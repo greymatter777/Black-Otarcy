@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Otarcy — Analyse Complète (Plan Essentiel)</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a0a0a; min-height: 100vh; font-family: 'Raleway', sans-serif; }
+
+  .page { background: #0a0a0a; padding: 40px 60px; max-width: 860px; margin: 0 auto; }
+
+  .section-label {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.65rem; letter-spacing: 0.3em;
+    color: #a3e635; text-transform: uppercase;
+    font-weight: 500; margin-bottom: 16px;
+  }
+  .sublabel {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.58rem; letter-spacing: 0.3em;
+    color: #7a7a7a; text-transform: uppercase; margin-bottom: 14px;
+  }
+  .card { padding: 24px; border: 1px solid #2a2a2a; background: #0f0f0f; margin-bottom: 16px; }
+  .card-inner { padding: 20px; background: #161616; border: 1px solid #2a2a2a; margin-bottom: 8px; }
+  .sep { border-top: 1px solid #2a2a2a; margin: 20px 0; }
+
+  .url-row { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+  .url-tag {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.62rem; letter-spacing: 0.1em;
+    color: #7a7a7a; padding: 4px 10px;
+    border: 1px solid #2a2a2a; text-transform: uppercase;
+  }
+  .url-val { font-family: 'Raleway', sans-serif; font-size: 0.70rem; color: #a0a0a0; letter-spacing: 0.05em; }
+
+  /* Score + barres */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .score-big { font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; color: #f0f0f0; line-height: 1; }
+  .score-slash { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: #7a7a7a; }
+  .score-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
+  .niveau { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: #f97316; letter-spacing: 0.1em; margin-bottom: 6px; }
+  .niveau-desc { font-family: 'Raleway', sans-serif; font-size: 0.72rem; color: #7a7a7a; font-weight: 300; line-height: 1.7; }
+
+  .bar-row { margin-bottom: 11px; }
+  .bar-label-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+  .bar-name { font-family: 'Raleway', sans-serif; font-size: 0.70rem; letter-spacing: 0.08em; text-transform: uppercase; color: #a0a0a0; }
+  .bar-val { font-family: 'Bebas Neue', sans-serif; font-size: 0.9rem; letter-spacing: 0.1em; }
+  .bar-bg { height: 2px; background: #2a2a2a; border-radius: 2px; }
+  .bar-fill { height: 2px; border-radius: 2px; }
+
+  /* Détail critères */
+  .crit-detail { padding: 14px 16px; border: 1px solid #2a2a2a; background: #0f0f0f; margin-bottom: 8px; }
+  .crit-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .crit-name { font-family: 'Raleway', sans-serif; font-size: 0.70rem; letter-spacing: 0.1em; text-transform: uppercase; color: #d4d4d4; font-weight: 500; }
+  .crit-score { font-family: 'Bebas Neue', sans-serif; font-size: 0.9rem; letter-spacing: 0.1em; }
+  .crit-desc { font-family: 'Raleway', sans-serif; font-size: 0.72rem; color: #7a7a7a; font-weight: 300; line-height: 1.6; }
+
+  /* Quick wins */
+  .quick-win {
+    padding: 16px 20px; background: #161616;
+    border: 1px solid #2a2a2a; border-left: 2px solid #f97316;
+    margin-bottom: 8px; display: flex; gap: 14px; align-items: flex-start;
+  }
+  .qw-num { font-family: 'Bebas Neue', sans-serif; font-size: 0.85rem; color: #f97316; letter-spacing: 0.15em; flex-shrink: 0; margin-top: 1px; }
+  .qw-title { font-family: 'Raleway', sans-serif; font-size: 0.72rem; color: #f0f0f0; font-weight: 500; margin-bottom: 4px; letter-spacing: 0.05em; }
+  .qw-desc { font-family: 'Raleway', sans-serif; font-size: 0.70rem; color: #7a7a7a; font-weight: 300; line-height: 1.6; }
+  .qw-tags { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+  .tag { font-family: 'Raleway', sans-serif; font-size: 0.58rem; letter-spacing: 0.1em; color: #7a7a7a; padding: 2px 8px; border: 1px solid #2a2a2a; text-transform: uppercase; }
+  .tag-orange { color: #f97316; border-color: #f97316; }
+
+  /* Plan long terme */
+  .plan-item {
+    padding: 16px 20px; background: #161616;
+    border: 1px solid #2a2a2a; border-left: 2px solid #60a5fa;
+    margin-bottom: 8px;
+  }
+  .plan-title { font-family: 'Raleway', sans-serif; font-size: 0.72rem; color: #60a5fa; font-weight: 500; margin-bottom: 4px; letter-spacing: 0.05em; }
+  .plan-desc { font-family: 'Raleway', sans-serif; font-size: 0.70rem; color: #7a7a7a; font-weight: 300; line-height: 1.6; }
+
+  /* CTA upgrade */
+  .upgrade-box {
+    border: 1px solid #a3e635; background: #0a0a0a;
+    padding: 24px; display: flex; align-items: center;
+    justify-content: space-between; gap: 16px; margin-top: 4px;
+  }
+  .upgrade-text { font-family: 'Raleway', sans-serif; font-size: 0.76rem; color: #d4d4d4; line-height: 1.7; font-weight: 300; max-width: 480px; }
+  .upgrade-text strong { color: #f0f0f0; font-weight: 500; }
+  .btn-primary {
+    font-family: 'Raleway', sans-serif; font-size: 0.66rem; letter-spacing: 0.22em;
+    text-transform: uppercase; padding: 13px 32px; background: #a3e635;
+    color: #0f0f0f; font-weight: 600; border: none; cursor: pointer;
+    white-space: nowrap; flex-shrink: 0; transition: opacity 0.2s;
+  }
+  .btn-primary:hover { opacity: 0.85; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="section-label">.02 — Analyse complète</div>
+
+  <div class="url-row">
+    <span class="url-tag">URL analysée</span>
+    <span class="url-val">https://exemple-pme.fr</span>
+  </div>
+
+  <!-- Score + barres -->
+  <div class="card">
+    <div class="grid2">
+      <div>
+        <div class="sublabel">Score global</div>
+        <div class="score-row">
+          <span class="score-big">34</span>
+          <span class="score-slash">/100</span>
+        </div>
+        <p class="niveau">Visibilité faible</p>
+        <p class="niveau-desc">6 critères à corriger en priorité pour améliorer votre présence IA.</p>
+      </div>
+      <div>
+        <div class="sublabel">Par catégorie</div>
+        <div class="bar-row">
+          <div class="bar-label-row">
+            <span class="bar-name">Crawlers IA</span>
+            <span class="bar-val" style="color:#ef4444">0/15</span>
+          </div>
+          <div class="bar-bg"><div class="bar-fill" style="width:0%;background:#ef4444"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label-row">
+            <span class="bar-name">Schema.org</span>
+            <span class="bar-val" style="color:#a3e635">12/15</span>
+          </div>
+          <div class="bar-bg"><div class="bar-fill" style="width:80%;background:#a3e635"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label-row">
+            <span class="bar-name">E-E-A-T</span>
+            <span class="bar-val" style="color:#f97316">7/15</span>
+          </div>
+          <div class="bar-bg"><div class="bar-fill" style="width:47%;background:#f97316"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label-row">
+            <span class="bar-name">FAQ / Glossaire</span>
+            <span class="bar-val" style="color:#ef4444">0/10</span>
+          </div>
+          <div class="bar-bg"><div class="bar-fill" style="width:0%;background:#ef4444"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label-row">
+            <span class="bar-name">llms.txt</span>
+            <span class="bar-val" style="color:#ef4444">0/10</span>
+          </div>
+          <div class="bar-bg"><div class="bar-fill" style="width:0%;background:#ef4444"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label-row">
+            <span class="bar-name">Meta / On-page</span>
+            <span class="bar-val" style="color:#f97316">8/10</span>
+          </div>
+          <div class="bar-bg"><div class="bar-fill" style="width:80%;background:#f97316"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label-row">
+            <span class="bar-name">Wikidata</span>
+            <span class="bar-val" style="color:#ef4444">0/10</span>
+          </div>
+          <div class="bar-bg"><div class="bar-fill" style="width:0%;background:#ef4444"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Détail critères -->
+  <div class="card">
+    <div class="sublabel">Détail par critère</div>
+    <div class="crit-detail">
+      <div class="crit-header">
+        <span class="crit-name">Accès crawlers IA</span>
+        <span class="crit-score" style="color:#ef4444">0 / 15</span>
+      </div>
+      <p class="crit-desc">GPTBot et ClaudeBot sont bloqués dans votre robots.txt. Les IAs ne peuvent pas crawler votre site — votre contenu est invisible pour leur indexation.</p>
+    </div>
+    <div class="crit-detail">
+      <div class="crit-header">
+        <span class="crit-name">Schema.org</span>
+        <span class="crit-score" style="color:#a3e635">12 / 15</span>
+      </div>
+      <p class="crit-desc">Organization et WebSite détectés. Il manque sameAs (Wikidata, GBP) pour compléter les signaux d'autorité.</p>
+    </div>
+    <div class="crit-detail">
+      <div class="crit-header">
+        <span class="crit-name">FAQ détectée</span>
+        <span class="crit-score" style="color:#ef4444">0 / 10</span>
+      </div>
+      <p class="crit-desc">Aucune section FAQ ni schema FAQPage détecté. Les IAs utilisent ce format pour extraire des réponses directes.</p>
+    </div>
+    <div class="crit-detail">
+      <div class="crit-header">
+        <span class="crit-name">E-E-A-T</span>
+        <span class="crit-score" style="color:#f97316">7 / 15</span>
+      </div>
+      <p class="crit-desc">Page À propos détectée. Manque : mentions d'auteur, politique de confidentialité complète, signaux d'expertise explicites.</p>
+    </div>
+  </div>
+
+  <!-- Quick wins -->
+  <div class="card">
+    <div class="sublabel">Quick wins — actions immédiates</div>
+    <div class="quick-win">
+      <span class="qw-num">01</span>
+      <div>
+        <p class="qw-title">Débloquer GPTBot et ClaudeBot dans robots.txt</p>
+        <p class="qw-desc">Supprimer les règles Disallow pour GPTBot, ClaudeBot et PerplexityBot. Modification en 5 minutes, impact immédiat sur l'indexation IA.</p>
+        <div class="qw-tags">
+          <span class="tag tag-orange">Impact élevé</span>
+          <span class="tag">5 min</span>
+          <span class="tag">Technique</span>
+        </div>
+      </div>
+    </div>
+    <div class="quick-win">
+      <span class="qw-num">02</span>
+      <div>
+        <p class="qw-title">Créer un fichier llms.txt à la racine</p>
+        <p class="qw-desc">Fichier texte simple qui décrit votre activité aux LLMs. Équivalent du robots.txt pour les IA génératives.</p>
+        <div class="qw-tags">
+          <span class="tag tag-orange">Impact élevé</span>
+          <span class="tag">15 min</span>
+          <span class="tag">Contenu</span>
+        </div>
+      </div>
+    </div>
+    <div class="quick-win">
+      <span class="qw-num">03</span>
+      <div>
+        <p class="qw-title">Ajouter une section FAQ sur la homepage</p>
+        <p class="qw-desc">5 questions/réponses sur votre activité avec schema FAQPage en JSON-LD. Directement consommé par ChatGPT et Perplexity.</p>
+        <div class="qw-tags">
+          <span class="tag tag-orange">Impact moyen</span>
+          <span class="tag">1h</span>
+          <span class="tag">Contenu</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Plan long terme -->
+  <div class="card">
+    <div class="sublabel">Plan long terme</div>
+    <div class="plan-item">
+      <p class="plan-title">Semaine 1-2 — Signaux techniques</p>
+      <p class="plan-desc">Débloquer crawlers IA, créer llms.txt, compléter sameAs Schema.org avec Wikidata et Google Business Profile.</p>
+    </div>
+    <div class="plan-item">
+      <p class="plan-title">Semaine 3-4 — Contenu structuré</p>
+      <p class="plan-desc">Ajouter FAQ, glossaire métier, page À propos complète avec signaux E-E-A-T (auteur, contact, expertise).</p>
+    </div>
+    <div class="plan-item">
+      <p class="plan-title">Mois 2-3 — Autorité et citations</p>
+      <p class="plan-desc">Obtenir des citations externes (presse, annuaires, partenaires), créer entrée Wikidata, publier du contenu régulier indexable par les IAs.</p>
+    </div>
+  </div>
+
+  <!-- CTA upgrade -->
+  <div class="upgrade-box">
+    <p class="upgrade-text">
+      Vous voulez savoir ce que <strong>ChatGPT, Claude et Perplexity</strong> disent réellement de votre marque aujourd'hui ?
+    </p>
+    <button class="btn-primary">Voir la perception IA →</button>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Otarcy — Perception IA (Plan Expert)</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a0a0a; min-height: 100vh; font-family: 'Raleway', sans-serif; }
+
+  .page { background: #0a0a0a; padding: 40px 60px; max-width: 860px; margin: 0 auto; }
+
+  .section-label {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.65rem; letter-spacing: 0.3em;
+    color: #a3e635; text-transform: uppercase;
+    font-weight: 500; margin-bottom: 16px;
+  }
+  .sublabel {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.58rem; letter-spacing: 0.3em;
+    color: #7a7a7a; text-transform: uppercase; margin-bottom: 14px;
+  }
+  .card { padding: 24px; border: 1px solid #2a2a2a; background: #0f0f0f; margin-bottom: 16px; }
+
+  .url-row { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+  .url-tag {
+    font-family: 'Raleway', sans-serif; font-size: 0.62rem; letter-spacing: 0.1em;
+    color: #7a7a7a; padding: 4px 10px; border: 1px solid #2a2a2a; text-transform: uppercase;
+  }
+  .url-val { font-family: 'Raleway', sans-serif; font-size: 0.70rem; color: #a0a0a0; letter-spacing: 0.05em; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+  /* Score */
+  .score-big { font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; color: #f0f0f0; line-height: 1; }
+  .score-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
+  .score-slash { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: #7a7a7a; }
+  .niveau { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: #f97316; letter-spacing: 0.1em; margin-bottom: 6px; }
+  .niveau-desc { font-family: 'Raleway', sans-serif; font-size: 0.70rem; color: #7a7a7a; font-weight: 300; line-height: 1.7; }
+
+  /* Résumé LLMs */
+  .llm-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; background: #0f0f0f; border: 1px solid #2a2a2a;
+    margin-bottom: 6px;
+  }
+  .llm-row-name {
+    font-family: 'Raleway', sans-serif; font-size: 0.70rem;
+    letter-spacing: 0.08em; text-transform: uppercase; color: #a0a0a0;
+  }
+  .badge {
+    font-family: 'Raleway', sans-serif; font-size: 0.58rem;
+    letter-spacing: 0.1em; padding: 3px 10px; border: 1px solid; text-transform: uppercase;
+  }
+  .badge-ok { color: #a3e635; border-color: #a3e635; }
+  .badge-warn { color: #f97316; border-color: #f97316; }
+  .badge-ko { color: #ef4444; border-color: #ef4444; }
+
+  /* Verbatim LLMs */
+  .llm-card { padding: 20px; background: #161616; border: 1px solid #2a2a2a; margin-bottom: 12px; }
+  .llm-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .llm-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 0.1em; color: #f0f0f0; }
+
+  .verbatim {
+    font-family: 'Raleway', sans-serif; font-size: 0.72rem; color: #7a7a7a;
+    font-weight: 300; line-height: 1.7; font-style: italic;
+    padding: 12px 16px; background: #0f0f0f;
+    border-left: 2px solid #2a2a2a; margin-bottom: 14px;
+  }
+  .verbatim-ok { border-left-color: #a3e635; }
+  .verbatim-warn { border-left-color: #f97316; }
+  .verbatim-ko { border-left-color: #ef4444; }
+
+  .llm-meta { display: flex; gap: 20px; flex-wrap: wrap; }
+  .meta-item { display: flex; flex-direction: column; gap: 3px; }
+  .meta-key {
+    font-family: 'Raleway', sans-serif; font-size: 0.58rem;
+    letter-spacing: 0.15em; color: #4a4a4a; text-transform: uppercase;
+  }
+  .meta-val {
+    font-family: 'Raleway', sans-serif; font-size: 0.66rem;
+    letter-spacing: 0.1em; color: #a0a0a0; text-transform: uppercase;
+  }
+
+  /* Delta */
+  .delta-item {
+    padding: 16px 20px; background: #161616;
+    border: 1px solid #2a2a2a; border-left: 2px solid #60a5fa;
+    margin-bottom: 8px;
+  }
+  .delta-title {
+    font-family: 'Raleway', sans-serif; font-size: 0.72rem;
+    color: #60a5fa; font-weight: 500; margin-bottom: 5px; letter-spacing: 0.05em;
+  }
+  .delta-desc {
+    font-family: 'Raleway', sans-serif; font-size: 0.70rem;
+    color: #7a7a7a; font-weight: 300; line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="section-label">.03 — Perception IA en temps réel</div>
+
+  <div class="url-row">
+    <span class="url-tag">URL analysée</span>
+    <span class="url-val">https://exemple-pme.fr</span>
+  </div>
+
+  <!-- Score + résumé -->
+  <div class="card">
+    <div class="grid2">
+      <div>
+        <div class="sublabel">Score de visibilité IA</div>
+        <div class="score-row">
+          <span class="score-big">34</span>
+          <span class="score-slash">/100</span>
+        </div>
+        <p class="niveau">Visibilité faible</p>
+        <p class="niveau-desc">Connue par 1 IA sur 4 interrogées.<br>Citée directement par aucune.</p>
+      </div>
+      <div>
+        <div class="sublabel">Résumé par IA</div>
+        <div class="llm-row">
+          <span class="llm-row-name">ChatGPT</span>
+          <span class="badge badge-ko">Inconnue</span>
+        </div>
+        <div class="llm-row">
+          <span class="llm-row-name">Claude</span>
+          <span class="badge badge-warn">Mention indirecte</span>
+        </div>
+        <div class="llm-row">
+          <span class="llm-row-name">Perplexity</span>
+          <span class="badge badge-ko">Inconnue</span>
+        </div>
+        <div class="llm-row">
+          <span class="llm-row-name">Gemini</span>
+          <span class="badge badge-ok">Citée</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Verbatim brut -->
+  <div class="card">
+    <div class="sublabel">Réponses brutes des IAs</div>
+
+    <div class="llm-card">
+      <div class="llm-header">
+        <span class="llm-name">ChatGPT</span>
+        <span class="badge badge-ko">Inconnue</span>
+      </div>
+      <div class="verbatim verbatim-ko">
+        "Je n'ai pas d'informations spécifiques sur cette marque dans mes données d'entraînement. Il est possible qu'elle soit trop récente ou trop locale pour figurer dans mes sources."
+      </div>
+      <div class="llm-meta">
+        <div class="meta-item"><span class="meta-key">Ton</span><span class="meta-val">Neutre</span></div>
+        <div class="meta-item"><span class="meta-key">Citation directe</span><span class="meta-val">Aucune</span></div>
+        <div class="meta-item"><span class="meta-key">Sources</span><span class="meta-val">0</span></div>
+      </div>
+    </div>
+
+    <div class="llm-card">
+      <div class="llm-header">
+        <span class="llm-name">Claude</span>
+        <span class="badge badge-warn">Mention indirecte</span>
+      </div>
+      <div class="verbatim verbatim-warn">
+        "Dans le secteur des outils de visibilité IA pour PME, quelques acteurs émergent en France. Je ne dispose pas d'informations précises sur cette marque spécifique mais le secteur est en forte croissance."
+      </div>
+      <div class="llm-meta">
+        <div class="meta-item"><span class="meta-key">Ton</span><span class="meta-val">Positif</span></div>
+        <div class="meta-item"><span class="meta-key">Citation directe</span><span class="meta-val">Aucune</span></div>
+        <div class="meta-item"><span class="meta-key">Secteur reconnu</span><span class="meta-val">Oui</span></div>
+      </div>
+    </div>
+
+    <div class="llm-card">
+      <div class="llm-header">
+        <span class="llm-name">Perplexity</span>
+        <span class="badge badge-ko">Inconnue</span>
+      </div>
+      <div class="verbatim verbatim-ko">
+        "Aucune information disponible sur cette entreprise dans mes sources indexées. Pour obtenir des informations actualisées, je vous recommande de consulter directement leur site web."
+      </div>
+      <div class="llm-meta">
+        <div class="meta-item"><span class="meta-key">Ton</span><span class="meta-val">Neutre</span></div>
+        <div class="meta-item"><span class="meta-key">Citation directe</span><span class="meta-val">Aucune</span></div>
+        <div class="meta-item"><span class="meta-key">Sources</span><span class="meta-val">0</span></div>
+      </div>
+    </div>
+
+    <div class="llm-card">
+      <div class="llm-header">
+        <span class="llm-name">Gemini</span>
+        <span class="badge badge-ok">Citée</span>
+      </div>
+      <div class="verbatim verbatim-ok">
+        "Cette entreprise propose des services dans le domaine de l'optimisation de la visibilité pour les moteurs de recherche IA. Basée en France, elle cible principalement les PME souhaitant améliorer leur présence sur ChatGPT et Perplexity."
+      </div>
+      <div class="llm-meta">
+        <div class="meta-item"><span class="meta-key">Ton</span><span class="meta-val">Positif</span></div>
+        <div class="meta-item"><span class="meta-key">Citation directe</span><span class="meta-val">Oui</span></div>
+        <div class="meta-item"><span class="meta-key">Précision</span><span class="meta-val">Partielle</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delta -->
+  <div class="card">
+    <div class="sublabel">Delta — ce que vous émettez vs ce que les IAs retiennent</div>
+    <div class="delta-item">
+      <p class="delta-title">Proposition de valeur non retransmise</p>
+      <p class="delta-desc">Vous vous positionnez sur "diagnostic de présence IA". Aucune IA ne restitue ce positionnement. Le terme n'est pas assez ancré dans vos contenus structurés pour être capté.</p>
+    </div>
+    <div class="delta-item">
+      <p class="delta-title">Secteur reconnu, marque non associée</p>
+      <p class="delta-desc">Claude identifie le secteur mais pas votre marque. Vous existez dans l'espace sémantique mais pas encore comme entité nommée. Wikidata et citations externes sont prioritaires.</p>
+    </div>
+    <div class="delta-item">
+      <p class="delta-title">Gemini seul vous cite — dépendance à une source</p>
+      <p class="delta-desc">La citation Gemini provient probablement de votre Google Business Profile. Sans diversification des signaux, cette visibilité est fragile.</p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
