@@ -4,6 +4,18 @@ Instructions pour Claude Code. Lire entièrement avant de modifier quoi que ce s
 
 ---
 
+## ⚠ Amendements — Lire avant toute chose
+
+Trois correctifs ont été intégrés à ce document suite à une revue d'architecture. Ils sont signalés par `⚠` à chaque point d'impact et ont le même statut que les conventions techniques existantes.
+
+| # | Correctif | Impact |
+|---|-----------|--------|
+| 1 | Validation locale des checkers obligatoire avant tout endpoint | Étape 0 + script fourni |
+| 2 | `fetchWithTimeout()` obligatoire sur tout fetch externe | Nouveau helper à copier |
+| 3 | Champ `brand` pour `llm-perception.ts` — décision UX requise avant étape 7 | Index.tsx + PerceptionResult.tsx |
+
+---
+
 ## Identité du projet
 
 - **Produit** : Otarcy — outil de diagnostic de présence IA
@@ -47,6 +59,8 @@ Logique :
 - Agréger les scores
 - Retourner uniquement le score global + statuts (ok / warn / ko) sans détail
 
+> ⚠ **Correctif 2** — Tout fetch externe utilise `fetchWithTimeout()`. Voir section "Conventions techniques".
+
 Payload sortant :
 ```json
 {
@@ -89,6 +103,8 @@ Logique :
 - Génère les quick wins (liste priorisée par impact/effort)
 - Génère le plan long terme (3 phases)
 - Utilise Claude API (claude-sonnet-4-20250514) uniquement pour la synthèse des quick wins et du plan — pas pour la vérification des critères (qui reste 100% technique)
+
+> ⚠ **Correctif 2** — Tout fetch externe utilise `fetchWithTimeout()`. Voir section "Conventions techniques".
 
 Payload sortant :
 ```json
@@ -136,6 +152,8 @@ Payload entrant :
 { "url": "https://exemple.fr", "brand": "Nom de la marque" }
 ```
 
+> ⚠ **Correctif 3** — Le champ `brand` n'est pas collecté par le flow score/audit. Décision UX requise avant l'étape 7 : ajouter un champ "Nom de votre marque" visible uniquement si `plan = agency` sur `Index.tsx`. Implémenter à l'étape 9, avant de finaliser `PerceptionResult.tsx`.
+
 Logique :
 - Appels parallèles via OpenRouter à 4 LLMs (Claude, GPT-4o, Perplexity, Gemini)
 - Requête standardisée pour chaque LLM :
@@ -180,8 +198,12 @@ Payload sortant :
 
 ## Les 10 vérificateurs — Workflow 1
 
+> ⚠ **Correctif 1** — Chaque vérificateur doit être testé indépendamment avant toute intégration dans les endpoints. Exécuter le script `validate-checkers.mjs` (section dédiée en fin de document) sur 3 URLs réelles avant de passer à l'étape 2.
+
 Chaque vérificateur est une fonction pure TypeScript :
 `check[Nom](html: string, robotsTxt?: string, url?: string): { statut: 'ok'|'warn'|'ko', points: number, detail: string, impact: string }`
+
+Les vérificateurs ne font jamais d'appel LLM — ils parsent exclusivement du HTML et du texte brut.
 
 ### 1. `checkCrawlersIA(robotsTxt: string)` — 15 pts
 Chercher dans robots.txt les User-agent : GPTBot, ClaudeBot, PerplexityBot, Googlebot-Extended, OAI-SearchBot.
@@ -209,7 +231,7 @@ Détecter : schema FAQPage en JSON-LD, balises `<details>/<summary>`, sections a
 - Rien → ko (0 pts)
 
 ### 5. `checkLlmsTxt(url: string)` — 10 pts
-Fetch `[url]/llms.txt`.
+Fetch `[url]/llms.txt` via `fetchWithTimeout()`.
 - Présent et contenu > 100 caractères → ok (10 pts)
 - Présent mais vide → warn (3 pts)
 - Absent (404) → ko (0 pts)
@@ -226,7 +248,7 @@ Chercher dans le HTML ou Schema.org sameAs une URL `wikidata.org/wiki/Q`.
 - Non détecté → ko (0 pts)
 
 ### 8. `checkSitemap(url: string)` — 5 pts
-Fetch `[url]/sitemap.xml` ou chercher `<link rel="sitemap">` dans le HTML.
+Fetch `[url]/sitemap.xml` via `fetchWithTimeout()` ou chercher `<link rel="sitemap">` dans le HTML.
 - Sitemap trouvé et non vide → ok (5 pts)
 - Absent → ko (0 pts)
 
@@ -247,7 +269,7 @@ Vérifier que l'URL commence par `https://`.
 
 ### Helpers inlinés dans chaque fichier API
 Vercel ne résout pas les imports relatifs hors `/api/` au runtime.
-Copier ces 3 fonctions dans chaque nouveau fichier API :
+Copier ces **4 fonctions** dans chaque nouveau fichier API :
 
 ```typescript
 async function verifySupabaseAuth(req: any): Promise<{ userId: string; email: string } | null> {
@@ -276,6 +298,49 @@ function sanitizeUrl(url: string): string {
     throw new Error("URL invalide");
   }
 }
+```
+
+### ⚠ Correctif 2 — `fetchWithTimeout()` obligatoire sur tout fetch externe
+
+Vercel Functions timeout à 10s (hobby) ou 30s (pro). Sans `AbortController`, un fetch bloquant fait timeout l'endpoint entier. **Jamais utiliser `fetch()` nu sur une URL externe.**
+
+```typescript
+async function fetchWithTimeout(url: string, timeoutMs = 8000): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, {
+      signal: controller.signal,
+      headers: { "User-Agent": "OtarcyBot/1.0 (+https://otarcy.app)" },
+    });
+    return res;
+  } catch (err: any) {
+    if (err.name === "AbortError") throw new Error("Timeout : URL trop lente (>8s)");
+    throw new Error("Impossible d'accéder à cette URL");
+  } finally {
+    clearTimeout(timer);
+  }
+}
+```
+
+Usage dans les endpoints (score.ts, audit.ts) :
+```typescript
+// Fetch du HTML cible
+const htmlRes = await fetchWithTimeout(sanitizeUrl(url));
+if (!htmlRes.ok) return res.status(422).json({ error: "Impossible d'accéder à cette URL" });
+const html = await htmlRes.text();
+
+// Fetch robots.txt (échec silencieux accepté)
+const origin = new URL(url).origin;
+const robotsRes = await fetchWithTimeout(`${origin}/robots.txt`).catch(() => null);
+const robotsTxt = robotsRes?.ok ? await robotsRes.text() : "";
+```
+
+Usage dans les checkers qui fetch (`checkLlmsTxt`, `checkSitemap`) :
+```typescript
+// Remplacer fetch() par fetchWithTimeout()
+const res = await fetchWithTimeout(`${url}/llms.txt`);
+if (!res.ok) return { statut: "ko", points: 0, detail: "Absent (404)", impact: "..." };
 ```
 
 ### CORS — header obligatoire sur chaque endpoint
@@ -339,6 +404,14 @@ ANTHROPIC_API_KEY         ← clé Anthropic pour la synthèse des quick wins
 
 Fichier de référence : `otarcy-design-system.md`
 
+Le dossier `design-ref/` contient 3 fichiers HTML de référence pixel-perfect. Les parser avant de générer tout composant React.
+
+| Fichier | Correspond à | Route cible |
+|---------|-------------|-------------|
+| `score-free.html` | ScoreResult.tsx — vue plan free | /score |
+| `audit-essentiel.html` | AuditResult.tsx — vue plan pro | /audit |
+| `perception-expert.html` | PerceptionResult.tsx — vue agency | /perception |
+
 Règles critiques à respecter dans tout nouveau composant :
 - **Jamais de className Tailwind** — tout en inline style
 - **Jamais de border-radius** sauf `borderRadius: "2px"` sur les barres
@@ -355,26 +428,31 @@ Règles critiques à respecter dans tout nouveau composant :
 
 ### `src/pages/ScoreResult.tsx` — résultat plan free
 Route : `/score` (protégée — auth requise)
+Référence visuelle : `design-ref/score-free.html`
 Affiche :
-- Score circulaire dominant avec chiffre en Bebas Neue
-- Grille des 10 critères avec statut (ok/warn/ko) — détail verrouillé
+- Score circulaire dominant (SVG ring) avec chiffre en Bebas Neue
+- Grille des 10 critères avec statut (ok/warn/ko) — détail verrouillé (dashed border)
 - CTA "Débloquer l'analyse complète →" vers `/pricing`
 
 ### `src/pages/AuditResult.tsx` — résultat plan pro (remplace AioReport.tsx)
 Route : `/audit` (protégée — plan pro ou agency)
+Référence visuelle : `design-ref/audit-essentiel.html`
 Affiche :
 - Score global + barres par catégorie
 - Détail complet de chaque critère
-- Section quick wins (bordure orange)
-- Plan long terme 3 phases (bordure bleue)
+- Section quick wins (bordure gauche orange `#f97316`)
+- Plan long terme 3 phases (bordure gauche bleue `#60a5fa`)
 - CTA vers plan Expert si plan = pro
 
 ### `src/pages/PerceptionResult.tsx` — résultat plan agency
 Route : `/perception` (protégée — plan agency uniquement)
+Référence visuelle : `design-ref/perception-expert.html`
 Affiche :
 - Résumé perception par LLM (tableau statuts)
 - Cartes verbatim brut par LLM (bordure colorée selon statut)
 - Section delta (ce que vous émettez vs ce que les IAs retiennent)
+
+> ⚠ **Correctif 3** — Cette page consomme `api/llm-perception.ts` qui exige `{ url, brand }`. Vérifier que le champ `brand` est collecté côté `Index.tsx` avant de finaliser cette page.
 
 ---
 
@@ -399,6 +477,11 @@ Affiche :
 Respecter cet ordre strictement — ne pas sauter d'étape.
 
 ```
+ÉTAPE 0 — ⚠ Correctif 1 : valider les checkers en isolation
+  → node validate-checkers.mjs (script fourni ci-dessous)
+  → Tester sur 3 URLs réelles : bon / moyen / vide
+  → Ne pas passer à l'étape 1 si un résultat est incohérent
+
 ÉTAPE 1 — Créer les 10 fonctions vérificateurs
   → src/lib/checkers.ts
   → Chaque fonction testable indépendamment
@@ -406,6 +489,7 @@ Respecter cet ordre strictement — ne pas sauter d'étape.
 ÉTAPE 2 — Créer api/score.ts
   → Utilise les 10 vérificateurs
   → Auth optionnelle (plan free accessible sans compte)
+  → Utilise fetchWithTimeout() pour tous les fetch externes
   → Tester avec curl avant de passer à l'étape suivante
 
 ÉTAPE 3 — Créer api/audit.ts (remplace l'ancien)
@@ -420,12 +504,16 @@ Respecter cet ordre strictement — ne pas sauter d'étape.
 
 ÉTAPE 5 — Créer ScoreResult.tsx
   → Layout vue gratuite (score + critères verrouillés)
+  → Référence : design-ref/score-free.html
 
 ÉTAPE 6 — Créer AuditResult.tsx
   → Layout vue Essentiel (détail + quick wins + plan)
+  → Référence : design-ref/audit-essentiel.html
 
 ÉTAPE 7 — Créer PerceptionResult.tsx
   → Layout vue Expert (verbatim LLMs + delta)
+  → Référence : design-ref/perception-expert.html
+  → ⚠ Correctif 3 : vérifier que le champ brand est disponible avant cette étape
 
 ÉTAPE 8 — Mettre à jour App.tsx
   → Ajouter les nouvelles routes
@@ -433,8 +521,82 @@ Respecter cet ordre strictement — ne pas sauter d'étape.
 
 ÉTAPE 9 — Mettre à jour Index.tsx
   → Remplacer le champ "nom de marque" par un champ URL
-  → Conserver le design existant, changer uniquement le contenu du champ
+  → ⚠ Correctif 3 : ajouter un champ "Nom de votre marque" visible si plan = agency
+  → Conserver le design existant, changer uniquement le contenu des champs
 ```
+
+---
+
+## Script de validation locale — Étape 0
+
+Créer ce fichier à la racine du projet. Exécuter avec `node validate-checkers.mjs` avant de commencer l'étape 1.
+
+```javascript
+// validate-checkers.mjs
+// Teste les 10 checkers sur 3 URLs réelles avant tout déploiement.
+// Un checker défaillant = 3 endpoints qui retournent des scores faux.
+
+import {
+  checkCrawlersIA, checkSchemaOrg, checkEEAT,
+  checkFAQGlossaire, checkLlmsTxt, checkMetaOnpage,
+  checkWikidata, checkSitemap, checkOpenGraph, checkHTTPS
+} from "./src/lib/checkers.ts";
+
+const URLS = [
+  "https://anthropic.com",     // site bien configuré — score attendu > 70
+  "https://exemple-pme.fr",    // remplacer par une URL réelle à tester
+  "https://httpbin.org/html",  // page HTML minimaliste — score attendu faible
+];
+
+async function fetchWithTimeout(url, ms = 8000) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), ms);
+  try {
+    return await fetch(url, { signal: ctrl.signal });
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+for (const url of URLS) {
+  console.log(`\n── ${url} ──`);
+  try {
+    const [htmlRes, robotsRes] = await Promise.all([
+      fetchWithTimeout(url),
+      fetchWithTimeout(new URL(url).origin + "/robots.txt").catch(() => null),
+    ]);
+    const html = await htmlRes.text();
+    const robots = robotsRes?.ok ? await robotsRes.text() : "";
+
+    const results = {
+      https:       checkHTTPS(url),
+      crawlers_ia: checkCrawlersIA(robots),
+      schema_org:  checkSchemaOrg(html),
+      eeat:        checkEEAT(html),
+      faq:         checkFAQGlossaire(html),
+      meta_onpage: checkMetaOnpage(html),
+      wikidata:    checkWikidata(html),
+      open_graph:  checkOpenGraph(html),
+    };
+
+    // Ces deux checkers font leur propre fetch interne
+    results.llms_txt = await checkLlmsTxt(url);
+    results.sitemap  = await checkSitemap(url, html);
+
+    let total = 0;
+    for (const [nom, r] of Object.entries(results)) {
+      const icon = r.statut === "ok" ? "✅" : r.statut === "warn" ? "⚠️ " : "🔴";
+      console.log(`  ${icon} ${nom.padEnd(14)} ${String(r.points).padStart(2)}/${r.max ?? "?"} — ${r.detail}`);
+      total += r.points;
+    }
+    console.log(`  ── SCORE : ${total}/100`);
+  } catch (e) {
+    console.error(`  ERREUR : ${e.message}`);
+  }
+}
+```
+
+Résultat attendu pour `anthropic.com` : score > 70, majorité des checkers en ✅. Si ce n'est pas le cas, corriger le checker défaillant avant de continuer.
 
 ---
 
@@ -444,5 +606,7 @@ Respecter cet ordre strictement — ne pas sauter d'étape.
 - Ne jamais logger les clés API ou tokens JWT dans la console
 - Les vérificateurs ne font jamais d'appel LLM — ils parsent du HTML et du texte uniquement
 - Le score est toujours calculé côté serveur, jamais côté client
-- En cas de fetch échoué sur l'URL soumise, retourner une erreur claire : `{ error: "Impossible d'accéder à cette URL" }`
+- En cas de fetch échoué sur l'URL soumise, retourner une erreur claire : `{ error: "Impossible d'accéder à cette URL" }` avec status 422
+- **Jamais `fetch()` nu sur une URL externe** — toujours `fetchWithTimeout()` — Correctif 2
 - Tester chaque endpoint avec curl avant de créer le composant React correspondant
+- `api/llm-perception.ts` : ne tester avec de vraies clés OpenRouter qu'une seule fois avant déploiement pour éviter de brûler des crédits sur des tests d'intégration
