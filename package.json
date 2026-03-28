@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.80.0",
     "@supabase/supabase-js": "^2.45.0",
     "@vitejs/plugin-react": "^4.3.4",
     "jspdf": "^2.5.1",
