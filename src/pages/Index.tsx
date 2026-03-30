@@ -4,8 +4,6 @@ import { useAuth } from "../lib/auth";
 import { useNavigate } from "react-router-dom";
 import { authFetch } from "../lib/useAuthFetch";
 
-import { exportAuditPDF } from "../lib/exportPDF";
-
 // ─── HOOK: Scroll Reveal ──────────────────────────────
 function useReveal(deps: any[] = []) {
   useEffect(() => {
@@ -57,7 +55,7 @@ const Navbar = () => {
   }, [mobileOpen]);
 
   const navLinks = [
-    { label: "AIO", to: "/aio-report", highlight: true },
+    { label: "DIAGNOSTIC", to: "#audit", highlight: true },
     { label: "À PROPOS", to: "#about" },
     { label: "NEWSLETTER", to: "#newsletter" },
     { label: "AUDIT", to: "#audit" },
@@ -285,13 +283,14 @@ const Hero: React.FC<{ isSignedIn: boolean; onSignIn: () => void }> = ({ isSigne
     </p>
 
     <div className="reveal" style={{ marginTop: "40px", display: "flex", gap: "14px", flexWrap: "wrap", justifyContent: "center" }}>
-      <Link to="/aio-report"
-        style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.22em", textTransform: "uppercase", padding: "13px 32px", background: "#a3e635", color: "#0f0f0f", textDecoration: "none", fontWeight: 600, transition: "opacity 0.2s" }}
+      <button type="button"
+        onClick={() => document.getElementById("audit")?.scrollIntoView({ behavior: "smooth" })}
+        style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.22em", textTransform: "uppercase", padding: "13px 32px", background: "#a3e635", color: "#0f0f0f", border: "none", cursor: "pointer", fontWeight: 600, transition: "opacity 0.2s" }}
         onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
         onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
       >
-        Lancer l'audit AIO →
-      </Link>
+        Lancer le diagnostic →
+      </button>
       <button type="button"
         onClick={() => document.getElementById("audit")?.scrollIntoView({ behavior: "smooth" })}
         style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.22em", textTransform: "uppercase", padding: "13px 32px", border: "1px solid #3a3a3a", background: "transparent", color: "#7a7a7a", cursor: "pointer", transition: "border-color 0.3s, color 0.3s" }}
@@ -354,13 +353,14 @@ const WhyAio = () => (
       </div>
 
       <div className="reveal" style={{ marginTop: "48px", textAlign: "center" }}>
-        <Link to="/aio-report"
-          style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.22em", textTransform: "uppercase", padding: "13px 36px", background: "#a3e635", color: "#0f0f0f", textDecoration: "none", fontWeight: 600, transition: "opacity 0.2s" }}
+        <button type="button"
+          onClick={() => document.getElementById("audit")?.scrollIntoView({ behavior: "smooth" })}
+          style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.22em", textTransform: "uppercase", padding: "13px 36px", background: "#a3e635", color: "#0f0f0f", border: "none", cursor: "pointer", fontWeight: 600, transition: "opacity 0.2s" }}
           onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
           onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
         >
           Analyser ma marque →
-        </Link>
+        </button>
       </div>
     </div>
   </section>
@@ -597,228 +597,90 @@ const NewsletterSection = () => {
   );
 };
 
-// ─── TYPES ────────────────────────────────────────────
-interface SwotData {
-  strengths: string[];
-  weaknesses: string[];
-  opportunities: string[];
-  threats: string[];
-}
-
-interface KpiData {
-  notoriete: number;
-  coherence: number;
-  digital: number;
-  contenu: number;
-}
-
-interface AuditData {
-  score: number;
-  analysis: string;
-  strengths: string[];
-  weaknesses: string[];
-  recommendations: string[];
-  swot?: SwotData | null;
-  kpis?: KpiData | null;
-  plan?: string;
-}
-
-// ─── SCORE RING ───────────────────────────────────────
-const ScoreRing: React.FC<{ score: number }> = ({ score }) => {
-  const radius = 42;
-  const circumference = 2 * Math.PI * radius;
-  const progress = (score / 10) * circumference;
-  const color = score >= 7 ? "#a3e635" : score >= 5 ? "#f0f0f0" : "#ef4444";
-  return (
-    <div style={{ position: "relative", width: 110, height: 110, flexShrink: 0 }}>
-      <svg width="110" height="110" style={{ transform: "rotate(-90deg)" }}>
-        <circle cx="55" cy="55" r={radius} fill="none" stroke="#2a2a2a" strokeWidth="5" />
-        <circle cx="55" cy="55" r={radius} fill="none" stroke={color} strokeWidth="5"
-          strokeDasharray={circumference} strokeDashoffset={circumference - progress}
-          strokeLinecap="round" style={{ transition: "stroke-dashoffset 1.2s cubic-bezier(.22,1,.36,1)" }}
-        />
-      </svg>
-      <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-        <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2rem", color: "#f0f0f0", lineHeight: 1 }}>{score}</span>
-        <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.55rem", letterSpacing: "0.2em", color: "#7a7a7a" }}>/10</span>
-      </div>
-    </div>
-  );
-};
-
-// ─── KPI BAR ──────────────────────────────────────────
-const KpiBar: React.FC<{ label: string; value: number; color: string }> = ({ label, value, color }) => (
-  <div style={{ marginBottom: "16px" }}>
-    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
-      <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.7rem", color: "#a0a0a0", letterSpacing: "0.1em" }}>{label}</span>
-      <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.9rem", color: "#f0f0f0", letterSpacing: "0.1em" }}>{value}</span>
-    </div>
-    <div style={{ background: "#2a2a2a", height: "3px", borderRadius: "2px" }}>
-      <div style={{ background: color, height: "3px", borderRadius: "2px", width: `${value}%`, transition: "width 1s cubic-bezier(.22,1,.36,1)" }} />
-    </div>
-  </div>
-);
-
-// ─── SWOT SECTION ─────────────────────────────────────
-const SwotSection: React.FC<{ swot: SwotData }> = ({ swot }) => {
-  const quadrants = [
-    { key: "strengths", label: "Forces", items: swot.strengths, color: "#a3e635", symbol: "+" },
-    { key: "weaknesses", label: "Faiblesses", items: swot.weaknesses, color: "#ef4444", symbol: "−" },
-    { key: "opportunities", label: "Opportunités", items: swot.opportunities, color: "#60a5fa", symbol: "↑" },
-    { key: "threats", label: "Menaces", items: swot.threats, color: "#f97316", symbol: "!" },
-  ];
-  return (
-    <div style={{ marginBottom: "32px" }}>
-      <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.6rem", letterSpacing: "0.3em", color: "#7a7a7a", textTransform: "uppercase", marginBottom: "16px" }}>Analyse SWOT</p>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-        {quadrants.map((q) => (
-          <div key={q.key} style={{ padding: "20px", border: "1px solid #2a2a2a", background: "#161616" }}>
-            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", letterSpacing: "0.25em", color: q.color, textTransform: "uppercase", marginBottom: "12px", fontWeight: 600 }}>
-              {q.symbol} {q.label}
-            </p>
-            {q.items.map((item, i) => (
-              <div key={i} style={{ display: "flex", gap: "8px", marginBottom: "8px", alignItems: "flex-start" }}>
-                <span style={{ color: q.color, fontSize: "0.65rem", flexShrink: 0, marginTop: "2px" }}>{q.symbol}</span>
-                <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.75rem", color: "#d4d4d4", lineHeight: 1.6, fontWeight: 300 }}>{item}</p>
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-// ─── KPI SECTION ──────────────────────────────────────
-const KpiSection: React.FC<{ kpis: KpiData }> = ({ kpis }) => (
-  <div style={{ padding: "28px", border: "1px solid #2a2a2a", background: "#161616", marginBottom: "32px" }}>
-    <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.6rem", letterSpacing: "0.3em", color: "#7a7a7a", textTransform: "uppercase", marginBottom: "20px" }}>KPI de marque</p>
-    <KpiBar label="Notoriété" value={kpis.notoriete} color="#a3e635" />
-    <KpiBar label="Cohérence" value={kpis.coherence} color="#60a5fa" />
-    <KpiBar label="Présence digitale" value={kpis.digital} color="#f97316" />
-    <KpiBar label="Qualité de contenu" value={kpis.contenu} color="#e8e8e8" />
-  </div>
-);
-
 // ─── AUDIT SECTION ────────────────────────────────────
-interface GuideData {
-  titre: string;
-  etapes: { numero: number; action: string; detail: string }[];
-  duree_estimee: string;
-  impact: string;
-}
-
 const AuditSection: React.FC<{
-  setBrandName: (v: string) => void;
-  handleAudit: () => void;
+  url: string;
+  setUrl: (v: string) => void;
+  brand: string;
+  setBrand: (v: string) => void;
+  handleSubmit: () => void;
   loading: boolean;
   isSignedIn: boolean;
   onSignIn: () => void;
-  auditsLeft: number | null;
-  results: AuditData | null;
-  brand: string;
   plan: string;
   error: string | null;
-}> = ({ setBrandName, handleAudit, loading, isSignedIn, onSignIn, auditsLeft, results, brand, plan, error }) => {
-  const canExport = plan === "pro" || plan === "agency";
-  const [guides, setGuides] = React.useState<Record<number, GuideData | null>>({});
-  const [guidesLoading, setGuidesLoading] = React.useState<Record<number, boolean>>({});
-  const [guidesOpen, setGuidesOpen] = React.useState<Record<number, boolean>>({});
-  const [swotTemplates, setSwotTemplates] = React.useState<any | null>(null);
-  const [swotTemplatesLoading, setSwotTemplatesLoading] = React.useState(false);
-  const [swotTemplatesOpen, setSwotTemplatesOpen] = React.useState(false);
-  const [copiedSwot, setCopiedSwot] = React.useState<number | null>(null);
-
-  const fetchSwotTemplates = async () => {
-    if (!results?.swot) return;
-    if (swotTemplates) { setSwotTemplatesOpen(!swotTemplatesOpen); return; }
-    setSwotTemplatesLoading(true);
-    setSwotTemplatesOpen(true);
-    try {
-      const { authFetch } = await import("../lib/useAuthFetch");
-      const res = await authFetch("/api/swot-templates", {
-        method: "POST",
-        body: JSON.stringify({
-          brand,
-          strengths: results.swot.strengths,
-          opportunities: results.swot.opportunities,
-        }),
-      });
-      const data = await res.json();
-      setSwotTemplates(data);
-    } catch {
-      setSwotTemplates(null);
-    } finally {
-      setSwotTemplatesLoading(false);
-    }
-  };
-
-  const copySwotPost = (post: any, index: number) => {
-    const text = `${post.accroche}
-
-${post.contenu}
-
-${post.hashtags.map((h: string) => `#${h.replace("#","")}`).join(" ")}`;
-    navigator.clipboard.writeText(text);
-    setCopiedSwot(index);
-    setTimeout(() => setCopiedSwot(null), 2000);
-  };
-
-  const fetchGuide = async (index: number, recommendation: string) => {
-    if (guides[index]) {
-      setGuidesOpen((prev) => ({ ...prev, [index]: !prev[index] }));
-      return;
-    }
-    setGuidesLoading((prev) => ({ ...prev, [index]: true }));
-    setGuidesOpen((prev) => ({ ...prev, [index]: true }));
-    try {
-      const { authFetch } = await import("../lib/useAuthFetch");
-      const res = await authFetch("/api/guide", {
-        method: "POST",
-        body: JSON.stringify({ recommendation, brand }),
-      });
-      const data = await res.json();
-      setGuides((prev) => ({ ...prev, [index]: data }));
-    } catch {
-      setGuides((prev) => ({ ...prev, [index]: null }));
-    } finally {
-      setGuidesLoading((prev) => ({ ...prev, [index]: false }));
-    }
-  };
+}> = ({ url, setUrl, brand, setBrand, handleSubmit, loading, isSignedIn, onSignIn, plan, error }) => {
 
   return (
     <section id="audit" style={{ padding: "100px 60px", background: "#161616", borderTop: "1px solid #1a1a1a" }}>
       <div style={{ maxWidth: "860px", margin: "0 auto" }}>
         <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.3em", color: "#7a7a7a", textTransform: "uppercase", marginBottom: "16px" }}>
-          .03 — Audit de marque
+          .03 — Diagnostic de présence IA
         </p>
         <h2 className="reveal" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2.5rem, 5vw, 4rem)", letterSpacing: "0.06em", color: "#f0f0f0", marginBottom: "16px" }}>
           DIAGNOSTIC RAPIDE
         </h2>
         <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.82rem", color: "#7a7a7a", lineHeight: 1.8, fontWeight: 300, maxWidth: "520px", marginBottom: "40px" }}>
-          Score, forces, faiblesses et recommandations en quelques secondes. Le point de départ avant votre audit AIO.
+          Entrez l'URL de votre site. Otarcy vérifie en quelques secondes si votre présence est visible pour les IAs.
         </p>
 
-        {/* Champ de saisie */}
+        {/* Formulaire */}
         {isSignedIn ? (
-          <div>
-            {auditsLeft !== null && (
-              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", letterSpacing: "0.2em", color: auditsLeft === 0 ? "#ef4444" : "#4a4a4a", marginBottom: "16px", textTransform: "uppercase" }}>
-                {auditsLeft === 0 ? "Limite atteinte" : `${auditsLeft} audit${auditsLeft > 1 ? "s" : ""} restant${auditsLeft > 1 ? "s" : ""}`}
-              </p>
-            )}
-            <div style={{ display: "flex", gap: "12px", maxWidth: "520px" }}>
-              <input type="text" placeholder="Entrez le nom de votre marque"
-                onChange={(e) => setBrandName(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleAudit()}
-                style={{ flex: 1, background: "transparent", border: "1px solid #4a4a4a", padding: "10px 14px", color: "#f0f0f0", fontFamily: "'Raleway', sans-serif", fontSize: "0.78rem", letterSpacing: "0.08em", outline: "none" }}
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px", maxWidth: "520px" }}>
+            {/* Champ URL */}
+            <div style={{ display: "flex", gap: "12px" }}>
+              <input
+                type="url"
+                placeholder="https://votre-site.fr"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && !loading && handleSubmit()}
+                style={{
+                  flex: 1, background: "transparent", border: "1px solid #4a4a4a",
+                  padding: "10px 14px", color: "#f0f0f0",
+                  fontFamily: "'Raleway', sans-serif", fontSize: "0.78rem",
+                  letterSpacing: "0.08em", outline: "none",
+                }}
               />
-              <button onClick={handleAudit} disabled={loading || auditsLeft === 0}
-                style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.22em", textTransform: "uppercase", padding: "10px 18px", border: "none", background: (loading || auditsLeft === 0) ? "#555" : "#e8e8e8", color: "#0f0f0f", cursor: (loading || auditsLeft === 0) ? "not-allowed" : "pointer", opacity: (loading || auditsLeft === 0) ? 0.7 : 1, whiteSpace: "nowrap" }}
+              <button
+                onClick={handleSubmit}
+                disabled={loading}
+                style={{
+                  fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem",
+                  letterSpacing: "0.22em", textTransform: "uppercase",
+                  padding: "10px 18px", border: "none",
+                  background: loading ? "#555" : "#e8e8e8", color: "#0f0f0f",
+                  cursor: loading ? "not-allowed" : "pointer",
+                  opacity: loading ? 0.7 : 1, whiteSpace: "nowrap",
+                  transition: "opacity 0.2s",
+                }}
               >
                 {loading ? "ANALYSE..." : "Analyser"}
               </button>
             </div>
+
+            {/* Champ marque — plan agency uniquement */}
+            {plan === "agency" && (
+              <input
+                type="text"
+                placeholder="Nom de votre marque (ex : Otarcy)"
+                value={brand}
+                onChange={(e) => setBrand(e.target.value)}
+                style={{
+                  background: "transparent", border: "1px solid #4a4a4a",
+                  padding: "10px 14px", color: "#f0f0f0",
+                  fontFamily: "'Raleway', sans-serif", fontSize: "0.78rem",
+                  letterSpacing: "0.08em", outline: "none",
+                }}
+              />
+            )}
+
+            {/* Erreur */}
+            {error && (
+              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "#ef4444", letterSpacing: "0.05em" }}>
+                ⚠ {error}
+              </p>
+            )}
           </div>
         ) : (
           <div>
@@ -827,202 +689,7 @@ ${post.hashtags.map((h: string) => `#${h.replace("#","")}`).join(" ")}`;
             >
               Connexion pour accéder
             </button>
-            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", color: "#4a4a4a", marginTop: "12px", letterSpacing: "0.15em" }}>3 audits offerts</p>
-          </div>
-        )}
-
-        {/* Erreur */}
-        {error && (
-          <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.75rem", color: "#ef4444", marginTop: "16px" }}>⚠ {error}</p>
-        )}
-
-        {/* Limite atteinte */}
-        {auditsLeft === 0 && !loading && (
-          <div style={{ marginTop: "24px", padding: "20px 24px", border: "1px solid #2a2a2a", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", flexWrap: "wrap" }}>
-            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.75rem", color: "#7a7a7a", fontWeight: 300 }}>Passez au plan Pro pour des audits illimités</p>
-            <Link to="/pricing" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", letterSpacing: "0.2em", textTransform: "uppercase", padding: "10px 20px", background: "#e8e8e8", color: "#0f0f0f", textDecoration: "none", whiteSpace: "nowrap" }}>
-              Passer au Pro →
-            </Link>
-          </div>
-        )}
-
-        {/* Résultats */}
-        {results && (
-          <div style={{ marginTop: "56px" }}>
-            <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: "32px" }}>
-              <h3 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2rem", letterSpacing: "0.06em", color: "#f0f0f0" }}>
-                AUDIT — {brand.toUpperCase()}
-              </h3>
-              {canExport ? (
-                <button onClick={() => exportAuditPDF({ ...results, brand })}
-                  style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", letterSpacing: "0.22em", textTransform: "uppercase", padding: "10px 20px", border: "1px solid #3a3a3a", background: "transparent", color: "#e8e8e8", cursor: "pointer" }}
-                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#e8e8e8")}
-                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#3a3a3a")}
-                >↓ Export PDF</button>
-              ) : (
-                <Link to="/pricing" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", letterSpacing: "0.2em", padding: "10px 20px", border: "1px solid #2a2a2a", color: "#4a4a4a", textDecoration: "none" }}>
-                  🔒 PDF — Plan Pro
-                </Link>
-              )}
-            </div>
-
-            {/* 1. Score + Analyse */}
-            <div style={{ display: "flex", gap: "32px", alignItems: "flex-start", marginBottom: "16px", padding: "28px", border: "1px solid #2a2a2a", background: "#0f0f0f" }}>
-              <ScoreRing score={results.score} />
-              <div>
-                <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", letterSpacing: "0.25em", color: "#7a7a7a", textTransform: "uppercase", marginBottom: "10px" }}>Score de marque</p>
-                <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.86rem", color: "#d4d4d4", lineHeight: 1.85, fontWeight: 300 }}>{results.analysis}</p>
-              </div>
-            </div>
-
-            {/* 2. KPI */}
-            {results.kpis ? (
-              <div style={{ marginBottom: "16px" }}>
-                <KpiSection kpis={results.kpis} />
-              </div>
-            ) : (
-              <div style={{ padding: "24px", border: "1px dashed #2a2a2a", display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
-                <div>
-                  <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.1rem", letterSpacing: "0.08em", color: "#4a4a4a", marginBottom: "4px" }}>KPI DE MARQUE + SWOT COMPLET</p>
-                  <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "#4a4a4a", fontWeight: 300 }}>Notoriété · Cohérence · Digital · Contenu — Plan Pro</p>
-                </div>
-                <Link to="/pricing" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", letterSpacing: "0.2em", textTransform: "uppercase", padding: "10px 20px", border: "1px solid #3a3a3a", color: "#7a7a7a", textDecoration: "none" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#e8e8e8"; e.currentTarget.style.color = "#e8e8e8"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#3a3a3a"; e.currentTarget.style.color = "#7a7a7a"; }}
-                >Passer au Pro →</Link>
-              </div>
-            )}
-
-            {/* 3. SWOT */}
-            {results.swot && (
-              <div style={{ marginBottom: "16px" }}>
-                <SwotSection swot={results.swot} />
-
-                {/* Templates LinkedIn depuis SWOT */}
-                <div style={{ marginTop: "12px", padding: "20px 24px", border: "1px solid #2a2a2a", background: "#0f0f0f" }}>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: swotTemplatesOpen ? "20px" : "0" }}>
-                    <div>
-                      <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1rem", letterSpacing: "0.08em", color: "#f0f0f0", marginBottom: "2px" }}>TEMPLATES LINKEDIN</p>
-                      <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", color: "#7a7a7a", fontWeight: 300 }}>3 posts basés sur tes forces & opportunités</p>
-                    </div>
-                    <button onClick={fetchSwotTemplates} disabled={swotTemplatesLoading}
-                      style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", letterSpacing: "0.18em", textTransform: "uppercase", padding: "8px 16px", border: "1px solid #60a5fa", background: swotTemplatesOpen ? "#60a5fa" : "transparent", color: swotTemplatesOpen ? "#0f0f0f" : "#60a5fa", cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.2s", opacity: swotTemplatesLoading ? 0.7 : 1 }}>
-                      {swotTemplatesLoading ? "..." : swotTemplatesOpen ? "↑ Fermer" : "Générer →"}
-                    </button>
-                  </div>
-
-                  {swotTemplatesOpen && (
-                    <div>
-                      {swotTemplatesLoading ? (
-                        <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "#7a7a7a", letterSpacing: "0.1em" }}>Génération des templates...</p>
-                      ) : swotTemplates?.templates ? (
-                        <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-                          {swotTemplates.templates.map((t: any, i: number) => (
-                            <div key={i} style={{ padding: "18px", border: "1px solid #2a2a2a", background: "#161616", borderLeft: "2px solid #60a5fa" }}>
-                              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-                                <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-                                  <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.9rem", color: "#60a5fa" }}>0{t.numero}</span>
-                                  <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", letterSpacing: "0.18em", color: "#7a7a7a", textTransform: "uppercase" }}>{t.format}</span>
-                                </div>
-                                <button onClick={() => copySwotPost(t, i)}
-                                  style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.55rem", letterSpacing: "0.12em", textTransform: "uppercase", padding: "3px 8px", border: "1px solid #3a3a3a", background: copiedSwot === i ? "#60a5fa" : "transparent", color: copiedSwot === i ? "#0f0f0f" : "#7a7a7a", cursor: "pointer", transition: "all 0.2s" }}>
-                                  {copiedSwot === i ? "Copié ✓" : "Copier"}
-                                </button>
-                              </div>
-                              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.78rem", color: "#f0f0f0", fontWeight: 600, marginBottom: "6px", lineHeight: 1.5 }}>{t.accroche}</p>
-                              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.73rem", color: "#d4d4d4", lineHeight: 1.8, fontWeight: 300, marginBottom: "10px", whiteSpace: "pre-wrap" }}>{t.contenu}</p>
-                              <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "8px" }}>
-                                {t.hashtags.map((h: string, j: number) => (
-                                  <span key={j} style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.6rem", color: "#60a5fa" }}>#{h.replace("#","")}</span>
-                                ))}
-                              </div>
-                              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.6rem", color: "#4a4a4a", fontStyle: "italic", borderTop: "1px solid #2a2a2a", paddingTop: "8px" }}>💡 {t.conseil}</p>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "#ef4444" }}>Erreur lors de la génération. Réessayez.</p>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* 4. Recommandations */}
-            <div style={{ padding: "24px", border: "1px solid #2a2a2a", background: "#0f0f0f", marginBottom: "16px" }}>
-              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", letterSpacing: "0.3em", color: "#7a7a7a", textTransform: "uppercase", marginBottom: "14px" }}>Recommandations</p>
-              {results.recommendations.map((item, i) => (
-                <div key={i} style={{ marginBottom: "16px" }}>
-                  {/* Ligne recommandation */}
-                  <div style={{ display: "flex", gap: "10px", alignItems: "flex-start", justifyContent: "space-between" }}>
-                    <div style={{ display: "flex", gap: "10px", alignItems: "flex-start", flex: 1 }}>
-                      <span style={{ color: "#f0f0f0", fontSize: "0.7rem", marginTop: "2px", flexShrink: 0 }}>→</span>
-                      <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.78rem", color: "#d4d4d4", lineHeight: 1.6, fontWeight: 300 }}>{item}</p>
-                    </div>
-                    {isSignedIn && (
-                      <button
-                        onClick={() => fetchGuide(i, item)}
-                        style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", letterSpacing: "0.15em", textTransform: "uppercase", padding: "4px 10px", border: "1px solid #3a3a3a", background: "transparent", color: guidesOpen[i] ? "#a3e635" : "#7a7a7a", cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0, marginLeft: "12px", transition: "color 0.2s, border-color 0.2s" }}
-                        onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#a3e635"; e.currentTarget.style.color = "#a3e635"; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.borderColor = guidesOpen[i] ? "#a3e635" : "#3a3a3a"; e.currentTarget.style.color = guidesOpen[i] ? "#a3e635" : "#7a7a7a"; }}
-                      >
-                        {guidesLoading[i] ? "..." : guidesOpen[i] ? "↑ Fermer" : "→ Comment faire ?"}
-                      </button>
-                    )}
-                  </div>
-
-                  {/* Guide d'action */}
-                  {guidesOpen[i] && (
-                    <div style={{ marginTop: "12px", marginLeft: "18px", padding: "20px", background: "#161616", border: "1px solid #2a2a2a", borderLeft: "2px solid #a3e635" }}>
-                      {guidesLoading[i] ? (
-                        <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "#7a7a7a", letterSpacing: "0.1em" }}>Génération du guide...</p>
-                      ) : guides[i] ? (
-                        <>
-                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-                            <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1rem", letterSpacing: "0.08em", color: "#f0f0f0" }}>{guides[i]!.titre}</p>
-                            <div style={{ display: "flex", gap: "8px" }}>
-                              <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", letterSpacing: "0.1em", color: "#7a7a7a", padding: "2px 8px", border: "1px solid #2a2a2a" }}>⏱ {guides[i]!.duree_estimee}</span>
-                              <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", letterSpacing: "0.1em", color: guides[i]!.impact === "élevé" ? "#a3e635" : guides[i]!.impact === "moyen" ? "#f97316" : "#7a7a7a", padding: "2px 8px", border: `1px solid ${guides[i]!.impact === "élevé" ? "#a3e635" : guides[i]!.impact === "moyen" ? "#f97316" : "#3a3a3a"}` }}>Impact {guides[i]!.impact}</span>
-                            </div>
-                          </div>
-                          {guides[i]!.etapes.map((etape) => (
-                            <div key={etape.numero} style={{ display: "flex", gap: "14px", marginBottom: "14px", alignItems: "flex-start" }}>
-                              <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.9rem", color: "#a3e635", flexShrink: 0, minWidth: "18px" }}>{etape.numero}</span>
-                              <div>
-                                <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.76rem", color: "#f0f0f0", fontWeight: 600, marginBottom: "3px" }}>{etape.action}</p>
-                                <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "#7a7a7a", lineHeight: 1.6, fontWeight: 300 }}>{etape.detail}</p>
-                              </div>
-                            </div>
-                          ))}
-                        </>
-                      ) : (
-                        <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "#ef4444" }}>Erreur lors de la génération. Réessayez.</p>
-                      )}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {/* CTA AIO */}
-            <div style={{ marginTop: "32px", padding: "32px", border: "1px solid #a3e635", background: "#0a0a0a", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "24px", flexWrap: "wrap" }}>
-              <div>
-                <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.3rem", letterSpacing: "0.08em", color: "#f0f0f0", marginBottom: "6px" }}>
-                  PRÊT POUR L'AUDIT AIO ?
-                </p>
-                <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.75rem", color: "#7a7a7a", fontWeight: 300 }}>
-                  Découvrez comment ChatGPT, Claude et Gemini perçoivent réellement votre marque.
-                </p>
-              </div>
-              <Link to="/aio-report"
-                style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.22em", textTransform: "uppercase", padding: "12px 28px", background: "#a3e635", color: "#0f0f0f", textDecoration: "none", fontWeight: 600, whiteSpace: "nowrap" }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
-              >
-                Lancer l'audit AIO →
-              </Link>
-            </div>
+            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", color: "#4a4a4a", marginTop: "12px", letterSpacing: "0.15em" }}>Gratuit — résultat immédiat</p>
           </div>
         )}
       </div>
@@ -1075,7 +742,7 @@ const Footer = () => (
           </p>
           {[
             { label: "Audit AIO", to: "#audit", scroll: true },
-            { label: "Rapport AIO", to: "/aio-report", scroll: false },
+            { label: "Diagnostic IA", to: "/audit", scroll: false },
             { label: "Tarifs", to: "/pricing", scroll: false },
             { label: "Dashboard", to: "/dashboard", scroll: false },
           ].map((item) => (
@@ -1138,20 +805,12 @@ const Footer = () => (
   </footer>
 );
 
-// ─── ERROR BANNER ─────────────────────────────────────
-const ErrorBanner: React.FC<{ message: string }> = ({ message }) => (
-  <div style={{ padding: "20px 60px", background: "#1a0a0a", borderTop: "1px solid #3a1a1a" }}>
-    <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.75rem", color: "#ef4444", letterSpacing: "0.1em" }}>⚠ {message}</p>
-  </div>
-);
-
 // ─── PAGE ─────────────────────────────────────────────
 const Index = () => {
-  const [brandName, setBrandName] = useState<string>("");
-  const [results, setResults] = useState<AuditData | null>(null);
+  const [url, setUrl] = useState<string>("");
+  const [brand, setBrand] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [auditsLeft, setAuditsLeft] = useState<number | null>(null);
   const [userPlan, setUserPlan] = useState<string>("free");
 
   const { user } = useAuth();
@@ -1162,44 +821,40 @@ const Index = () => {
     if (isSignedIn && user) {
       authFetch("/api/user-status")
         .then((r) => r.json())
-        .then((d) => { setAuditsLeft(d.auditsLeft ?? 3); setUserPlan(d.plan ?? "free"); })
-        .catch(() => setAuditsLeft(3));
-    } else {
-      setAuditsLeft(null);
+        .then((d) => { setUserPlan(d.plan ?? "free"); })
+        .catch(() => {});
     }
   }, [isSignedIn, user]);
 
-  const handleAudit = async () => {
-    if (!brandName.trim() || !isSignedIn) return;
-    if (auditsLeft === 0) return;
+  const handleSubmit = () => {
+    const trimmedUrl = url.trim();
+    if (!trimmedUrl || !isSignedIn) return;
 
-    setLoading(true);
-    setResults(null);
-    setError(null);
-
+    // Validation URL basique
     try {
-      const res = await authFetch("/api/audit", {
-        method: "POST",
-        body: JSON.stringify({ brand: brandName.trim() }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Erreur lors de l'audit.");
-
-      setResults(data as AuditData);
-      if (auditsLeft !== null) setAuditsLeft((prev) => prev !== null ? Math.max(0, prev - 1) : null);
-
-      setTimeout(() => {
-        document.getElementById("audit")?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 150);
-    } catch (err: any) {
-      setError(err.message ?? "Une erreur inattendue s'est produite.");
-    } finally {
-      setLoading(false);
+      new URL(trimmedUrl);
+    } catch {
+      setError("URL invalide. Exemple : https://votre-site.fr");
+      return;
     }
+
+    setError(null);
+    setLoading(true);
+
+    sessionStorage.setItem("otarcy_audit_url", trimmedUrl);
+    if (userPlan === "agency" && brand.trim()) {
+      sessionStorage.setItem("otarcy_brand", brand.trim());
+    } else {
+      sessionStorage.removeItem("otarcy_brand");
+    }
+
+    if (userPlan === "free") navigate("/score");
+    else if (userPlan === "pro") navigate("/audit");
+    else if (userPlan === "agency") navigate("/audit");
+    else navigate("/score");
   };
 
-  useReveal([results]);
+  useReveal([]);
 
   return (
     <div style={{ background: "#0f0f0f", minHeight: "100vh" }}>
@@ -1211,14 +866,14 @@ const Index = () => {
       <AboutSection />
       <NewsletterSection />
       <AuditSection
-        setBrandName={setBrandName}
-        handleAudit={handleAudit}
+        url={url}
+        setUrl={setUrl}
+        brand={brand}
+        setBrand={setBrand}
+        handleSubmit={handleSubmit}
         loading={loading}
         isSignedIn={!!isSignedIn}
         onSignIn={() => navigate("/login")}
-        auditsLeft={auditsLeft}
-        results={results}
-        brand={brandName}
         plan={userPlan}
         error={error}
       />
