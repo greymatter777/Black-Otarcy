@@ -216,13 +216,13 @@ const Hero: React.FC<{ isSignedIn: boolean; onSignIn: () => void }> = ({ isSigne
     <span style={{ position: "absolute", bottom: "40px", left: "50%", transform: "translateX(-50%)", fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.2em", color: "#4a4a4a" }}>.01</span>
 
     <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.7rem", letterSpacing: "0.3em", color: "#a3e635", textTransform: "uppercase", marginBottom: "24px", fontWeight: 500 }}>
-      AI Optimization
+      Diagnostic de présence IA
     </p>
     <h1 className="reveal otarcytitle" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(5rem, 14vw, 11rem)", letterSpacing: "0.04em", color: "#f0f0f0", lineHeight: 0.9, textTransform: "uppercase" }}>
       OTARCY
     </h1>
     <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.82rem", letterSpacing: "0.22em", color: "#7a7a7a", marginTop: "28px", textTransform: "uppercase", fontWeight: 300, maxWidth: "520px" }}>
-      Optimisez votre marque pour les IAs
+      Votre site est-il visible pour les IAs ?
     </p>
     <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", letterSpacing: "0.15em", color: "#4a4a4a", marginTop: "12px", fontWeight: 300 }}>
       ChatGPT · Claude · Gemini · Perplexity
@@ -243,7 +243,7 @@ const Hero: React.FC<{ isSignedIn: boolean; onSignIn: () => void }> = ({ isSigne
         onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#e8e8e8"; e.currentTarget.style.color = "#e8e8e8"; }}
         onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#3a3a3a"; e.currentTarget.style.color = "#7a7a7a"; }}
       >
-        Audit de marque
+        Voir comment ça marche
       </button>
     </div>
 
@@ -260,21 +260,21 @@ const WhyAio = () => (
   <section style={{ padding: "100px 60px", background: "#0a0a0a", borderTop: "1px solid #1a1a1a" }}>
     <div style={{ maxWidth: "860px", margin: "0 auto" }}>
       <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.3em", color: "#a3e635", textTransform: "uppercase", marginBottom: "16px" }}>
-        .02 — Pourquoi l'AIO ?
+        .02 — Comment ça marche ?
       </p>
       <h2 className="reveal" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2.5rem, 5vw, 4.5rem)", letterSpacing: "0.06em", color: "#f0f0f0", marginBottom: "24px", lineHeight: 0.95 }}>
-        LE MOTEUR DE RECHERCHE<br />A CHANGÉ
+        10 VÉRIFICATEURS<br />TECHNIQUES
       </h2>
       <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.88rem", color: "#7a7a7a", lineHeight: 1.9, fontWeight: 300, maxWidth: "580px", marginBottom: "64px" }}>
-        Vos clients ne tapent plus leurs questions sur Google. Ils les posent à ChatGPT, Claude ou Perplexity. Si votre marque n'est pas visible dans ces réponses, vous n'existez pas pour eux.
+        Otarcy analyse l'URL de votre site et vérifie les signaux concrets que les IAs utilisent pour détecter, comprendre et citer une marque. Aucune estimation — uniquement des faits techniques.
       </p>
 
       {/* Chiffres clés */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1px", background: "#1a1a1a", marginBottom: "64px" }}>
         {[
-          { stat: "60%", desc: "des recherches en ligne passeront par des IAs d'ici 2026" },
-          { stat: "3×", desc: "plus de conversions pour les marques bien référencées dans les IAs" },
-          { stat: "92%", desc: "des marques n'ont aucune stratégie AIO aujourd'hui" },
+          { stat: "10", desc: "critères techniques vérifiés : Schema.org, crawlers IA, llms.txt, E-E-A-T, FAQ, Wikidata…" },
+          { stat: "/100", desc: "score de présence calculé côté serveur, par parsing HTML — aucun LLM impliqué" },
+          { stat: "4", desc: "LLMs interrogés en parallèle sur le plan Expert : Claude, GPT-4o, Gemini, Perplexity" },
         ].map((item, i) => (
           <div key={i} className="reveal" style={{ padding: "40px 28px", background: "#0a0a0a" }}>
             <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "3.5rem", color: "#a3e635", letterSpacing: "0.04em", lineHeight: 1, marginBottom: "12px" }}>{item.stat}</p>
@@ -286,9 +286,9 @@ const WhyAio = () => (
       {/* Ce qu'Otarcy fait */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "16px" }}>
         {[
-          { num: "01", title: "Score AIO", desc: "Mesurez votre visibilité dans les réponses des IAs sur 100 points.", color: "#a3e635" },
-          { num: "02", title: "Rapport de visibilité", desc: "Gaps de contenu, concurrents mieux positionnés, sujets associés.", color: "#60a5fa" },
-          { num: "03", title: "Plan d'optimisation", desc: "Actions prioritaires classées par impact pour dominer votre secteur dans les IAs.", color: "#f97316" },
+          { num: "01", title: "Score /100", desc: "Vérification des signaux techniques : Schema.org, crawlers IA, llms.txt, HTTPS, Open Graph, Sitemap…", color: "#a3e635" },
+          { num: "02", title: "Détail & quick wins", desc: "Statut de chaque critère, points perdus identifiés, actions prioritaires classées par impact.", color: "#60a5fa" },
+          { num: "03", title: "Perception LLMs", desc: "4 LLMs interrogés en direct sur votre marque — verbatim brut, analyse delta, lacunes détectées.", color: "#f97316" },
         ].map((f) => (
           <div key={f.num} className="reveal" style={{ padding: "28px", border: "1px solid #1a1a1a", background: "#0f0f0f" }}>
             <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.85rem", letterSpacing: "0.15em", color: f.color, marginBottom: "10px" }}>{f.num}</p>
@@ -305,7 +305,7 @@ const WhyAio = () => (
           onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
           onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
         >
-          Analyser ma marque →
+          Lancer le diagnostic →
         </button>
       </div>
     </div>
@@ -324,7 +324,7 @@ const AboutSection = () => (
         QU'EST-CE QU'OTARCY ?
       </h2>
       <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.88rem", color: "#7a7a7a", lineHeight: 1.9, fontWeight: 300, maxWidth: "600px", marginBottom: "64px" }}>
-        Otarcy est un outil SaaS français d'AI Optimization (AIO) conçu pour les PME, startups et indépendants qui veulent exister dans les réponses de ChatGPT, Claude, Gemini et Perplexity.
+        Otarcy est un outil de diagnostic de présence IA conçu pour les PME, startups et indépendants qui veulent savoir si leur site est visible pour ChatGPT, Claude, Gemini et Perplexity.
       </p>
 
       {/* Bloc Qui / Quoi / Pourquoi — format questions/réponses lisible par les IAs */}
@@ -334,16 +334,16 @@ const AboutSection = () => (
         </p>
         {[
           {
-            q: "Qu'est-ce que l'AIO (AI Optimization) ?",
-            a: "L'AIO est la discipline qui consiste à rendre une marque, une entreprise ou un contenu visible dans les réponses générées par les intelligences artificielles conversationnelles comme ChatGPT, Claude, Gemini ou Perplexity. Contrairement au SEO traditionnel centré sur Google, l'AIO optimise la façon dont les IA perçoivent, comprennent et citent une marque.",
+            q: "Qu'est-ce que le diagnostic de présence IA ?",
+            a: "Le diagnostic de présence IA vérifie si les signaux techniques que les intelligences artificielles utilisent pour détecter et citer une marque sont en place sur votre site : Schema.org, crawlers IA autorisés, llms.txt, FAQ structurée, E-E-A-T, Wikidata, Open Graph… Ces signaux sont vérifiés par parsing HTML — aucune estimation, uniquement des faits.",
           },
           {
             q: "À qui s'adresse Otarcy ?",
-            a: "Otarcy s'adresse aux fondateurs, responsables marketing et équipes de PME ou startups (5 à 50 employés) déjà présents en ligne mais invisibles auprès des IA. C'est la solution idéale pour ceux qui perdent des clients au profit de concurrents mieux positionnés sur les moteurs de recherche IA.",
+            a: "Otarcy s'adresse aux fondateurs, responsables marketing et équipes de PME ou startups déjà présents en ligne mais qui ne savent pas si leur site est correctement configuré pour être détecté par les IAs conversationnelles.",
           },
           {
             q: "Comment fonctionne Otarcy concrètement ?",
-            a: "L'utilisateur saisit le nom de sa marque. Otarcy analyse sa visibilité IA en temps réel, génère un score AIO sur 10, identifie les gaps de contenu, produit une analyse SWOT automatisée, et propose un plan d'action priorisé avec des guides étape par étape pour chaque recommandation.",
+            a: "L'utilisateur entre l'URL de son site. Otarcy vérifie en quelques secondes 10 critères techniques, calcule un score /100 côté serveur, et selon le plan, détaille les critères, propose des quick wins et interroge 4 LLMs sur la perception réelle de la marque.",
           },
         ].map((item, i) => (
           <div key={i} style={{ marginBottom: i < 2 ? "28px" : 0, paddingBottom: i < 2 ? "28px" : 0, borderBottom: i < 2 ? "1px solid #1a1a1a" : "none" }}>
@@ -365,19 +365,19 @@ const AboutSection = () => (
           {
             num: "01",
             title: "Accessible",
-            desc: "Pas besoin d'être expert en marketing IA. Otarcy traduit des concepts complexes en actions concrètes et immédiatement applicables.",
+            desc: "Entrez une URL — obtenez un score et des résultats en quelques secondes, sans configuration ni expertise technique.",
             color: "#a3e635",
           },
           {
             num: "02",
             title: "Actionnable",
-            desc: "Chaque recommandation est accompagnée d'un guide d'action détaillé : étapes, durée estimée, impact attendu.",
+            desc: "Chaque critère manquant est accompagné d'un quick win : ce qui bloque, pourquoi, et comment corriger.",
             color: "#60a5fa",
           },
           {
             num: "03",
             title: "Conçu pour les PME",
-            desc: "Un outil positionné entre le diagnostic gratuit et les solutions enterprise, pensé pour les équipes sans ressources dédiées à l'AIO.",
+            desc: "Un outil positionné entre le diagnostic gratuit et les solutions enterprise, pensé pour les équipes sans ressources dédiées à la présence IA.",
             color: "#f97316",
           },
         ].map((f) => (
@@ -395,10 +395,10 @@ const AboutSection = () => (
           Contexte & Origine
         </p>
         <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.78rem", color: "#d4d4d4", lineHeight: 1.8, fontWeight: 300, marginBottom: "16px" }}>
-          Otarcy est né d'un constat simple : en 2024-2025, les moteurs de recherche IA ont capturé une part croissante des requêtes commerciales, mais aucune solution accessible n'existait pour aider les PME françaises à s'y positionner.
+          Otarcy est né d'un constat simple : en 2024-2025, les IAs conversationnelles ont capturé une part croissante des requêtes commerciales, mais aucune solution accessible n'existait pour vérifier objectivement si un site était correctement configuré pour être détecté et cité par ces modèles.
         </p>
         <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.78rem", color: "#d4d4d4", lineHeight: 1.8, fontWeight: 300 }}>
-          Développé et lancé en France, Otarcy est aujourd'hui la première solution française dédiée à l'AI Optimization pour les petites et moyennes entreprises — un segment laissé de côté par les solutions enterprise comme Semrush ou BrightEdge.
+          Développé et lancé en France, Otarcy est aujourd'hui la première solution française de diagnostic de présence IA pour les PME — un segment laissé de côté par les solutions enterprise comme Semrush ou BrightEdge.
         </p>
       </div>
 
@@ -656,7 +656,7 @@ const Footer = () => (
             <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.4rem", letterSpacing: "0.15em", color: "#7a7a7a", display: "block", lineHeight: 0.9 }}>CY</span>
           </div>
           <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "#4a4a4a", lineHeight: 1.8, fontWeight: 300, maxWidth: "200px" }}>
-            La solution française d'AI Optimization pour les PME.
+            Le diagnostic de présence IA pour les PME.
           </p>
           <div style={{ display: "flex", gap: "16px", marginTop: "20px" }}>
             <a href="https://www.linkedin.com/company/otarcy-france" target="_blank" rel="noopener noreferrer" style={{ display: "flex" }}>
@@ -687,7 +687,7 @@ const Footer = () => (
             Produit
           </p>
           {[
-            { label: "Audit AIO", to: "#audit", scroll: true },
+            { label: "Diagnostic IA", to: "#audit", scroll: true },
             { label: "Diagnostic IA", to: "/audit", scroll: false },
             { label: "Tarifs", to: "/pricing", scroll: false },
             { label: "Dashboard", to: "/dashboard", scroll: false },
@@ -742,9 +742,6 @@ const Footer = () => (
       <div style={{ borderTop: "1px solid #1a1a1a", paddingTop: "24px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
         <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", color: "#2a2a2a", letterSpacing: "0.05em" }}>
           © 2025 Otarcy France — Bordeaux, Gironde
-        </p>
-        <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", color: "#2a2a2a", letterSpacing: "0.05em" }}>
-          La référence française de l'AI Optimization pour les PME
         </p>
       </div>
     </div>
