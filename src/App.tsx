@@ -8,12 +8,6 @@ import Login from "./pages/Login";
 import ResetPassword from "./pages/ResetPassword";
 import Glossaire from "./pages/Glossaire";
 import Faq from "./pages/Faq";
-import AioCoaching from "./pages/AioCoaching";
-import AioEcommerce from "./pages/AioEcommerce";
-import AioImmobilier from "./pages/AioImmobilier";
-import AioRestauration from "./pages/AioRestauration";
-import AioRh from "./pages/AioRh";
-import AioSante from "./pages/AioSante";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import ScoreResult from "./pages/ScoreResult";
@@ -59,12 +53,12 @@ function App() {
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/glossaire" element={<Glossaire />} />
           <Route path="/faq" element={<Faq />} />
-          <Route path="/aio-coaching" element={<AioCoaching />} />
-          <Route path="/aio-ecommerce" element={<AioEcommerce />} />
-          <Route path="/aio-immobilier" element={<AioImmobilier />} />
-          <Route path="/aio-restauration" element={<AioRestauration />} />
-          <Route path="/aio-rh" element={<AioRh />} />
-          <Route path="/aio-sante" element={<AioSante />} />
+          <Route path="/aio-coaching" element={<Navigate to="/pricing" replace />} />
+          <Route path="/aio-ecommerce" element={<Navigate to="/pricing" replace />} />
+          <Route path="/aio-immobilier" element={<Navigate to="/pricing" replace />} />
+          <Route path="/aio-restauration" element={<Navigate to="/pricing" replace />} />
+          <Route path="/aio-rh" element={<Navigate to="/pricing" replace />} />
+          <Route path="/aio-sante" element={<Navigate to="/pricing" replace />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
