@@ -13,6 +13,7 @@ import BlogPost from "./pages/BlogPost";
 import ScoreResult from "./pages/ScoreResult";
 import AuditResult from "./pages/AuditResult";
 import PerceptionResult from "./pages/PerceptionResult";
+import About from "./pages/About";
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -53,6 +54,7 @@ function App() {
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/glossaire" element={<Glossaire />} />
           <Route path="/faq" element={<Faq />} />
+          <Route path="/about" element={<About />} />
           <Route path="/aio-coaching" element={<Navigate to="/pricing" replace />} />
           <Route path="/aio-ecommerce" element={<Navigate to="/pricing" replace />} />
           <Route path="/aio-immobilier" element={<Navigate to="/pricing" replace />} />

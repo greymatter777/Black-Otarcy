@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/auth";
-import { useNavigate } from "react-router-dom";
-import { authFetch } from "../lib/useAuthFetch";
 
 // ─── HOOK: Scroll Reveal ──────────────────────────────
 function useReveal(deps: any[] = []) {
@@ -30,7 +28,6 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Bloque le scroll quand le menu mobile est ouvert
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
@@ -50,7 +47,6 @@ const Navbar = () => {
 
   return (
     <>
-      {/* Styles responsive injectés une seule fois */}
       <style>{`
         .nav-desktop { display: flex; }
         .nav-hamburger { display: none; }
@@ -87,9 +83,9 @@ const Navbar = () => {
               >{item.label}</button>
             ) : (
               <Link key={item.label} to={item.to}
-                style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.7rem", letterSpacing: "0.2em", color: item.highlight ? "#a3e635" : "#7a7a7a", fontWeight: 500, textDecoration: "none", transition: "color 0.3s" }}
+                style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.7rem", letterSpacing: "0.2em", color: "#7a7a7a", fontWeight: 500, textDecoration: "none", transition: "color 0.3s" }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "#f0f0f0")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = item.highlight ? "#a3e635" : "#7a7a7a")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#7a7a7a")}
               >{item.label}</Link>
             )
           ))}
@@ -140,7 +136,6 @@ const Navbar = () => {
           padding: "100px 32px 48px",
           overflowY: "auto",
         }}>
-          {/* Liens principaux */}
           {navLinks.map((item) => (
             item.to.startsWith("#") ? (
               <button key={item.label} type="button"
@@ -152,9 +147,9 @@ const Navbar = () => {
             ) : (
               <Link key={item.label} to={item.to}
                 onClick={() => setMobileOpen(false)}
-                style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.8rem", letterSpacing: "0.25em", color: item.highlight ? "#a3e635" : "#7a7a7a", fontWeight: 500, textDecoration: "none", borderBottom: "1px solid #1a1a1a", padding: "18px 0", display: "block", transition: "color 0.2s" }}
+                style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.8rem", letterSpacing: "0.25em", color: "#7a7a7a", fontWeight: 500, textDecoration: "none", borderBottom: "1px solid #1a1a1a", padding: "18px 0", display: "block", transition: "color 0.2s" }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "#f0f0f0")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = item.highlight ? "#a3e635" : "#7a7a7a")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#7a7a7a")}
               >{item.label}</Link>
             )
           ))}
@@ -181,194 +176,6 @@ const Navbar = () => {
     </>
   );
 };
-
-// ─── SIDE ELEMENTS ────────────────────────────────────
-const SideLeft = () => (
-  <div className="side-elements" style={{ position: "fixed", left: "20px", top: "50%", transform: "translateY(-50%)", display: "flex", flexDirection: "column", gap: "18px", zIndex: 50 }}>
-    <a href="https://www.linkedin.com/company/otarcy-france" target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a3e635" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z" />
-        <rect x="2" y="9" width="4" height="12" />
-        <circle cx="4" cy="4" r="2" />
-      </svg>
-    </a>
-    <a href="https://www.instagram.com/otarcy.ai?igsh=MTZiY2M4aGpoa3lncg==" target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a3e635" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-        <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" />
-        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-      </svg>
-    </a>
-  </div>
-);
-
-const SideRight = () => (
-  <div className="side-elements" style={{ position: "fixed", right: "18px", top: "50%", transform: "translateY(-50%) rotate(90deg)", zIndex: 50 }}>
-    <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.6rem", letterSpacing: "0.35em", color: "#4a4a4a", fontWeight: 500, textTransform: "uppercase" }}>SCROLL</span>
-  </div>
-);
-
-// ─── HERO ─────────────────────────────────────────────
-const Hero: React.FC<{ isSignedIn: boolean; onSignIn: () => void; searchBar: React.ReactNode }> = ({ isSignedIn, searchBar }) => (
-  <section style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", background: "#161616", position: "relative", padding: "0 60px" }}>
-    <span style={{ position: "absolute", bottom: "40px", left: "50%", transform: "translateX(-50%)", fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.2em", color: "#4a4a4a" }}>.01</span>
-
-    <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.7rem", letterSpacing: "0.3em", color: "#a3e635", textTransform: "uppercase", marginBottom: "24px", fontWeight: 500 }}>
-      Diagnostic de présence IA
-    </p>
-    <h1 className="reveal otarcytitle" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(5rem, 14vw, 11rem)", letterSpacing: "0.04em", color: "#f0f0f0", lineHeight: 0.9, textTransform: "uppercase" }}>
-      OTARCY
-    </h1>
-    <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.82rem", letterSpacing: "0.22em", color: "#7a7a7a", marginTop: "28px", textTransform: "uppercase", fontWeight: 300, maxWidth: "520px" }}>
-      Votre site est-il visible pour les IAs ?
-    </p>
-    <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", letterSpacing: "0.15em", color: "#4a4a4a", marginTop: "12px", fontWeight: 300 }}>
-      ChatGPT · Claude · Gemini · Perplexity
-    </p>
-
-    <div className="reveal" style={{ marginTop: "40px", width: "100%", maxWidth: "540px" }}>
-      {searchBar}
-    </div>
-  </section>
-);
-
-// ─── NEWSLETTER SECTION ───────────────────────────────
-const NewsletterSection = () => {
-  const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [errorMsg, setErrorMsg] = useState("");
-
-  const handleSubmit = async () => {
-    if (!email || !email.includes("@")) {
-      setErrorMsg("Adresse email invalide.");
-      setStatus("error");
-      return;
-    }
-    setStatus("loading");
-    setErrorMsg("");
-    try {
-      const res = await fetch("/api/newsletter", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Erreur serveur");
-      setStatus("success");
-      setEmail("");
-    } catch (err: any) {
-      setErrorMsg(err.message || "Une erreur est survenue.");
-      setStatus("error");
-    }
-  };
-
-  return (
-    <section
-      id="newsletter"
-      style={{
-        background: "#0a0a0a",
-        borderTop: "1px solid #1a1a1a",
-        borderBottom: "1px solid #1a1a1a",
-        padding: "80px 60px",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
-      <div style={{ maxWidth: "640px", margin: "0 auto" }}>
-        {/* Label section */}
-        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "32px" }}>
-          <span style={{ fontSize: "0.65rem", letterSpacing: "0.3em", color: "#a3e635", textTransform: "uppercase", fontFamily: "'Raleway', sans-serif", fontWeight: 500 }}>
-            .04 — Newsletter
-          </span>
-          <div style={{ flex: 1, height: "1px", background: "linear-gradient(90deg, #a3e635 0%, transparent 100%)" }} />
-        </div>
-
-        {/* Titre */}
-        <h2 className="reveal" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2.5rem, 5vw, 4rem)", letterSpacing: "0.06em", color: "#f0f0f0", lineHeight: 0.95, margin: "0 0 10px 0" }}>
-          LE BRIEF{" "}
-          <em style={{ color: "#a3e635", fontStyle: "italic" }}>AIO</em>
-        </h2>
-
-        {/* Cadence */}
-        <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.2em", color: "#4a4a4a", textTransform: "uppercase", margin: "0 0 20px 0" }}>
-          Chaque dimanche matin — 5 min de veille AIO
-        </p>
-
-        {/* Description */}
-        <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.82rem", color: "#7a7a7a", lineHeight: 1.9, fontWeight: 300, margin: "0 0 36px 0", maxWidth: "520px" }}>
-          Les dernières évolutions de l'AI Optimization, les marques qui gagnent de la visibilité auprès de ChatGPT, Claude et Perplexity — et ce que ça change concrètement pour votre stratégie.
-        </p>
-
-        {/* Bullets */}
-        <ul style={{ listStyle: "none", padding: 0, margin: "0 0 40px 0", display: "flex", flexDirection: "column", gap: "10px" }}>
-          {[
-            "1 synthèse des actus AIO de la semaine",
-            "1 marque analysée sous l'angle IA",
-            "1 action concrète à implémenter",
-          ].map((item, i) => (
-            <li key={i} style={{ display: "flex", alignItems: "center", gap: "10px", fontFamily: "'Raleway', sans-serif", fontSize: "0.76rem", color: "#7a7a7a", fontWeight: 300 }}>
-              <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: "#a3e635", flexShrink: 0 }} />
-              {item}
-            </li>
-          ))}
-        </ul>
-
-        {/* Formulaire */}
-        {status === "success" ? (
-          <div style={{ border: "1px solid #a3e635", padding: "20px 24px", display: "flex", alignItems: "center", gap: "12px" }}>
-            <span style={{ color: "#a3e635", fontSize: "18px" }}>✓</span>
-            <div>
-              <p style={{ fontFamily: "'Raleway', sans-serif", color: "#a3e635", margin: 0, fontSize: "0.76rem", fontWeight: 600, letterSpacing: "0.05em" }}>Inscription confirmée</p>
-              <p style={{ fontFamily: "'Raleway', sans-serif", color: "#4a4a4a", margin: "4px 0 0 0", fontSize: "0.68rem", letterSpacing: "0.05em" }}>Prochain Brief AIO — dimanche matin dans votre boîte.</p>
-            </div>
-          </div>
-        ) : (
-          <div>
-            <div style={{ display: "flex", border: "1px solid #2a2a2a" }}>
-              <input
-                type="email"
-                placeholder="votre@email.com"
-                value={email}
-                onChange={(e) => { setEmail(e.target.value); if (status === "error") setStatus("idle"); }}
-                onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-                style={{
-                  flex: 1, background: "#111", border: "none", outline: "none",
-                  padding: "13px 16px", color: "#f0f0f0", fontSize: "0.76rem",
-                  fontFamily: "'Raleway', sans-serif", caretColor: "#a3e635",
-                }}
-              />
-              <button
-                type="button"
-                onClick={handleSubmit}
-                disabled={status === "loading"}
-                style={{
-                  background: status === "loading" ? "#1a2a0a" : "#a3e635",
-                  border: "none", padding: "13px 24px", color: "#0a0a0a",
-                  fontSize: "0.66rem", fontWeight: 700, fontFamily: "'Raleway', sans-serif",
-                  letterSpacing: "0.22em", cursor: status === "loading" ? "wait" : "pointer",
-                  textTransform: "uppercase", transition: "opacity 0.2s", whiteSpace: "nowrap",
-                }}
-                onMouseEnter={(e) => { if (status !== "loading") e.currentTarget.style.opacity = "0.85"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
-              >
-                {status === "loading" ? "..." : "S'abonner →"}
-              </button>
-            </div>
-
-            {status === "error" && (
-              <p style={{ fontFamily: "'Raleway', sans-serif", color: "#ef4444", fontSize: "0.68rem", margin: "8px 0 0 0", letterSpacing: "0.05em" }}>{errorMsg}</p>
-            )}
-
-            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", color: "#a3e635", margin: "12px 0 0 0", letterSpacing: "0.1em" }}>
-              Gratuit. Aucun spam. Désabonnement en 1 clic.
-            </p>
-          </div>
-        )}
-      </div>
-    </section>
-  );
-};
-
 
 // ─── FOOTER ───────────────────────────────────────────────────────────────────
 const Footer = () => (
@@ -474,114 +281,167 @@ const Footer = () => (
   </footer>
 );
 
+// ─── SECTION À PROPOS ─────────────────────────────────
+const AboutSection = () => (
+  <section id="about" style={{ padding: "100px 60px", background: "#0f0f0f", borderTop: "1px solid #1a1a1a" }}>
+    <div style={{ maxWidth: "860px", margin: "0 auto" }}>
+
+      <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.3em", color: "#a3e635", textTransform: "uppercase", marginBottom: "16px", fontWeight: 500 }}>
+        .01 — À propos
+      </p>
+      <h2 className="reveal" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2.5rem, 5vw, 4.5rem)", letterSpacing: "0.06em", color: "#f0f0f0", marginBottom: "24px", lineHeight: 0.95 }}>
+        QU'EST-CE QU'OTARCY ?
+      </h2>
+      <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.88rem", color: "#7a7a7a", lineHeight: 1.9, fontWeight: 300, maxWidth: "600px", marginBottom: "64px" }}>
+        Otarcy est un outil de diagnostic de présence IA conçu pour les PME, startups et indépendants qui veulent savoir si leur site est visible pour ChatGPT, Claude, Gemini et Perplexity.
+      </p>
+
+      {/* Bloc Qui / Quoi / Pourquoi — format questions/réponses lisible par les IAs */}
+      <div className="reveal" style={{ marginBottom: "48px", padding: "32px", border: "1px solid #2a2a2a", background: "#0a0a0a" }}>
+        <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", letterSpacing: "0.3em", color: "#7a7a7a", textTransform: "uppercase", marginBottom: "28px" }}>
+          Définition
+        </p>
+        {[
+          {
+            q: "Qu'est-ce que le diagnostic de présence IA ?",
+            a: "Le diagnostic de présence IA vérifie si les signaux techniques que les intelligences artificielles utilisent pour détecter et citer une marque sont en place sur votre site : Schema.org, crawlers IA autorisés, llms.txt, FAQ structurée, E-E-A-T, Wikidata, Open Graph… Ces signaux sont vérifiés par parsing HTML — aucune estimation, uniquement des faits.",
+          },
+          {
+            q: "À qui s'adresse Otarcy ?",
+            a: "Otarcy s'adresse aux fondateurs, responsables marketing et équipes de PME ou startups déjà présents en ligne mais qui ne savent pas si leur site est correctement configuré pour être détecté par les IAs conversationnelles.",
+          },
+          {
+            q: "Comment fonctionne Otarcy concrètement ?",
+            a: "L'utilisateur entre l'URL de son site. Otarcy vérifie en quelques secondes 10 critères techniques, calcule un score /100 côté serveur, et selon le plan, détaille les critères, propose des quick wins et interroge 4 LLMs sur la perception réelle de la marque.",
+          },
+        ].map((item, i) => (
+          <div key={i} style={{ marginBottom: i < 2 ? "28px" : 0, paddingBottom: i < 2 ? "28px" : 0, borderBottom: i < 2 ? "1px solid #1a1a1a" : "none" }}>
+            <div style={{ display: "flex", gap: "12px", marginBottom: "10px", alignItems: "flex-start" }}>
+              <span style={{ color: "#a3e635", fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.85rem", flexShrink: 0, marginTop: "2px" }}>Q</span>
+              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.78rem", color: "#f0f0f0", lineHeight: 1.6, fontWeight: 600 }}>{item.q}</p>
+            </div>
+            <div style={{ display: "flex", gap: "12px", alignItems: "flex-start", paddingLeft: "4px" }}>
+              <span style={{ color: "#7a7a7a", fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.85rem", flexShrink: 0, marginTop: "2px" }}>A</span>
+              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.76rem", color: "#7a7a7a", lineHeight: 1.7, fontWeight: 300 }}>{item.a}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Valeurs / Positionnement */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "16px", marginBottom: "48px" }}>
+        {[
+          {
+            num: "01",
+            title: "Accessible",
+            desc: "Entrez une URL — obtenez un score et des résultats en quelques secondes, sans configuration ni expertise technique.",
+            color: "#a3e635",
+          },
+          {
+            num: "02",
+            title: "Actionnable",
+            desc: "Chaque critère manquant est accompagné d'un quick win : ce qui bloque, pourquoi, et comment corriger.",
+            color: "#60a5fa",
+          },
+          {
+            num: "03",
+            title: "Conçu pour les PME",
+            desc: "Un outil positionné entre le diagnostic gratuit et les solutions enterprise, pensé pour les équipes sans ressources dédiées à la présence IA.",
+            color: "#f97316",
+          },
+        ].map((f) => (
+          <div key={f.num} className="reveal" style={{ padding: "28px", border: "1px solid #1a1a1a", background: "#0f0f0f" }}>
+            <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.85rem", letterSpacing: "0.15em", color: f.color, marginBottom: "10px" }}>{f.num}</p>
+            <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.25rem", letterSpacing: "0.08em", color: "#f0f0f0", marginBottom: "10px" }}>{f.title}</p>
+            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.76rem", color: "#7a7a7a", lineHeight: 1.7, fontWeight: 300 }}>{f.desc}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Contexte & Origine */}
+      <div className="reveal" style={{ padding: "28px 32px", border: "1px solid #2a2a2a", background: "#0a0a0a", borderLeft: "2px solid #a3e635" }}>
+        <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", letterSpacing: "0.3em", color: "#7a7a7a", textTransform: "uppercase", marginBottom: "16px" }}>
+          Contexte & Origine
+        </p>
+        <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.78rem", color: "#d4d4d4", lineHeight: 1.8, fontWeight: 300, marginBottom: "16px" }}>
+          Otarcy est né d'un constat simple : en 2024-2025, les IAs conversationnelles ont capturé une part croissante des requêtes commerciales, mais aucune solution accessible n'existait pour vérifier objectivement si un site était correctement configuré pour être détecté et cité par ces modèles.
+        </p>
+        <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.78rem", color: "#d4d4d4", lineHeight: 1.8, fontWeight: 300 }}>
+          Développé et lancé en France, Otarcy est aujourd'hui la première solution française de diagnostic de présence IA pour les PME — un segment laissé de côté par les solutions enterprise comme Semrush ou BrightEdge.
+        </p>
+      </div>
+
+    </div>
+  </section>
+);
+
+// ─── SECTION COMMENT ÇA MARCHE ────────────────────────
+const WhyAio = () => (
+  <section style={{ padding: "100px 60px", background: "#0a0a0a", borderTop: "1px solid #1a1a1a" }}>
+    <div style={{ maxWidth: "860px", margin: "0 auto" }}>
+      <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.3em", color: "#a3e635", textTransform: "uppercase", marginBottom: "16px" }}>
+        .02 — Comment ça marche ?
+      </p>
+      <h2 className="reveal" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2.5rem, 5vw, 4.5rem)", letterSpacing: "0.06em", color: "#f0f0f0", marginBottom: "24px", lineHeight: 0.95 }}>
+        10 VÉRIFICATEURS<br />TECHNIQUES
+      </h2>
+      <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.88rem", color: "#7a7a7a", lineHeight: 1.9, fontWeight: 300, maxWidth: "580px", marginBottom: "64px" }}>
+        Otarcy analyse l'URL de votre site et vérifie les signaux concrets que les IAs utilisent pour détecter, comprendre et citer une marque. Aucune estimation — uniquement des faits techniques.
+      </p>
+
+      {/* Chiffres clés */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1px", background: "#1a1a1a", marginBottom: "64px" }}>
+        {[
+          { stat: "10", desc: "critères techniques vérifiés : Schema.org, crawlers IA, llms.txt, E-E-A-T, FAQ, Wikidata…" },
+          { stat: "/100", desc: "score de présence calculé côté serveur, par parsing HTML — aucun LLM impliqué" },
+          { stat: "4", desc: "LLMs interrogés en parallèle sur le plan Expert : Claude, GPT-4o, Gemini, Perplexity" },
+        ].map((item, i) => (
+          <div key={i} className="reveal" style={{ padding: "40px 28px", background: "#0a0a0a" }}>
+            <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "3.5rem", color: "#a3e635", letterSpacing: "0.04em", lineHeight: 1, marginBottom: "12px" }}>{item.stat}</p>
+            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.76rem", color: "#7a7a7a", lineHeight: 1.7, fontWeight: 300 }}>{item.desc}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Ce qu'Otarcy fait */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "16px" }}>
+        {[
+          { num: "01", title: "Score /100", desc: "Vérification des signaux techniques : Schema.org, crawlers IA, llms.txt, HTTPS, Open Graph, Sitemap…", color: "#a3e635" },
+          { num: "02", title: "Détail & quick wins", desc: "Statut de chaque critère, points perdus identifiés, actions prioritaires classées par impact.", color: "#60a5fa" },
+          { num: "03", title: "Perception LLMs", desc: "4 LLMs interrogés en direct sur votre marque — verbatim brut, analyse delta, lacunes détectées.", color: "#f97316" },
+        ].map((f) => (
+          <div key={f.num} className="reveal" style={{ padding: "28px", border: "1px solid #1a1a1a", background: "#0f0f0f" }}>
+            <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.85rem", letterSpacing: "0.15em", color: f.color, marginBottom: "10px" }}>{f.num}</p>
+            <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.25rem", letterSpacing: "0.08em", color: "#f0f0f0", marginBottom: "10px" }}>{f.title}</p>
+            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.76rem", color: "#7a7a7a", lineHeight: 1.7, fontWeight: 300 }}>{f.desc}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="reveal" style={{ marginTop: "48px", textAlign: "center" }}>
+        <Link to="/"
+          style={{ display: "inline-block", fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.22em", textTransform: "uppercase", padding: "13px 36px", background: "#a3e635", color: "#0f0f0f", textDecoration: "none", fontWeight: 600, transition: "opacity 0.2s" }}
+          onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
+          onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+        >
+          Lancer le diagnostic →
+        </Link>
+      </div>
+    </div>
+  </section>
+);
+
 // ─── PAGE ─────────────────────────────────────────────
-const Index = () => {
-  const [url, setUrl] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-  const [userPlan, setUserPlan] = useState<string>("free");
-
-  const { user } = useAuth();
-  const navigate = useNavigate();
-  const isSignedIn = !!user;
-
-  useEffect(() => {
-    if (isSignedIn && user) {
-      authFetch("/api/user-status")
-        .then((r) => r.json())
-        .then((d) => { setUserPlan(d.plan ?? "free"); })
-        .catch(() => {});
-    }
-  }, [isSignedIn, user]);
-
-  const handleSubmit = () => {
-    const trimmedUrl = url.trim();
-    if (!trimmedUrl || !isSignedIn) return;
-
-    try {
-      new URL(trimmedUrl);
-    } catch {
-      return;
-    }
-
-    setLoading(true);
-    sessionStorage.setItem("otarcy_audit_url", trimmedUrl);
-    sessionStorage.removeItem("otarcy_brand");
-
-    if (userPlan === "free") navigate("/score");
-    else if (userPlan === "pro") navigate("/audit");
-    else if (userPlan === "agency") navigate("/audit");
-    else navigate("/score");
-  };
-
+export default function About() {
   useReveal([]);
-
   return (
     <div style={{ background: "#0f0f0f", minHeight: "100vh" }}>
       <Navbar />
-      <SideLeft />
-      <SideRight />
-      <Hero
-        isSignedIn={!!isSignedIn}
-        onSignIn={() => navigate("/login")}
-        searchBar={
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            <div style={{ display: "flex" }}>
-              <input
-                type="url"
-                placeholder="https://votre-site.fr"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && !loading && isSignedIn && handleSubmit()}
-                style={{
-                  flex: 1,
-                  background: "transparent",
-                  border: "1px solid #2a2a2a",
-                  borderRight: "none",
-                  padding: "13px 18px",
-                  color: "#f0f0f0",
-                  fontFamily: "'Raleway', sans-serif",
-                  fontSize: "0.76rem",
-                  letterSpacing: "0.08em",
-                  outline: "none",
-                  caretColor: "#a3e635",
-                }}
-              />
-              <button
-                type="button"
-                onClick={isSignedIn ? handleSubmit : () => navigate("/login")}
-                disabled={loading}
-                style={{
-                  fontFamily: "'Raleway', sans-serif",
-                  fontSize: "0.66rem",
-                  letterSpacing: "0.22em",
-                  textTransform: "uppercase",
-                  padding: "13px 28px",
-                  background: loading ? "#555" : "#a3e635",
-                  color: "#0f0f0f",
-                  border: "none",
-                  cursor: loading ? "not-allowed" : "pointer",
-                  fontWeight: 600,
-                  transition: "opacity 0.2s",
-                  whiteSpace: "nowrap",
-                }}
-                onMouseEnter={(e) => { if (!loading) e.currentTarget.style.opacity = "0.85"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
-              >
-                {loading ? "Analyse…" : isSignedIn ? "Analyser →" : "Commencer →"}
-              </button>
-            </div>
-            {!isSignedIn && (
-              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", letterSpacing: "0.15em", color: "#4a4a4a", textAlign: "center" }}>
-                3 audits offerts — sans carte bancaire
-              </p>
-            )}
-          </div>
-        }
-      />
-      <NewsletterSection />
+      <div style={{ paddingTop: "80px" }}>
+        <AboutSection />
+        <WhyAio />
+      </div>
       <Footer />
     </div>
   );
-};
-
-export default Index;
+}
