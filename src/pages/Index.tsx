@@ -37,10 +37,8 @@ const Navbar = () => {
   }, [mobileOpen]);
 
   const navLinks = [
-    { label: "DIAGNOSTIC", to: "#audit", highlight: true },
     { label: "À PROPOS", to: "#about" },
     { label: "NEWSLETTER", to: "#newsletter" },
-    { label: "AUDIT", to: "#audit" },
     { label: "TARIFS", to: "/pricing" },
     { label: "BLOG", to: "/blog" },
   ];
@@ -211,7 +209,7 @@ const SideRight = () => (
 );
 
 // ─── HERO ─────────────────────────────────────────────
-const Hero: React.FC<{ isSignedIn: boolean; onSignIn: () => void }> = ({ isSignedIn, onSignIn }) => (
+const Hero: React.FC<{ isSignedIn: boolean; onSignIn: () => void; searchBar: React.ReactNode }> = ({ isSignedIn, searchBar }) => (
   <section style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", background: "#161616", position: "relative", padding: "0 60px" }}>
     <span style={{ position: "absolute", bottom: "40px", left: "50%", transform: "translateX(-50%)", fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.2em", color: "#4a4a4a" }}>.01</span>
 
@@ -228,30 +226,9 @@ const Hero: React.FC<{ isSignedIn: boolean; onSignIn: () => void }> = ({ isSigne
       ChatGPT · Claude · Gemini · Perplexity
     </p>
 
-    <div className="reveal" style={{ marginTop: "40px", display: "flex", gap: "14px", flexWrap: "wrap", justifyContent: "center" }}>
-      <button type="button"
-        onClick={() => document.getElementById("audit")?.scrollIntoView({ behavior: "smooth" })}
-        style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.22em", textTransform: "uppercase", padding: "13px 32px", background: "#a3e635", color: "#0f0f0f", border: "none", cursor: "pointer", fontWeight: 600, transition: "opacity 0.2s" }}
-        onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
-        onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
-      >
-        Lancer le diagnostic →
-      </button>
-      <button type="button"
-        onClick={() => document.getElementById("audit")?.scrollIntoView({ behavior: "smooth" })}
-        style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.22em", textTransform: "uppercase", padding: "13px 32px", border: "1px solid #3a3a3a", background: "transparent", color: "#7a7a7a", cursor: "pointer", transition: "border-color 0.3s, color 0.3s" }}
-        onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#e8e8e8"; e.currentTarget.style.color = "#e8e8e8"; }}
-        onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#3a3a3a"; e.currentTarget.style.color = "#7a7a7a"; }}
-      >
-        Voir comment ça marche
-      </button>
+    <div className="reveal" style={{ marginTop: "40px", width: "100%", maxWidth: "540px" }}>
+      {searchBar}
     </div>
-
-    {!isSignedIn && (
-      <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", letterSpacing: "0.15em", color: "#4a4a4a", marginTop: "20px" }}>
-        3 audits offerts — sans carte bancaire
-      </p>
-    )}
   </section>
 );
 
@@ -688,7 +665,6 @@ const Footer = () => (
           </p>
           {[
             { label: "Diagnostic IA", to: "#audit", scroll: true },
-            { label: "Diagnostic IA", to: "/audit", scroll: false },
             { label: "Tarifs", to: "/pricing", scroll: false },
             { label: "Dashboard", to: "/dashboard", scroll: false },
           ].map((item) => (
@@ -804,7 +780,64 @@ const Index = () => {
       <Navbar />
       <SideLeft />
       <SideRight />
-      <Hero isSignedIn={!!isSignedIn} onSignIn={() => navigate("/login")} />
+      <Hero
+        isSignedIn={!!isSignedIn}
+        onSignIn={() => navigate("/login")}
+        searchBar={
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            <div style={{ display: "flex" }}>
+              <input
+                type="url"
+                placeholder="https://votre-site.fr"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && !loading && isSignedIn && handleSubmit()}
+                style={{
+                  flex: 1,
+                  background: "transparent",
+                  border: "1px solid #2a2a2a",
+                  borderRight: "none",
+                  padding: "13px 18px",
+                  color: "#f0f0f0",
+                  fontFamily: "'Raleway', sans-serif",
+                  fontSize: "0.76rem",
+                  letterSpacing: "0.08em",
+                  outline: "none",
+                  caretColor: "#a3e635",
+                }}
+              />
+              <button
+                type="button"
+                onClick={isSignedIn ? handleSubmit : () => navigate("/login")}
+                disabled={loading}
+                style={{
+                  fontFamily: "'Raleway', sans-serif",
+                  fontSize: "0.66rem",
+                  letterSpacing: "0.22em",
+                  textTransform: "uppercase",
+                  padding: "13px 28px",
+                  background: loading ? "#555" : "#a3e635",
+                  color: "#0f0f0f",
+                  border: "none",
+                  cursor: loading ? "not-allowed" : "pointer",
+                  fontWeight: 600,
+                  transition: "opacity 0.2s",
+                  whiteSpace: "nowrap",
+                }}
+                onMouseEnter={(e) => { if (!loading) e.currentTarget.style.opacity = "0.85"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
+              >
+                {loading ? "Analyse…" : isSignedIn ? "Analyser →" : "Commencer →"}
+              </button>
+            </div>
+            {!isSignedIn && (
+              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", letterSpacing: "0.15em", color: "#4a4a4a", textAlign: "center" }}>
+                3 audits offerts — sans carte bancaire
+              </p>
+            )}
+          </div>
+        }
+      />
       <WhyAio />
       <AboutSection />
       <NewsletterSection />
