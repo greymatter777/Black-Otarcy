@@ -344,7 +344,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const supabase = createClient(process.env.VITE_SUPABASE_URL!, process.env.SUPABASE_SERVICE_KEY!);
   const { data: userData } = await supabase
     .from("users")
-    .select("plan, audits_count, audits_limit")
+    .select("plan, audits_used, audits_limit")
     .eq("id", auth.userId)
     .single();
 
@@ -352,7 +352,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(403).json({ error: "Plan Essentiel ou Expert requis." });
   }
 
-  if (userData.audits_limit !== -1 && userData.audits_count >= userData.audits_limit) {
+  if (userData.audits_limit !== -1 && userData.audits_used >= userData.audits_limit) {
     return res.status(403).json({ error: "Limite d'audits atteinte pour ce mois." });
   }
 
