@@ -11,35 +11,35 @@ const plans = [
     price: "0€",
     period: "",
     description: "Pour tester Otarcy",
-    features: ["3 audits de marque offerts", "Score de marque", "Forces & faiblesses", "Recommandations basiques"],
-    locked: ["Audit AIO", "SWOT & KPI", "Export PDF"],
+    features: ["Score global /100", "Statut des 10 critères techniques", "Résultat immédiat"],
+    locked: [],
     cta: "Commencer gratuitement",
     highlighted: false,
     color: "#7a7a7a",
   },
   {
     id: "pro",
-    name: "AIO Essentiel",
+    name: "Essentiel",
     badge: "POPULAIRE",
     price: "19€",
     period: "/ mois",
     description: "Pour les entrepreneurs & freelances",
-    features: ["Audits illimités", "Score AIO — visibilité dans les IAs", "Rapport de visibilité IA complet", "Plan d'optimisation AIO", "SWOT & KPI de marque", "Export PDF", "Historique des audits", "Support email prioritaire"],
+    features: ["Détail des 10 critères", "Quick wins priorisés", "Plan d'action long terme"],
     locked: [],
-    cta: "Passer à l'AIO Essentiel",
+    cta: "Passer à l'Essentiel",
     highlighted: true,
     color: "#a3e635",
   },
   {
     id: "agency",
-    name: "AIO Expert",
+    name: "Expert",
     badge: null,
     price: "99€",
     period: "/ mois",
     description: "Pour les agences & consultants",
-    features: ["Tout de l'AIO Essentiel", "Stratégie marketing IA", "Quick Wins priorisés", "Analyse multi-marques", "Marque blanche", "Support dédié"],
+    features: ["Tout l'Essentiel", "Perception réelle par 4 LLMs", "Verbatim brut + analyse delta"],
     locked: [],
-    cta: "Passer à l'AIO Expert",
+    cta: "Passer à l'Expert",
     highlighted: false,
     color: "#60a5fa",
   },
@@ -83,7 +83,7 @@ const Pricing: React.FC = () => {
 
       <div style={{ maxWidth: "960px", margin: "0 auto" }}>
         <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.3em", color: "#a3e635", textTransform: "uppercase", marginBottom: "12px" }}>.03 — Tarifs</p>
-        <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(3rem, 7vw, 5.5rem)", letterSpacing: "0.06em", color: "#f0f0f0", marginBottom: "16px" }}>OPTIMISEZ VOTRE<br />PRÉSENCE IA</h1>
+        <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(3rem, 7vw, 5.5rem)", letterSpacing: "0.06em", color: "#f0f0f0", marginBottom: "16px" }}>DIAGNOSTIQUEZ VOTRE<br />PRÉSENCE IA</h1>
         <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.82rem", color: "#7a7a7a", marginBottom: "64px", fontWeight: 300, letterSpacing: "0.1em" }}>Sans engagement — résiliez à tout moment</p>
 
         {error && (
