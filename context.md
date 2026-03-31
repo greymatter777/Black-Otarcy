@@ -27,7 +27,7 @@
 - URL Vercel fonctionnelle : https://blackotarcyweb.vercel.app
 - IP Vercel pour otarcy.app : 216.198.79.1 (spécifique au projet, pas l'IP générique 76.76.21.21)
 
-### Fichiers créés cette session
+### Fichiers créés session 30/03/2026
 
 | Fichier | Statut |
 |---------|--------|
@@ -43,13 +43,22 @@
 | src/pages/AuditResult.tsx | ✅ Vue plan pro |
 | src/pages/PerceptionResult.tsx | ✅ Vue plan agency |
 
-### Reste à faire (session suivante)
+### Modifications session 31/03/2026
 
-1. Étape 8 : mettre à jour `src/App.tsx` — ajouter routes /score /audit /perception + redirect /aio-report → /audit
-2. Étape 9 : mettre à jour `src/pages/Index.tsx` — champ URL + sessionStorage + redirection selon plan
-3. Étape 4 (différée) : `api/llm-perception.ts` — nécessite OPENROUTER_API_KEY
-4. Ajouter `ANTHROPIC_API_KEY` dans Vercel dès que crédits disponibles
-5. Attendre réactivation DNS otarcy.app (24-48h)
+| Fichier | Modification |
+|---------|-------------|
+| src/App.tsx | ✅ Étape 8 — routes /score /audit /perception + 6 redirects secteurs → /pricing |
+| src/pages/Index.tsx | ✅ Étape 9 — messaging pivot complet + suppression dropdown secteurs |
+| src/pages/Pricing.tsx | ✅ Noms plans, features, CTAs alignés nouveau positionnement |
+| api/audit.ts | ✅ Fix : `audits_count` → `audits_used` (cohérence colonne Supabase) |
+
+### Reste à faire
+
+1. **Étape 4 — `api/llm-perception.ts`** : bloquée sur `OPENROUTER_API_KEY` — créer l'endpoint dès que la clé est disponible
+2. **`ANTHROPIC_API_KEY`** : ajouter dans Vercel pour activer la synthèse Claude dans `api/audit.ts` (fallback actif sans elle)
+3. **DNS otarcy.app** : vérifier réactivation (délai 24-48h depuis le 30/03/2026)
+4. **Dashboard** : toujours sur l'ancien modèle brand/score-sur-10 — à aligner sur le nouveau modèle URL/score-sur-100 lors d'une prochaine session
+5. **Pages secteurs** (`AioCoaching.tsx` etc.) : fichiers toujours sur disque, routes redirigées — supprimer ou recycler lors d'un nettoyage
 
 ### Leçons techniques retenues
 

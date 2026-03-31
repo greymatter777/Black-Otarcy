@@ -15,22 +15,22 @@ Instructions pour Claude Code. Lire entièrement avant de modifier quoi que ce s
 
 ---
 
-## État d'avancement — Session 30/03/2026
+## État d'avancement — Session 31/03/2026
 
 | Étape | Fichier | Statut |
 |-------|---------|--------|
 | 0 | validate-checkers.mjs | ✅ Validé — scores cohérents sur 3 URLs |
 | 1 | src/lib/checkers.ts | ✅ Créé |
 | 2 | api/score.ts | ✅ Testé en prod — retourne score + critères |
-| 3 | api/audit.ts | ✅ Créé + déployé |
+| 3 | api/audit.ts | ✅ Créé + déployé + fix audits_used |
 | 4 | api/llm-perception.ts | ⬜ En attente — nécessite OPENROUTER_API_KEY |
 | 5 | src/pages/ScoreResult.tsx | ✅ Créé + déployé |
 | 6 | src/pages/AuditResult.tsx | ✅ Créé + déployé |
 | 7 | src/pages/PerceptionResult.tsx | ✅ Créé + déployé |
-| 8 | src/App.tsx | 🔄 À faire — ajouter routes /score /audit /perception |
-| 9 | src/pages/Index.tsx | 🔄 À faire — champ URL + sessionStorage |
+| 8 | src/App.tsx | ✅ Routes /score /audit /perception + redirects secteurs → /pricing |
+| 9 | src/pages/Index.tsx | ✅ Messaging pivot + suppression dropdown secteurs |
 
-**Prochaine étape : Étape 8 — App.tsx**
+**Prochaine étape : Étape 4 — api/llm-perception.ts (bloquée sur OPENROUTER_API_KEY)**
 
 ---
 
@@ -260,29 +260,20 @@ Règles critiques :
 
 ---
 
-## Étape 8 — App.tsx (prochaine étape)
+## Modifications session 31/03/2026
 
-Ajouter les imports et routes suivants sans toucher aux routes existantes :
+### Pages secteurs dépubliées
+- `src/App.tsx` : imports AioCoaching/Ecommerce/Immobilier/Restauration/Rh/Sante supprimés
+- 6 routes remplacées par `<Navigate to="/pricing" replace />` — fichiers conservés sur disque
+- `src/pages/Index.tsx` : dropdown SECTEURS supprimé (desktop + mobile) + tableau `secteurLinks` supprimé
 
-```tsx
-import ScoreResult from "./pages/ScoreResult";
-import AuditResult from "./pages/AuditResult";
-import PerceptionResult from "./pages/PerceptionResult";
-import { Navigate } from "react-router-dom";
+### Messaging pivot — alignement "diagnostic de présence IA"
+- `src/pages/Index.tsx` : Hero, WhyAio, About, Footer — toutes les occurrences "AIO" / "AI Optimization" reformulées
+- `src/pages/Pricing.tsx` : H1, noms de plans (Essentiel/Expert), features et CTAs mis à jour
+- Plans free/pro/agency : descriptions alignées sur les 10 vérificateurs techniques
 
-// Dans le Router — après les routes existantes :
-<Route path="/score" element={<PrivateRoute><ScoreResult /></PrivateRoute>} />
-<Route path="/audit" element={<PrivateRoute><AuditResult /></PrivateRoute>} />
-<Route path="/perception" element={<PrivateRoute><PerceptionResult /></PrivateRoute>} />
-<Route path="/aio-report" element={<Navigate to="/audit" replace />} />
-```
-
-## Étape 9 — Index.tsx (après App.tsx)
-
-- Remplacer le champ "nom de marque" par un champ URL (`type="url"`, placeholder `https://votre-site.fr`)
-- Si plan = agency : afficher aussi un champ "Nom de votre marque"
-- Au submit : `sessionStorage.setItem("otarcy_audit_url", url)` puis rediriger selon plan
-- Conserver le design existant — changer uniquement le contenu du formulaire
+### Fix technique
+- `api/audit.ts` : `audits_count` → `audits_used` (alignement avec le nom réel de la colonne Supabase, cohérent avec `api/user-status.ts`)
 
 ---
 
