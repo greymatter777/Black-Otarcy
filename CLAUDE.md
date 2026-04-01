@@ -9,26 +9,28 @@ Instructions pour Claude Code. Lire entièrement avant de modifier quoi que ce s
 | # | Correctif | Impact |
 |---|-----------|--------|
 | 1 | Validation locale des checkers obligatoire avant tout endpoint | Étape 0 + script fourni |
-| 2 | `fetchWithTimeout()` obligatoire sur tout fetch externe | Helper inliné dans chaque fichier API |
-| 3 | Champ `brand` pour `llm-perception.ts` — collecté via sessionStorage | Index.tsx + PerceptionResult.tsx |
+| 2 | `fetchWithTimeout()` obligatoire sur tout fetch externe — voir spec complète ci-dessous | Helper inliné dans chaque fichier API |
+| 3 | Champ `brand` pour `llm-perception.ts` — collecté via sessionStorage | PerceptionResult.tsx |
 | 4 | Checkers inlinés dans chaque fichier API | Vercel ne résout pas les imports relatifs hors /api/ |
+| 5 | `sanitizeUrl()` obligatoire sur toute URL entrante avant validation | Inliné dans api/score.ts et api/audit.ts |
 
 ---
 
-## État d'avancement — Session 31/03/2026
+## État d'avancement — Session 01/04/2026
 
 | Étape | Fichier | Statut |
 |-------|---------|--------|
 | 0 | validate-checkers.mjs | ✅ Validé — scores cohérents sur 3 URLs |
 | 1 | src/lib/checkers.ts | ✅ Créé |
-| 2 | api/score.ts | ✅ Testé en prod — retourne score + critères |
-| 3 | api/audit.ts | ✅ Créé + déployé + fix audits_used |
+| 2 | api/score.ts | ✅ Testé en prod — robustesse fetch améliorée |
+| 3 | api/audit.ts | ✅ Déployé — robustesse fetch améliorée |
 | 4 | api/llm-perception.ts | ⬜ En attente — nécessite OPENROUTER_API_KEY |
-| 5 | src/pages/ScoreResult.tsx | ✅ Créé + déployé |
-| 6 | src/pages/AuditResult.tsx | ✅ Créé + déployé |
+| 5 | src/pages/ScoreResult.tsx | ✅ friendlyError() ajoutée |
+| 6 | src/pages/AuditResult.tsx | ✅ friendlyError() ajoutée |
 | 7 | src/pages/PerceptionResult.tsx | ✅ Créé + déployé |
-| 8 | src/App.tsx | ✅ Routes /score /audit /perception + redirects secteurs → /pricing |
-| 9 | src/pages/Index.tsx | ✅ Messaging pivot + suppression dropdown secteurs |
+| 8 | src/App.tsx | ✅ Routes /score /audit /perception /about + redirects secteurs → /pricing |
+| 9 | src/pages/Index.tsx | ✅ Nettoyage home — barre URL dans Hero, sections WhyAio/About/AuditSection supprimées |
+| 10 | src/pages/About.tsx | ✅ Créé — contient Navbar, AboutSection, WhyAio, Footer |
 
 **Prochaine étape : Étape 4 — api/llm-perception.ts (bloquée sur OPENROUTER_API_KEY)**
 
@@ -38,7 +40,7 @@ Instructions pour Claude Code. Lire entièrement avant de modifier quoi que ce s
 
 - **Produit** : Otarcy — outil de diagnostic de présence IA
 - **Positionnement** : Self-service, bouton → résultat immédiat, PME française
-- **Site** : https://otarcy.app (suspendu temporairement — vérification Namecheap en cours)
+- **Site** : https://otarcy.app
 - **URL Vercel** : https://blackotarcyweb.vercel.app (fonctionnelle)
 - **Repo** : https://github.com/greymatter777/Black-Otarcy
 - **Stack** : React 18 + TypeScript, Vite, Vercel (serverless), Supabase (auth + db), Stripe, Resend, Groq, @anthropic-ai/sdk
@@ -67,11 +69,15 @@ Il ne génère pas de texte marketing. Il **constate** des faits techniques.
 **`api/score.ts` — POST /api/score (plan free)**
 - Auth optionnelle
 - Checkers inlinés
+- sanitizeUrl() sur l'URL entrante
+- fetchWithTimeout() avec User-Agent, retry www., retry https
 - Retourne : `{ score, niveau, url, criteres[] }` — statuts uniquement, pas de détail
 
 **`api/audit.ts` — POST /api/audit (plan pro + agency)**
 - Auth requise — plan pro ou agency
 - Checkers inlinés
+- sanitizeUrl() sur l'URL entrante
+- fetchWithTimeout() avec User-Agent, retry www., retry https
 - Synthèse via Claude API (ANTHROPIC_API_KEY) — fallback si clé absente
 - Retourne : `{ score, niveau, url, criteres[], quick_wins[], plan_long_terme[] }`
 
@@ -152,15 +158,58 @@ Vercel ne résout pas les imports relatifs hors `/api/` au runtime.
 Ne jamais écrire `import { checkSchemaOrg } from "../src/lib/checkers"` dans un fichier API.
 Copier les fonctions directement dans le fichier.
 
+### sanitizeUrl — obligatoire sur toute URL entrante
+```typescript
+function sanitizeUrl(raw: string): string {
+  let url = raw.trim().replace(/[\u00A0\u200B\uFEFF\u00AD]/g, "");
+  if (!/^https?:\/\//i.test(url)) url = "https://" + url;
+  url = url.replace(/\s+/g, "");
+  return url;
+}
+```
+Appeler avant la validation `new URL()` dans chaque handler.
+
 ### fetchWithTimeout — obligatoire sur tout fetch externe
 ```typescript
-async function fetchWithTimeout(url: string, ms = 8000): Promise<Response> {
+async function fetchWithTimeout(url: string, ms = 15000): Promise<Response> {
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), ms);
   try {
-    return await fetch(url, { signal: ctrl.signal });
+    return await fetch(url, {
+      signal: ctrl.signal,
+      redirect: "follow",
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "fr-FR,fr;q=0.9,en;q=0.8",
+        "Accept-Encoding": "gzip, deflate, br",
+      },
+    });
   } finally {
     clearTimeout(t);
+  }
+}
+```
+
+### Retry fetch — pattern obligatoire sur le fetch principal du site cible
+```typescript
+let response: Response;
+try {
+  response = await fetchWithTimeout(normalizedUrl);
+  if (response.status === 403 || response.status === 406) {
+    response = await fetchWithTimeout(normalizedUrl.replace(/^http:\/\//i, "https://"));
+  }
+} catch (err: any) {
+  const urlObj = new URL(normalizedUrl);
+  if (!urlObj.hostname.startsWith("www.")) {
+    const wwwUrl = normalizedUrl.replace(urlObj.hostname, "www." + urlObj.hostname);
+    try {
+      response = await fetchWithTimeout(wwwUrl);
+    } catch {
+      return res.status(422).json({ error: "Impossible d'accéder à cette URL. Vérifiez qu'elle est accessible publiquement." });
+    }
+  } else {
+    return res.status(422).json({ error: "Impossible d'accéder à cette URL. Vérifiez qu'elle est accessible publiquement." });
   }
 }
 ```
@@ -277,6 +326,33 @@ Règles critiques :
 
 ---
 
+## Modifications session 01/04/2026
+
+### Navbar — nettoyage
+- `src/pages/Index.tsx` : liens "DIAGNOSTIC" et "AUDIT" supprimés du tableau navLinks
+- Lien "À PROPOS" mis à jour : `#about` → `/about`
+
+### Hero — barre URL directe
+- `src/pages/Index.tsx` : les deux boutons "Lancer le diagnostic" et "Voir comment ça marche" remplacés par la barre URL directement dans le Hero
+- Prop `searchBar: React.ReactNode` ajoutée au composant Hero
+- États `brand`, `error` supprimés du composant Index (devenus orphelins)
+
+### Page About créée
+- `src/pages/About.tsx` : nouvelle page publique — contient Navbar, AboutSection (.01), WhyAio (.02), Footer
+- Route `/about` ajoutée dans `src/App.tsx`
+
+### Nettoyage home
+- `src/pages/Index.tsx` : composants WhyAio, AboutSection, AuditSection supprimés (définitions + appels)
+- Home réduite à : Navbar + Hero (avec barre URL) + NewsletterSection + Footer
+
+### Robustesse fetch — api/score.ts + api/audit.ts
+- `fetchWithTimeout` : timeout 8s → 15s, User-Agent Chrome réaliste, `redirect: "follow"`, headers Accept complets
+- `sanitizeUrl()` ajoutée : strip caractères invisibles, ajout `https://` si protocole absent, strip espaces internes
+- Retry automatique : 403/406 → retry https, erreur réseau → retry sur `www.` si absent
+- `ScoreResult.tsx` + `AuditResult.tsx` : `friendlyError()` ajoutée pour messages d'erreur lisibles
+
+---
+
 ## Ce qu'il ne faut pas toucher
 
 - `api/newsletter.ts` — fonctionnel
@@ -289,7 +365,7 @@ Règles critiques :
 - `src/lib/useAuthFetch.ts` — authFetch()
 - `prerender.mjs` — prerendering
 - `.github/workflows/digest.yml` — cron newsletter
-- Toutes les pages publiques (Index, Pricing, Glossaire, Faq, Blog)
+- Toutes les pages publiques (Index, Pricing, Glossaire, Faq, Blog, About)
 
 ---
 
@@ -299,5 +375,6 @@ Règles critiques :
 - Ne jamais logger les clés API ou tokens JWT
 - Les vérificateurs ne font jamais d'appel LLM — parsing HTML uniquement
 - Le score est toujours calculé côté serveur, jamais côté client
-- Fetch échoué → `{ error: "Impossible d'accéder à cette URL" }` status 422
+- Fetch échoué → `{ error: "Impossible d'accéder à cette URL. Vérifiez qu'elle est accessible publiquement." }` status 422
 - `api/llm-perception.ts` : tester une seule fois avec vraies clés avant déploiement
+- `/clear` entre chaque étape Claude Code pour éviter compaction et consommation excessive de tokens
