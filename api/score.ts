@@ -18,11 +18,20 @@ interface CheckResult {
 
 // ─── Helpers inlinés ─────────────────────────────────────────────────────────
 
-async function fetchWithTimeout(url: string, ms = 8000): Promise<Response> {
+async function fetchWithTimeout(url: string, ms = 15000): Promise<Response> {
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), ms);
   try {
-    return await fetch(url, { signal: ctrl.signal });
+    return await fetch(url, {
+      signal: ctrl.signal,
+      redirect: "follow",
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "fr-FR,fr;q=0.9,en;q=0.8",
+        "Accept-Encoding": "gzip, deflate, br",
+      },
+    });
   } finally {
     clearTimeout(t);
   }
@@ -251,9 +260,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: "URL manquante ou invalide." });
   }
 
+  // Nettoyage caractères invisibles (copy-paste)
+  let normalizedUrl = (url as string).trim().replace(/[\u00A0\u200B\uFEFF\u00AD]/g, "");
+
+  // Ajout du protocole si absent
+  if (!/^https?:\/\//i.test(normalizedUrl)) {
+    normalizedUrl = "https://" + normalizedUrl;
+  }
+
+  // Suppression des espaces internes résiduels
+  normalizedUrl = normalizedUrl.replace(/\s+/g, "");
+
   let cleanUrl: string;
   try {
-    cleanUrl = sanitizeUrl(url.trim());
+    cleanUrl = sanitizeUrl(normalizedUrl);
   } catch {
     return res.status(422).json({ error: "URL invalide. Vérifiez le format (ex: https://exemple.fr)." });
   }
@@ -269,20 +289,37 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   let html = "";
   let robotsTxt = "";
+  let response: Response;
 
   try {
-    const origin = new URL(cleanUrl).origin;
-    const [htmlRes, robotsRes] = await Promise.all([
-      fetchWithTimeout(cleanUrl, 10_000),
-      fetchWithTimeout(`${origin}/robots.txt`, 6_000).catch(() => null),
-    ]);
-    if (!htmlRes.ok) return res.status(422).json({ error: "Impossible d'accéder à cette URL." });
-    html = await htmlRes.text();
-    robotsTxt = robotsRes?.ok ? await robotsRes.text() : "";
-  } catch (e: any) {
-    if (e.name === "AbortError") return res.status(422).json({ error: "Timeout — le site met trop de temps à répondre." });
-    return res.status(422).json({ error: "Impossible d'accéder à cette URL." });
+    response = await fetchWithTimeout(normalizedUrl);
+    // Si le serveur répond avec 403 ou 406, retry sans Accept-Encoding
+    if (response.status === 403 || response.status === 406) {
+      response = await fetchWithTimeout(
+        normalizedUrl.replace(/^http:\/\//i, "https://")
+      );
+    }
+  } catch (err: any) {
+    // Timeout ou erreur réseau — tentative sur www. si absent
+    const urlObj = new URL(normalizedUrl);
+    if (!urlObj.hostname.startsWith("www.")) {
+      const wwwUrl = normalizedUrl.replace(urlObj.hostname, "www." + urlObj.hostname);
+      try {
+        response = await fetchWithTimeout(wwwUrl);
+      } catch {
+        return res.status(422).json({ error: "Impossible d'accéder à cette URL. Vérifiez qu'elle est accessible publiquement." });
+      }
+    } else {
+      return res.status(422).json({ error: "Impossible d'accéder à cette URL. Vérifiez qu'elle est accessible publiquement." });
+    }
   }
+
+  if (!response!.ok) return res.status(422).json({ error: "Impossible d'accéder à cette URL. Vérifiez qu'elle est accessible publiquement." });
+  html = await response!.text();
+
+  const origin = new URL(cleanUrl).origin;
+  const robotsRes = await fetchWithTimeout(`${origin}/robots.txt`, 6_000).catch(() => null);
+  robotsTxt = robotsRes?.ok ? await robotsRes.text() : "";
 
   const [llmsTxtResult, sitemapResult] = await Promise.all([
     checkLlmsTxt(cleanUrl),

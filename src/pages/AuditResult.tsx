@@ -80,6 +80,14 @@ export default function AuditResult() {
       .finally(() => setLoading(false));
   }, []);
 
+  const friendlyError = (msg: string) => {
+    if (msg.includes("Impossible d'accéder"))
+      return "Ce site n'est pas accessible publiquement ou bloque les analyses automatiques.";
+    if (msg.includes("timeout") || msg.includes("trop de temps"))
+      return "Le site met trop de temps à répondre. Réessayez dans quelques instants.";
+    return msg;
+  };
+
   if (loading) return (
     <div style={{ background: "#0a0a0a", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.76rem", color: "#7a7a7a", letterSpacing: "0.2em", textTransform: "uppercase" }}>
@@ -91,7 +99,7 @@ export default function AuditResult() {
   if (error) return (
     <div style={{ background: "#0a0a0a", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div style={{ padding: "24px", border: "1px solid #ef4444", background: "#0f0f0f", maxWidth: "400px", textAlign: "center" }}>
-        <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.76rem", color: "#ef4444", marginBottom: "16px" }}>{error}</p>
+        <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.76rem", color: "#ef4444", marginBottom: "16px" }}>{friendlyError(error)}</p>
         <button onClick={() => navigate("/")} style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.22em", textTransform: "uppercase", padding: "10px 24px", background: "transparent", border: "1px solid #3a3a3a", color: "#7a7a7a", cursor: "pointer" }}>
           ← Retour
         </button>
