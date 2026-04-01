@@ -25,8 +25,8 @@ Instructions pour Claude Code. Lire entièrement avant de modifier quoi que ce s
 | 2 | api/score.ts | ✅ Testé en prod — robustesse fetch améliorée |
 | 3 | api/audit.ts | ✅ Déployé — robustesse fetch améliorée |
 | 4 | api/llm-perception.ts | ⬜ En attente — nécessite OPENROUTER_API_KEY |
-| 5 | src/pages/ScoreResult.tsx | ✅ friendlyError() ajoutée |
-| 6 | src/pages/AuditResult.tsx | ✅ friendlyError() ajoutée |
+| 5 | src/pages/ScoreResult.tsx | ✅ friendlyError() + ProtectedSiteState ajoutés |
+| 6 | src/pages/AuditResult.tsx | ✅ friendlyError() + ProtectedSiteState ajoutés |
 | 7 | src/pages/PerceptionResult.tsx | ✅ Créé + déployé |
 | 8 | src/App.tsx | ✅ Routes /score /audit /perception /about + redirects secteurs → /pricing |
 | 9 | src/pages/Index.tsx | ✅ Nettoyage home — barre URL dans Hero, sections WhyAio/About/AuditSection supprimées |
@@ -350,6 +350,12 @@ Règles critiques :
 - `sanitizeUrl()` ajoutée : strip caractères invisibles, ajout `https://` si protocole absent, strip espaces internes
 - Retry automatique : 403/406 → retry https, erreur réseau → retry sur `www.` si absent
 - `ScoreResult.tsx` + `AuditResult.tsx` : `friendlyError()` ajoutée pour messages d'erreur lisibles
+
+### État "Site protégé" — ScoreResult.tsx + AuditResult.tsx
+- `isProtectedSite(msg)` : détecte les mots-clés liés aux protections (403, 406, cloudflare, waf, accessible, anti-bot, bloque, protégé)
+- `ProtectedSiteState` : composant visuel dédié — bouclier SVG vert (96×112px centré), titre "SITE PROTÉGÉ" Bebas Neue, message explicatif, bloc détail avec bordure gauche verte, bouton "Analyser une autre URL →" ghost, note "Essayez avec l'URL de votre propre site"
+- Branchement : `if (error) → isProtectedSite → ProtectedSiteState` sinon erreur générique `friendlyError()`
+- Testé en prod : Decathlon.fr → bouclier affiché ✅, sites PME normaux → analyse complète ✅
 
 ---
 

@@ -89,8 +89,8 @@
 | src/App.tsx | ✅ Route /about ajoutée |
 | api/score.ts | ✅ fetchWithTimeout amélioré + sanitizeUrl + retry www./https |
 | api/audit.ts | ✅ fetchWithTimeout amélioré + sanitizeUrl + retry www./https |
-| src/pages/ScoreResult.tsx | ✅ friendlyError() ajoutée |
-| src/pages/AuditResult.tsx | ✅ friendlyError() ajoutée |
+| src/pages/ScoreResult.tsx | ✅ friendlyError() + isProtectedSite() + ProtectedSiteState ajoutés |
+| src/pages/AuditResult.tsx | ✅ friendlyError() + isProtectedSite() + ProtectedSiteState ajoutés |
 
 ### Détail des changements
 
@@ -114,6 +114,12 @@
 - `sanitizeUrl()` : strip caractères invisibles (copy-paste), ajout `https://` si protocole absent, strip espaces internes
 - Retry automatique : 403/406 → retry https ; erreur réseau → retry sur `www.` si absent
 - Messages d'erreur : `friendlyError()` dans ScoreResult et AuditResult pour messages lisibles côté utilisateur
+
+**État "Site protégé" (ScoreResult + AuditResult) :**
+- `isProtectedSite()` détecte les protections WAF/Cloudflare via mots-clés
+- `ProtectedSiteState` : bouclier SVG vert 96×112px, titre "SITE PROTÉGÉ", message explicatif, bouton retry vers "/"
+- Testé : decathlon.fr → bouclier ✅ — sites PME → analyse complète ✅
+- Décision produit : les sites enterprise protégés sont hors périmètre Otarcy — documenté dans le composant
 
 ### Reste à faire
 
