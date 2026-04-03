@@ -49,8 +49,7 @@ const ScoreRing: React.FC<{ score: number; size?: number }> = ({ score, size = 7
 
 const AuditCard: React.FC<{ audit: AuditRecord; onClick: () => void }> = ({ audit, onClick }) => {
   const date = new Date(audit.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
-  let hostname = audit.url;
-  try { hostname = new URL(audit.url).hostname; } catch { /* keep raw */ }
+  const hostname = (() => { try { return new URL(audit.url).hostname; } catch { return audit.url ?? "URL inconnue"; } })();
   return (
     <div onClick={onClick} style={{ padding: "24px 28px", border: "1px solid #2a2a2a", background: "#161616", cursor: "pointer", transition: "border-color 0.25s, background 0.25s", display: "flex", alignItems: "center", gap: "24px" }}
       onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = "#4a4a4a"; (e.currentTarget as HTMLDivElement).style.background = "#1c1c1c"; }}
@@ -73,8 +72,7 @@ const statutColor = (statut: "ok" | "warn" | "ko") =>
 
 const AuditDetail: React.FC<{ audit: AuditRecord; onClose: () => void }> = ({ audit, onClose }) => {
   const date = new Date(audit.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
-  let hostname = audit.url;
-  try { hostname = new URL(audit.url).hostname; } catch { /* keep raw */ }
+  const hostname = (() => { try { return new URL(audit.url).hostname; } catch { return audit.url ?? "URL inconnue"; } })();
 
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(0,0,0,0.85)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }} onClick={onClose}>
@@ -180,7 +178,7 @@ const Dashboard: React.FC = () => {
 
     authFetch("/api/history")
       .then((r) => r.json())
-      .then((d) => setAudits(d.audits ?? []))
+      .then((d) => setAudits((d.audits ?? []).filter((a: AuditRecord) => a.url)))
       .catch(console.error)
       .finally(() => setLoading(false));
 
@@ -196,10 +194,9 @@ const Dashboard: React.FC = () => {
     ? (audits.reduce((acc, a) => acc + a.score, 0) / audits.length).toFixed(0) + "/100"
     : "—";
 
-  let dernierSite = "—";
-  if (audits[0]?.url) {
-    try { dernierSite = new URL(audits[0].url).hostname; } catch { dernierSite = audits[0].url; }
-  }
+  const dernierSite = audits[0]?.url
+    ? (() => { try { return new URL(audits[0].url).hostname; } catch { return audits[0].url ?? "URL inconnue"; } })()
+    : "—";
 
   return (
     <div style={{ background: "#0f0f0f", minHeight: "100vh" }}>
