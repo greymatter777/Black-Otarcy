@@ -8,7 +8,7 @@ Quand l'utilisateur écrit le mot `OKLM` (en majuscules, seul ou dans une phrase
 
 1. **Relire l'intégralité de la session en cours** — identifier de façon autonome tout ce qui a été accompli, décidé, modifié ou appris. Prioriser : fichiers modifiés, décisions architecturales, étapes validées, problèmes résolus, prochaines étapes identifiées.
 
-2. **Lire `CLAUDE.md` et `context.md` avant d'écrire** — comparer l'état actuel des fichiers avec ce qui vient de changer. N'intervenir que sur les deltas réels.
+2. **Lire `CLAUDE.md` et `context.md` avant d'écrire** — comparer l'état actuel des fichiers avec ce qui vient de changer. Si des skills ont été créées, modifiées ou supprimées durant la session, mettre à jour le tableau `## Skills disponibles` dans `CLAUDE.md` en conséquence.
 
 3. **Mettre à jour `CLAUDE.md`** — ajouter ou modifier uniquement les sections impactées. Conserver la structure existante mot pour mot sur les sections non touchées.
 
