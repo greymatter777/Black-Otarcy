@@ -9,7 +9,7 @@ Instructions pour Claude Code. Lire entièrement avant de modifier quoi que ce s
 | # | Correctif | Impact |
 |---|-----------|--------|
 | 1 | Validation locale des checkers obligatoire avant tout endpoint | Étape 0 + script fourni |
-| 2 | `fetchWithTimeout()` obligatoire sur tout fetch externe — voir spec complète ci-dessous | Helper inliné dans chaque fichier API |
+| 2 | `fetchWithTimeout()` obligatoire sur tout fetch externe — voir spec complète dans `.claude/skills/vercel-api/SKILL.md` | Helper inliné dans chaque fichier API |
 | 3 | Champ `brand` pour `llm-perception.ts` — collecté via sessionStorage | PerceptionResult.tsx |
 | 4 | Checkers inlinés dans chaque fichier API | Vercel ne résout pas les imports relatifs hors /api/ |
 | 5 | `sanitizeUrl()` obligatoire sur toute URL entrante avant validation | Inliné dans api/score.ts et api/audit.ts |
@@ -59,6 +59,18 @@ Il ne génère pas de texte marketing. Il **constate** des faits techniques.
 | free | Découverte | 0€ | Score global + liste critères (statut visible, pas de détail) |
 | pro | Essentiel | 19€/mois | Workflow 1 complet : détail par critère + quick wins + plan long terme |
 | agency | Expert | 99€/mois | Workflow 1 + Workflow 2 : perception réelle des LLMs |
+
+---
+
+## Skills disponibles
+
+Lire la skill concernée AVANT toute intervention dans le domaine correspondant.
+
+| Skill | Chemin | Déclencher quand |
+|-------|--------|-----------------|
+| react-otarcy | `.claude/skills/react-otarcy/SKILL.md` | Tout composant, page, style, ou élément UI |
+| vercel-api | `.claude/skills/vercel-api/SKILL.md` | Tout fichier dans /api/, fetch externe, CORS, retry |
+| supabase-otarcy | `.claude/skills/supabase-otarcy/SKILL.md` | Toute interaction DB, auth, plan, quota |
 
 ---
 
@@ -153,85 +165,24 @@ Niveaux : 0-30 critique / 31-55 faible / 56-75 moyen / 76-90 bon / 91-100 excell
 
 ## Conventions techniques — NE PAS DÉROGER
 
+> Specs complètes dans les skills. Ce qui suit est un résumé d'orientation rapide.
+
 ### ⚠ Checkers inlinés dans chaque fichier API
 Vercel ne résout pas les imports relatifs hors `/api/` au runtime.
 Ne jamais écrire `import { checkSchemaOrg } from "../src/lib/checkers"` dans un fichier API.
 Copier les fonctions directement dans le fichier.
 
-### sanitizeUrl — obligatoire sur toute URL entrante
-```typescript
-function sanitizeUrl(raw: string): string {
-  let url = raw.trim().replace(/[\u00A0\u200B\uFEFF\u00AD]/g, "");
-  if (!/^https?:\/\//i.test(url)) url = "https://" + url;
-  url = url.replace(/\s+/g, "");
-  return url;
-}
-```
-Appeler avant la validation `new URL()` dans chaque handler.
+### Helpers obligatoires — voir `.claude/skills/vercel-api/SKILL.md`
+- `sanitizeUrl()` — sur toute URL entrante
+- `fetchWithTimeout()` — sur tout fetch externe
+- Retry pattern — sur le fetch du site cible
+- CORS headers — en tête de chaque handler
+- `verifySupabaseAuth()` — sur les endpoints protégés
 
-### fetchWithTimeout — obligatoire sur tout fetch externe
-```typescript
-async function fetchWithTimeout(url: string, ms = 15000): Promise<Response> {
-  const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), ms);
-  try {
-    return await fetch(url, {
-      signal: ctrl.signal,
-      redirect: "follow",
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "Accept-Language": "fr-FR,fr;q=0.9,en;q=0.8",
-        "Accept-Encoding": "gzip, deflate, br",
-      },
-    });
-  } finally {
-    clearTimeout(t);
-  }
-}
-```
-
-### Retry fetch — pattern obligatoire sur le fetch principal du site cible
-```typescript
-let response: Response;
-try {
-  response = await fetchWithTimeout(normalizedUrl);
-  if (response.status === 403 || response.status === 406) {
-    response = await fetchWithTimeout(normalizedUrl.replace(/^http:\/\//i, "https://"));
-  }
-} catch (err: any) {
-  const urlObj = new URL(normalizedUrl);
-  if (!urlObj.hostname.startsWith("www.")) {
-    const wwwUrl = normalizedUrl.replace(urlObj.hostname, "www." + urlObj.hostname);
-    try {
-      response = await fetchWithTimeout(wwwUrl);
-    } catch {
-      return res.status(422).json({ error: "Impossible d'accéder à cette URL. Vérifiez qu'elle est accessible publiquement." });
-    }
-  } else {
-    return res.status(422).json({ error: "Impossible d'accéder à cette URL. Vérifiez qu'elle est accessible publiquement." });
-  }
-}
-```
-
-### CORS — header obligatoire sur chaque endpoint
-```typescript
-res.setHeader("Access-Control-Allow-Origin", "*");
-res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-if (req.method === "OPTIONS") return res.status(200).end();
-```
-
-### verifySupabaseAuth — inliné dans chaque fichier API auth-required
-```typescript
-async function verifySupabaseAuth(req: VercelRequest): Promise<{ userId: string; email: string } | null> {
-  const token = req.headers["authorization"]?.replace("Bearer ", "");
-  if (!token) return null;
-  const supabase = createClient(process.env.VITE_SUPABASE_URL!, process.env.SUPABASE_SERVICE_KEY!);
-  const { data: { user } } = await supabase.auth.getUser(token);
-  return user ? { userId: user.id, email: user.email! } : null;
-}
-```
+### Supabase — voir `.claude/skills/supabase-otarcy/SKILL.md`
+- `SUPABASE_SERVICE_KEY` côté serveur uniquement
+- Colonne `audits_used` (pas `audits_count`)
+- `audits_limit === -1` = illimité
 
 ### sessionStorage — flow de navigation
 ```typescript
@@ -259,6 +210,19 @@ Ne pas modifier.
 
 ---
 
+## Design system
+
+Référence complète : `.claude/skills/react-otarcy/SKILL.md` — lire avant tout composant.
+Référence HTML pixel-perfect : `design-ref/`
+
+| Fichier | Composant | Route |
+|---------|-----------|-------|
+| design-ref/score-free.html | ScoreResult.tsx | /score |
+| design-ref/audit-essentiel.html | AuditResult.tsx | /audit |
+| design-ref/perception-expert.html | PerceptionResult.tsx | /perception |
+
+---
+
 ## Variables d'environnement Vercel
 
 ### Existantes — ne pas toucher
@@ -283,29 +247,6 @@ DIGEST_RECIPIENT_EMAIL
 ANTHROPIC_API_KEY     ← synthèse quick wins dans api/audit.ts
 OPENROUTER_API_KEY    ← workflow 2 dans api/llm-perception.ts
 ```
-
----
-
-## Design system — règles absolues
-
-Fichier de référence : `otarcy-design-system.md`
-Référence HTML pixel-perfect : `design-ref/`
-
-| Fichier | Composant | Route |
-|---------|-----------|-------|
-| design-ref/score-free.html | ScoreResult.tsx | /score |
-| design-ref/audit-essentiel.html | AuditResult.tsx | /audit |
-| design-ref/perception-expert.html | PerceptionResult.tsx | /perception |
-
-Règles critiques :
-- **Jamais de className Tailwind** — tout en inline style
-- **Jamais de border-radius** sauf `borderRadius: "2px"` sur les barres
-- **Jamais de box-shadow**
-- **Polices** : `'Bebas Neue'` titres/scores, `'Raleway'` tout le reste
-- **Couleurs** : `#a3e635` vert, `#f97316` orange, `#ef4444` rouge, `#60a5fa` bleu
-- **Fonds** : `#0a0a0a` principal, `#0f0f0f` cartes, `#161616` cartes intérieures
-- **fontWeight 300** corps, **600** CTA
-- Animations scroll : `className="reveal"` + `useReveal()`
 
 ---
 

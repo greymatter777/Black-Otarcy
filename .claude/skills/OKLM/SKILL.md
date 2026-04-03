@@ -1,8 +1,8 @@
-# Skill — UPDATE
+# Skill — OKLM
 
 ## Déclencheur
 
-Quand l'utilisateur écrit le mot `UPDATE` (en majuscules, seul ou dans une phrase), cette skill s'active immédiatement.
+Quand l'utilisateur écrit le mot `OKLM` (en majuscules, seul ou dans une phrase), cette skill s'active immédiatement.
 
 ## Ce que tu dois faire
 

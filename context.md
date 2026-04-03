@@ -138,3 +138,46 @@
 - Le CLAUDE.md est le filet de sécurité — le tenir à jour permet de /clear sans perdre le contexte projet
 - Sites PME français : beaucoup répondent uniquement sur `www.` — le retry est indispensable
 - Copy-paste d'URL : les caractères invisibles Unicode (u00A0, u200B, uFEFF) causent des échecs silencieux — toujours sanitizer
+
+---
+
+## Session 03/04/2026 — Pause stratégique : création des skills Claude Code
+
+### Contexte
+
+Session hors code — réflexion et mise en place de l'infrastructure de skills pour maximiser l'efficacité de Claude Code sur les prochaines sessions. Inspiré par une présentation sur l'architecture agents IA (paradigme CPU/OS/Applications appliqué aux LLMs).
+
+### Principe retenu
+
+Une skill = des décisions résolues, pas des conseils génériques. Chaque règle dans une skill doit pouvoir être justifiée par "ça vient de là, ça a résolu ce problème". Sources : code en production, doc officielle des outils, bugs corrigés.
+
+### Skills créées
+
+| Skill | Chemin | Contenu clé |
+|-------|--------|-------------|
+| react-otarcy | `.claude/skills/react-otarcy/SKILL.md` | Design system complet — palette, typographie, 6 types de boutons, composants récurrents, 8 règles absolues, checklist de livraison |
+| vercel-api | `.claude/skills/vercel-api/SKILL.md` | Patterns API battle-tested — sanitizeUrl, fetchWithTimeout, retry pattern, CORS, verifySupabaseAuth, structure complète d'un endpoint, tableau des endpoints existants |
+| supabase-otarcy | `.claude/skills/supabase-otarcy/SKILL.md` | Deux clients Supabase (anon vs service key), AuthProvider, schéma table users, patterns de requêtes exacts, gestion quota audits_used, sessionStorage flow |
+
+### CLAUDE.md mis à jour
+
+- Section `## Skills disponibles` ajoutée — tableau des 3 skills avec conditions de déclenchement
+- Section `## Design system` allégée — renvoi vers la skill au lieu de dupliquer les règles
+- Section `## Conventions techniques` allégée — renvoi vers les skills pour les specs complètes
+
+### Leçons retenues
+
+- L'architecture skills (dossier avec SKILL.md + ressources) transforme chaque décision technique en procédure réutilisable
+- Différence skill médiocre / skill elite : la skill elite ne donne pas de conseils, elle donne du code exact justifié par un problème réel
+- Source la plus précieuse pour construire une skill : le code en production existant, pas la théorie
+- La divulgation progressive (Claude ne charge la skill que quand pertinent) évite la saturation du contexte
+
+### Reste à faire — inchangé depuis session 01/04
+
+1. **Étape 4 — `api/llm-perception.ts`** : bloquée sur `OPENROUTER_API_KEY`
+2. **`ANTHROPIC_API_KEY`** : ajouter dans Vercel pour activer la synthèse Claude dans `api/audit.ts`
+3. **Dashboard** : aligner sur le nouveau modèle URL/score-sur-100
+4. **Pages secteurs** : supprimer les fichiers devenus orphelins
+5. **Refacto Navbar/Footer** : extraire dans `src/components/`
+6. **index.html** : meta tags et Schema.org à mettre à jour
+7. **DNS otarcy.app** : vérifier réactivation
