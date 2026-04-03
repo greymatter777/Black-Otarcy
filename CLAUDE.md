@@ -16,14 +16,14 @@ Instructions pour Claude Code. Lire entièrement avant de modifier quoi que ce s
 
 ---
 
-## État d'avancement — Session 01/04/2026
+## État d'avancement — Session 03/04/2026
 
 | Étape | Fichier | Statut |
 |-------|---------|--------|
 | 0 | validate-checkers.mjs | ✅ Validé — scores cohérents sur 3 URLs |
 | 1 | src/lib/checkers.ts | ✅ Créé |
 | 2 | api/score.ts | ✅ Testé en prod — robustesse fetch améliorée |
-| 3 | api/audit.ts | ✅ Déployé — robustesse fetch améliorée |
+| 3 | api/audit.ts | ✅ Insert Supabase table `audits` ajouté |
 | 4 | api/llm-perception.ts | ⬜ En attente — nécessite OPENROUTER_API_KEY |
 | 5 | src/pages/ScoreResult.tsx | ✅ friendlyError() + ProtectedSiteState ajoutés |
 | 6 | src/pages/AuditResult.tsx | ✅ friendlyError() + ProtectedSiteState ajoutés |
@@ -31,6 +31,7 @@ Instructions pour Claude Code. Lire entièrement avant de modifier quoi que ce s
 | 8 | src/App.tsx | ✅ Routes /score /audit /perception /about + redirects secteurs → /pricing |
 | 9 | src/pages/Index.tsx | ✅ Nettoyage home — barre URL dans Hero, sections WhyAio/About/AuditSection supprimées |
 | 10 | src/pages/About.tsx | ✅ Créé — contient Navbar, AboutSection, WhyAio, Footer |
+| 11 | src/pages/Dashboard.tsx | ✅ Réécrit — nouveau modèle URL/score-100, criteres/quick_wins/plan_long_terme |
 
 **Prochaine étape : Étape 4 — api/llm-perception.ts (bloquée sur OPENROUTER_API_KEY)**
 
@@ -313,6 +314,30 @@ OPENROUTER_API_KEY    ← workflow 2 dans api/llm-perception.ts
 - `prerender.mjs` — prerendering
 - `.github/workflows/digest.yml` — cron newsletter
 - Toutes les pages publiques (Index, Pricing, Glossaire, Faq, Blog, About)
+
+---
+
+## Modifications session 03/04/2026
+
+### Insert Supabase dans api/audit.ts
+- Après `genererSynthese()` et avant `increment_audit_count`, insert dans la table `audits` : `user_id`, `url`, `score`, `niveau`, `criteres`, `quick_wins`, `plan_long_terme`, `created_at`
+
+### Dashboard — nouveau modèle
+- `src/pages/Dashboard.tsx` entièrement réécrit : `AuditRecord` avec `url/score/niveau/criteres/quick_wins/plan_long_terme`
+- `ScoreRing` : progress sur 100, seuils 76/56, label `/100`
+- `AuditCard` : hostname via IIFE try/catch, badge niveau coloré
+- `AuditDetail` : grille critères (statut coloré) + quick wins (badges impact/effort/catégorie) + plan long terme — bloc Forces/Faiblesses/Recommandations supprimé — bouton PDF supprimé
+- Stats : "Score moyen" sur 100, "Dernier site" avec hostname
+- Navbar Dashboard : `AUDIT` → `DIAGNOSTIC`
+- Filtre au chargement : `.filter((a) => a.url)` pour ignorer les entrées sans URL (ancien modèle)
+- Extraction hostname : IIFE `(() => { try { return new URL(url).hostname; } catch { return url ?? "URL inconnue"; } })()`
+
+### Nettoyage URLs — projet entier
+- Toutes les occurrences `blackotarcyweb.vercel.app` remplacées dans `src/` et `api/`
+- `src/` (Blog.tsx, BlogPost.tsx, exportPDF.ts) → `otarcy.app`
+- `api/` CORS headers (tous les endpoints) → `"*"` — plus aucune URL hardcodée en CORS
+- `api/` URLs non-CORS (newsletter, digest, create-checkout) → `otarcy.app`
+- Liens Instagram → `https://www.instagram.com/otarcy.app/` (About.tsx, Index.tsx)
 
 ---
 

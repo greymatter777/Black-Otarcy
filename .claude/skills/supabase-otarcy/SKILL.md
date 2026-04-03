@@ -18,7 +18,7 @@ Tout ce qui est ici vient du code en production — rien n'est théorique.
 4. **Colonne audits : `audits_used`** — pas `audits_count` (erreur corrigée en prod le 01/04/2026)
 5. **upsert utilisateur au premier accès** — vérifier si l'user existe, créer si absent
 6. **`audits_limit === -1` = illimité** — toujours gérer ce cas avant le calcul du quota
-7. **CORS sur `/api/user-status.ts`** : `Access-Control-Allow-Origin: https://blackotarcyweb.vercel.app` (pas `*`)
+7. **CORS sur `/api/user-status.ts`** : `Access-Control-Allow-Origin: *` (comme tous les autres endpoints)
 
 ---
 

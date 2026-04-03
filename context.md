@@ -172,12 +172,37 @@ Une skill = des décisions résolues, pas des conseils génériques. Chaque règ
 - Source la plus précieuse pour construire une skill : le code en production existant, pas la théorie
 - La divulgation progressive (Claude ne charge la skill que quand pertinent) évite la saturation du contexte
 
-### Reste à faire — inchangé depuis session 01/04
+---
+
+## Session 03/04/2026 — Dashboard nouveau modèle + nettoyage URLs
+
+### Modifications effectuées
+
+| Fichier | Modification |
+|---------|-------------|
+| api/audit.ts | ✅ Insert Supabase table `audits` après genererSynthese() |
+| api/history.ts | ✅ CORS `"*"` (était blackotarcyweb.vercel.app) |
+| src/pages/Dashboard.tsx | ✅ Réécrit — AuditRecord URL/score-100, criteres/quick_wins/plan_long_terme |
+| src/pages/Blog.tsx | ✅ URLs Schema.org → otarcy.app |
+| src/pages/BlogPost.tsx | ✅ URLs Schema.org → otarcy.app |
+| src/lib/exportPDF.ts | ✅ Footer PDF → otarcy.app |
+| src/pages/Index.tsx | ✅ Lien Instagram mis à jour |
+| src/pages/About.tsx | ✅ Lien Instagram mis à jour |
+| api/* (8 endpoints) | ✅ CORS headers → `"*"`, URLs non-CORS → otarcy.app |
+
+### Décisions techniques
+
+- **Dashboard** : extraction hostname via IIFE try/catch sur toute occurrence (`AuditCard`, `AuditDetail`, stat "Dernier site") — protège contre les URLs malformées ou null
+- **Filtre chargement** : `.filter((a) => a.url)` — ignore les anciennes entrées Supabase de l'ancien modèle (champ `brand` sans `url`)
+- **CORS** : tous les endpoints passés à `"*"` — cohérence totale, plus de risque de blocage cross-origin au changement de domaine
+
+### Reste à faire — mis à jour session 03/04
 
 1. **Étape 4 — `api/llm-perception.ts`** : bloquée sur `OPENROUTER_API_KEY`
 2. **`ANTHROPIC_API_KEY`** : ajouter dans Vercel pour activer la synthèse Claude dans `api/audit.ts`
-3. **Dashboard** : aligner sur le nouveau modèle URL/score-sur-100
-4. **Pages secteurs** : supprimer les fichiers devenus orphelins
+3. ~~Dashboard~~ ✅ Réécrit session 03/04
+4. **Pages secteurs** : supprimer les fichiers devenus orphelins (`AioCoaching.tsx` etc.)
 5. **Refacto Navbar/Footer** : extraire dans `src/components/`
 6. **index.html** : meta tags et Schema.org à mettre à jour
+7. **`.claude/skills/supabase-otarcy/SKILL.md`** : note CORS user-status.ts obsolète (encore `blackotarcyweb.vercel.app`) — à corriger
 7. **DNS otarcy.app** : vérifier réactivation
