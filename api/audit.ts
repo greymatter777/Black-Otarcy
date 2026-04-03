@@ -443,6 +443,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const score = criteres.reduce((acc, c) => acc + c.points, 0);
   const { quick_wins, plan_long_terme } = await genererSynthese(cleanUrl, criteres);
 
+  await supabase.from("audits").insert({
+    user_id: auth.userId,
+    url: cleanUrl,
+    score,
+    niveau: getNiveau(score),
+    criteres,
+    quick_wins,
+    plan_long_terme,
+    created_at: new Date().toISOString(),
+  });
+
   await supabase.rpc("increment_audit_count", { user_id: auth.userId });
 
   return res.status(200).json({
