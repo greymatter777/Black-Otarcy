@@ -61,7 +61,7 @@ export function exportAuditPDF(audit: AuditData) {
     doc.setTextColor(...DIM);
     doc.text("OTARCY — AIO Brand Audit", 14, H - 9);
     doc.text(`Page ${page}`, W / 2, H - 9, { align: "center" });
-    doc.text("blackotarcyweb.vercel.app", W - 14, H - 9, { align: "right" });
+    doc.text("otarcy.app", W - 14, H - 9, { align: "right" });
   };
 
   const newPage = () => {

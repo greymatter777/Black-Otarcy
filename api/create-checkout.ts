@@ -29,7 +29,7 @@ const PRICE_IDS: Record<string, string> = {
 };
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  res.setHeader("Access-Control-Allow-Origin", "https://blackotarcyweb.vercel.app");
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   if (req.method === "OPTIONS") return res.status(204).end();
@@ -52,8 +52,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       ...(auth.email ? { customer_email: auth.email } : {}),
       line_items: [{ price: PRICE_IDS[plan], quantity: 1 }],
       metadata: { user_id: auth.userId, plan },
-      success_url: "https://blackotarcyweb.vercel.app/?success=true",
-      cancel_url: "https://blackotarcyweb.vercel.app/pricing?canceled=true",
+      success_url: "https://otarcy.app/?success=true",
+      cancel_url: "https://otarcy.app/pricing?canceled=true",
     });
     return res.status(200).json({ url: session.url });
   } catch {

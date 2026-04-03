@@ -148,30 +148,30 @@ export default function BlogPost() {
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Article",
-              "@id": `https://blackotarcyweb.vercel.app/blog/${post.slug}`,
+              "@id": `https://otarcy.app/blog/${post.slug}`,
               "headline": post.title,
               "description": post.excerpt,
               "datePublished": post.published_at,
               "dateModified": post.published_at,
               "inLanguage": "fr",
-              "url": `https://blackotarcyweb.vercel.app/blog/${post.slug}`,
+              "url": `https://otarcy.app/blog/${post.slug}`,
               "author": {
                 "@type": "Organization",
                 "name": "Otarcy",
-                "url": "https://blackotarcyweb.vercel.app"
+                "url": "https://otarcy.app"
               },
               "publisher": {
                 "@type": "Organization",
                 "name": "Otarcy",
-                "url": "https://blackotarcyweb.vercel.app",
+                "url": "https://otarcy.app",
                 "logo": {
                   "@type": "ImageObject",
-                  "url": "https://blackotarcyweb.vercel.app/favicon.png"
+                  "url": "https://otarcy.app/favicon.png"
                 }
               },
               "mainEntityOfPage": {
                 "@type": "WebPage",
-                "@id": `https://blackotarcyweb.vercel.app/blog/${post.slug}`
+                "@id": `https://otarcy.app/blog/${post.slug}`
               },
               "articleSection": post.category,
               "keywords": "AIO, AI Optimization, SEO, référencement IA, PME, ChatGPT, Perplexity, Otarcy"

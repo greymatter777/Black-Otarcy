@@ -32,7 +32,7 @@ function isValidEmail(email: string): boolean {
 // ─── Handler principal ────────────────────────────────────────────────────────
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // CORS
-  res.setHeader("Access-Control-Allow-Origin", "https://blackotarcyweb.vercel.app");
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   if (req.method === "OPTIONS") return res.status(200).end();
@@ -151,7 +151,7 @@ function confirmationEmailHtml(email: string): string {
               </div>
               <p style="margin:24px 0 0;font-size:13px;color:#444;line-height:1.6;">
                 En attendant, testez gratuitement l'audit AIO de votre marque sur 
-                <a href="https://blackotarcyweb.vercel.app" style="color:#a3e635;text-decoration:none;">otarcy.fr</a>
+                <a href="https://otarcy.app" style="color:#a3e635;text-decoration:none;">otarcy.app</a>
               </p>
             </td>
           </tr>
@@ -160,7 +160,7 @@ function confirmationEmailHtml(email: string): string {
             <td style="padding:16px 32px;border-top:1px solid #1a1a1a;">
               <p style="margin:0;font-size:11px;color:#333;line-height:1.6;">
                 Vous recevez cet email car vous vous êtes inscrit(e) sur otarcy.fr.<br/>
-                <a href="https://blackotarcyweb.vercel.app/unsubscribe?email=${encodeURIComponent(email)}" 
+                <a href="https://otarcy.app/unsubscribe?email=${encodeURIComponent(email)}"
                    style="color:#444;text-decoration:underline;">Se désabonner</a>
                 &nbsp;·&nbsp; Otarcy France — Bordeaux
               </p>

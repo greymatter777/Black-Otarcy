@@ -321,7 +321,7 @@ function buildNewsletterHtml(data: any, dateLabel: string): string {
             <p style="margin:0 0 12px;font-size:11px;color:#5a7a2a;text-transform:uppercase;letter-spacing:0.15em;">
               Découvrez votre score AIO gratuitement
             </p>
-            <a href="https://blackotarcyweb.vercel.app/#audit"
+            <a href="https://otarcy.app/#audit"
                style="display:inline-block;background:#a3e635;color:#0a0a0a;padding:12px 28px;font-size:12px;font-weight:700;font-family:'Courier New',monospace;text-decoration:none;letter-spacing:0.05em;text-transform:uppercase;">
               Auditer ma marque →
             </a>
@@ -335,11 +335,11 @@ function buildNewsletterHtml(data: any, dateLabel: string): string {
               <strong style="color:#333;">Le Brief AIO</strong> par Otarcy France — Bordeaux, Gironde
             </p>
             <p style="margin:0;font-size:11px;color:#222;line-height:1.6;">
-              <a href="https://blackotarcyweb.vercel.app" style="color:#333;text-decoration:none;">otarcy.fr</a>
+              <a href="https://otarcy.app" style="color:#333;text-decoration:none;">otarcy.app</a>
               &nbsp;·&nbsp;
               <a href="https://www.linkedin.com/company/otarcy-france" style="color:#333;text-decoration:none;">LinkedIn</a>
               &nbsp;·&nbsp;
-              <a href="https://blackotarcyweb.vercel.app/unsubscribe" style="color:#2a2a2a;text-decoration:underline;">Se désabonner</a>
+              <a href="https://otarcy.app/unsubscribe" style="color:#2a2a2a;text-decoration:underline;">Se désabonner</a>
             </p>
           </td>
         </tr>

@@ -65,15 +65,15 @@ export default function Blog() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Blog",
-            "@id": "https://blackotarcyweb.vercel.app/blog#blog",
+            "@id": "https://otarcy.app/blog#blog",
             "name": "Blog AIO — Otarcy",
             "description": "Articles de référence sur l'AI Optimization (AIO) pour les PME françaises. Stratégies, guides et analyses par Otarcy.",
-            "url": "https://blackotarcyweb.vercel.app/blog",
+            "url": "https://otarcy.app/blog",
             "inLanguage": "fr",
             "publisher": {
               "@type": "Organization",
               "name": "Otarcy",
-              "url": "https://blackotarcyweb.vercel.app"
+              "url": "https://otarcy.app"
             }
           })
         }}
