@@ -16,7 +16,7 @@ Instructions pour Claude Code. Lire entièrement avant de modifier quoi que ce s
 
 ---
 
-## État d'avancement — Session 03/04/2026
+## État d'avancement — Session 07/04/2026
 
 | Étape | Fichier | Statut |
 |-------|---------|--------|
@@ -338,6 +338,25 @@ OPENROUTER_API_KEY    ← workflow 2 dans api/llm-perception.ts
 - `api/` CORS headers (tous les endpoints) → `"*"` — plus aucune URL hardcodée en CORS
 - `api/` URLs non-CORS (newsletter, digest, create-checkout) → `otarcy.app`
 - Liens Instagram → `https://www.instagram.com/otarcy.app/` (About.tsx, Index.tsx)
+
+---
+
+## Modifications session 07/04/2026
+
+### ThemeToggle — intégration navbars
+
+- `src/lib/ThemeContext.tsx` : ThemeProvider + useTheme hook — persistance localStorage, data-theme sur `<html>`
+- `src/components/ThemeToggle.tsx` : toggle switch lune/soleil, prop `showLabel?: boolean`
+- `src/pages/Index.tsx` : import ThemeToggle + useTheme — desktop (avant auth, dans flex gap 14px) + mobile (bloc `padding: "18px 0"` avant auth)
+- `src/pages/About.tsx` : même intervention — desktop + mobile
+- `SideLeft` + `SideRight` dans `Index.tsx` : convertis en arrow function, `if (theme === "light") return null`
+- Script anti-flash dans `index.html` (avant cette session)
+
+### Migration CSS variables — Index.tsx + About.tsx
+
+- 153 couleurs hardcodées remplacées par les variables CSS définies dans `index.css`
+- Table de correspondance appliquée : `#0a0a0a` → `var(--bg-primary)`, `#0f0f0f` → `var(--bg-page)`, `#161616` → `var(--bg-hero)`, `#111` → `var(--bg-input-nl)`, `rgba(15,15,15,...)` → `var(--bg-nav)`, `#1a1a1a` → `var(--border-1)`, `#2a2a2a` → `var(--border-2)`, `#3a3a3a` → `var(--border-3)`, `#f0f0f0` → `var(--text-1)`, `#7a7a7a` → `var(--text-2)`, `#4a4a4a` → `var(--text-3)`, `#d4d4d4` → `var(--text-4)`, `#e8e8e8` → `var(--text-5)`, `#a3e635` → `var(--accent)`
+- Intacts : `#ef4444` (erreur), `#60a5fa` (bleu), `#f97316` (orange), attributs SVG `stroke=/fill=`, handlers `onMouseEnter/Leave`
 
 ---
 
