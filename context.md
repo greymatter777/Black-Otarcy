@@ -196,7 +196,7 @@ Une skill = des décisions résolues, pas des conseils génériques. Chaque règ
 - **Filtre chargement** : `.filter((a) => a.url)` — ignore les anciennes entrées Supabase de l'ancien modèle (champ `brand` sans `url`)
 - **CORS** : tous les endpoints passés à `"*"` — cohérence totale, plus de risque de blocage cross-origin au changement de domaine
 
-### Reste à faire — mis à jour session 03/04
+### Reste à faire — mis à jour session 07/04
 
 1. **Étape 4 — `api/llm-perception.ts`** : bloquée sur `OPENROUTER_API_KEY`
 2. **`ANTHROPIC_API_KEY`** : ajouter dans Vercel pour activer la synthèse Claude dans `api/audit.ts`
@@ -205,4 +205,15 @@ Une skill = des décisions résolues, pas des conseils génériques. Chaque règ
 5. **Refacto Navbar/Footer** : extraire dans `src/components/`
 6. **index.html** : meta tags et Schema.org à mettre à jour
 7. **`.claude/skills/supabase-otarcy/SKILL.md`** : note CORS user-status.ts obsolète (encore `blackotarcyweb.vercel.app`) — à corriger
-7. **DNS otarcy.app** : vérifier réactivation
+8. **DNS otarcy.app** : vérifier réactivation
+
+---
+
+## Session 07/04/2026 — ThemeToggle intégration navbars
+
+- `ThemeContext` + CSS variables dark/light créés (`src/lib/ThemeContext.tsx`)
+- Script anti-flash ajouté dans `index.html`
+- `ThemeToggle` créé (`src/components/ThemeToggle.tsx`) — toggle switch lune/soleil
+- Intégré dans `Index.tsx` : desktop (avant auth) + mobile overlay (avant bloc auth)
+- Intégré dans `About.tsx` : desktop (avant auth) + mobile overlay (avant bloc auth)
+- `SideLeft` et `SideRight` masqués en mode light (`if (theme === "light") return null`)

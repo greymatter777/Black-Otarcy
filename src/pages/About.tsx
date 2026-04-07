@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/auth";
+import ThemeToggle from "../components/ThemeToggle";
 
 // ─── HOOK: Scroll Reveal ──────────────────────────────
 function useReveal(deps: any[] = []) {
@@ -91,26 +92,29 @@ const Navbar = () => {
           ))}
 
           {/* Auth desktop */}
-          {user ? (
-            <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-              <Link to="/dashboard"
-                style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.15em", color: "#7a7a7a", textDecoration: "none", transition: "color 0.3s" }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "#e8e8e8")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "#7a7a7a")}
-              >{user?.user_metadata?.full_name ?? user?.email}</Link>
-              <button type="button" onClick={() => signOut().then(() => navigate("/login"))}
-                style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "#4a4a4a", background: "transparent", border: "none", cursor: "pointer", transition: "color 0.3s" }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "#ef4444")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "#4a4a4a")}
-              >Déconnexion</button>
-            </div>
-          ) : (
-            <button type="button" onClick={() => navigate("/login")}
-              style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.22em", textTransform: "uppercase", padding: "7px 16px", border: "1px solid #3a3a3a", background: "transparent", color: "#e8e8e8", cursor: "pointer", transition: "border-color 0.3s" }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#e8e8e8"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#3a3a3a"; }}
-            >Connexion</button>
-          )}
+          <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+            <ThemeToggle />
+            {user ? (
+              <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                <Link to="/dashboard"
+                  style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.15em", color: "#7a7a7a", textDecoration: "none", transition: "color 0.3s" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "#e8e8e8")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "#7a7a7a")}
+                >{user?.user_metadata?.full_name ?? user?.email}</Link>
+                <button type="button" onClick={() => signOut().then(() => navigate("/login"))}
+                  style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "#4a4a4a", background: "transparent", border: "none", cursor: "pointer", transition: "color 0.3s" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "#ef4444")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "#4a4a4a")}
+                >Déconnexion</button>
+              </div>
+            ) : (
+              <button type="button" onClick={() => navigate("/login")}
+                style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.22em", textTransform: "uppercase", padding: "7px 16px", border: "1px solid #3a3a3a", background: "transparent", color: "#e8e8e8", cursor: "pointer", transition: "border-color 0.3s" }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#e8e8e8"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#3a3a3a"; }}
+              >Connexion</button>
+            )}
+          </div>
         </div>
 
         {/* ── HAMBURGER BUTTON (mobile uniquement) ── */}
@@ -153,6 +157,10 @@ const Navbar = () => {
               >{item.label}</Link>
             )
           ))}
+
+          <div style={{ padding: "18px 0", borderBottom: "1px solid #1a1a1a" }}>
+            <ThemeToggle showLabel={true} />
+          </div>
 
           {/* Auth mobile */}
           <div style={{ marginTop: "32px" }}>

@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../lib/auth";
 import { useNavigate } from "react-router-dom";
 import { authFetch } from "../lib/useAuthFetch";
+import ThemeToggle from "../components/ThemeToggle";
+import { useTheme } from "../lib/ThemeContext";
 
 // ─── HOOK: Scroll Reveal ──────────────────────────────
 function useReveal(deps: any[] = []) {
@@ -95,26 +97,29 @@ const Navbar = () => {
           ))}
 
           {/* Auth desktop */}
-          {user ? (
-            <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-              <Link to="/dashboard"
-                style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.15em", color: "#7a7a7a", textDecoration: "none", transition: "color 0.3s" }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "#e8e8e8")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "#7a7a7a")}
-              >{user?.user_metadata?.full_name ?? user?.email}</Link>
-              <button type="button" onClick={() => signOut().then(() => navigate("/login"))}
-                style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "#4a4a4a", background: "transparent", border: "none", cursor: "pointer", transition: "color 0.3s" }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "#ef4444")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "#4a4a4a")}
-              >Déconnexion</button>
-            </div>
-          ) : (
-            <button type="button" onClick={() => navigate("/login")}
-              style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.22em", textTransform: "uppercase", padding: "7px 16px", border: "1px solid #3a3a3a", background: "transparent", color: "#e8e8e8", cursor: "pointer", transition: "border-color 0.3s" }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#e8e8e8"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#3a3a3a"; }}
-            >Connexion</button>
-          )}
+          <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+            <ThemeToggle />
+            {user ? (
+              <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                <Link to="/dashboard"
+                  style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.15em", color: "#7a7a7a", textDecoration: "none", transition: "color 0.3s" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "#e8e8e8")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "#7a7a7a")}
+                >{user?.user_metadata?.full_name ?? user?.email}</Link>
+                <button type="button" onClick={() => signOut().then(() => navigate("/login"))}
+                  style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "#4a4a4a", background: "transparent", border: "none", cursor: "pointer", transition: "color 0.3s" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "#ef4444")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "#4a4a4a")}
+                >Déconnexion</button>
+              </div>
+            ) : (
+              <button type="button" onClick={() => navigate("/login")}
+                style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.22em", textTransform: "uppercase", padding: "7px 16px", border: "1px solid #3a3a3a", background: "transparent", color: "#e8e8e8", cursor: "pointer", transition: "border-color 0.3s" }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#e8e8e8"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#3a3a3a"; }}
+              >Connexion</button>
+            )}
+          </div>
         </div>
 
         {/* ── HAMBURGER BUTTON (mobile uniquement) ── */}
@@ -159,6 +164,10 @@ const Navbar = () => {
             )
           ))}
 
+          <div style={{ padding: "18px 0", borderBottom: "1px solid #1a1a1a" }}>
+            <ThemeToggle showLabel={true} />
+          </div>
+
           {/* Auth mobile */}
           <div style={{ marginTop: "32px" }}>
             {user ? (
@@ -183,30 +192,38 @@ const Navbar = () => {
 };
 
 // ─── SIDE ELEMENTS ────────────────────────────────────
-const SideLeft = () => (
-  <div className="side-elements" style={{ position: "fixed", left: "20px", top: "50%", transform: "translateY(-50%)", display: "flex", flexDirection: "column", gap: "18px", zIndex: 50 }}>
-    <a href="https://www.linkedin.com/company/otarcy-france" target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a3e635" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z" />
-        <rect x="2" y="9" width="4" height="12" />
-        <circle cx="4" cy="4" r="2" />
-      </svg>
-    </a>
-    <a href="https://www.instagram.com/otarcy.app/" target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a3e635" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-        <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" />
-        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-      </svg>
-    </a>
-  </div>
-);
+const SideLeft = () => {
+  const { theme } = useTheme();
+  if (theme === "light") return null;
+  return (
+    <div className="side-elements" style={{ position: "fixed", left: "20px", top: "50%", transform: "translateY(-50%)", display: "flex", flexDirection: "column", gap: "18px", zIndex: 50 }}>
+      <a href="https://www.linkedin.com/company/otarcy-france" target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a3e635" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z" />
+          <rect x="2" y="9" width="4" height="12" />
+          <circle cx="4" cy="4" r="2" />
+        </svg>
+      </a>
+      <a href="https://www.instagram.com/otarcy.app/" target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a3e635" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+          <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" />
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+        </svg>
+      </a>
+    </div>
+  );
+};
 
-const SideRight = () => (
-  <div className="side-elements" style={{ position: "fixed", right: "18px", top: "50%", transform: "translateY(-50%) rotate(90deg)", zIndex: 50 }}>
-    <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.6rem", letterSpacing: "0.35em", color: "#4a4a4a", fontWeight: 500, textTransform: "uppercase" }}>SCROLL</span>
-  </div>
-);
+const SideRight = () => {
+  const { theme } = useTheme();
+  if (theme === "light") return null;
+  return (
+    <div className="side-elements" style={{ position: "fixed", right: "18px", top: "50%", transform: "translateY(-50%) rotate(90deg)", zIndex: 50 }}>
+      <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.6rem", letterSpacing: "0.35em", color: "#4a4a4a", fontWeight: 500, textTransform: "uppercase" }}>SCROLL</span>
+    </div>
+  );
+};
 
 // ─── HERO ─────────────────────────────────────────────
 const Hero: React.FC<{ isSignedIn: boolean; onSignIn: () => void; searchBar: React.ReactNode }> = ({ isSignedIn, searchBar }) => (
