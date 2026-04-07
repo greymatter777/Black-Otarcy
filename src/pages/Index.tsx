@@ -66,15 +66,15 @@ const Navbar = () => {
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
         display: "flex", alignItems: "center", justifyContent: "space-between",
         padding: "20px 24px",
-        background: scrolled ? "rgba(15,15,15,0.97)" : "rgba(15,15,15,0.6)",
+        background: scrolled ? "var(--bg-nav)" : "var(--bg-nav)",
         backdropFilter: "blur(12px)",
         borderBottom: "1px solid rgba(255,255,255,0.04)",
         transition: "background 0.4s",
       }}>
         {/* Logo */}
         <Link to="/" style={{ display: "flex", flexDirection: "column", lineHeight: 0.9, textDecoration: "none" }}>
-          <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.15rem", letterSpacing: "0.15em", color: "#f0f0f0" }}>OT</span>
-          <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.15rem", letterSpacing: "0.15em", color: "#7a7a7a" }}>CY</span>
+          <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.15rem", letterSpacing: "0.15em", color: "var(--text-1)" }}>OT</span>
+          <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.15rem", letterSpacing: "0.15em", color: "var(--text-2)" }}>CY</span>
         </Link>
 
         {/* ── DESKTOP NAV ── */}
@@ -83,13 +83,13 @@ const Navbar = () => {
             item.to.startsWith("#") ? (
               <button key={item.label} type="button"
                 onClick={() => handleScrollLink(item.to.replace("#", ""))}
-                style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.7rem", letterSpacing: "0.2em", color: "#7a7a7a", fontWeight: 500, background: "transparent", border: "none", cursor: "pointer", transition: "color 0.3s" }}
+                style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.7rem", letterSpacing: "0.2em", color: "var(--text-2)", fontWeight: 500, background: "transparent", border: "none", cursor: "pointer", transition: "color 0.3s" }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "#e8e8e8")}
                 onMouseLeave={(e) => (e.currentTarget.style.color = "#7a7a7a")}
               >{item.label}</button>
             ) : (
               <Link key={item.label} to={item.to}
-                style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.7rem", letterSpacing: "0.2em", color: item.highlight ? "#a3e635" : "#7a7a7a", fontWeight: 500, textDecoration: "none", transition: "color 0.3s" }}
+                style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.7rem", letterSpacing: "0.2em", color: item.highlight ? "var(--accent)" : "var(--text-2)", fontWeight: 500, textDecoration: "none", transition: "color 0.3s" }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "#f0f0f0")}
                 onMouseLeave={(e) => (e.currentTarget.style.color = item.highlight ? "#a3e635" : "#7a7a7a")}
               >{item.label}</Link>
@@ -102,19 +102,19 @@ const Navbar = () => {
             {user ? (
               <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
                 <Link to="/dashboard"
-                  style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.15em", color: "#7a7a7a", textDecoration: "none", transition: "color 0.3s" }}
+                  style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.15em", color: "var(--text-2)", textDecoration: "none", transition: "color 0.3s" }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = "#e8e8e8")}
                   onMouseLeave={(e) => (e.currentTarget.style.color = "#7a7a7a")}
                 >{user?.user_metadata?.full_name ?? user?.email}</Link>
                 <button type="button" onClick={() => signOut().then(() => navigate("/login"))}
-                  style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "#4a4a4a", background: "transparent", border: "none", cursor: "pointer", transition: "color 0.3s" }}
+                  style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-3)", background: "transparent", border: "none", cursor: "pointer", transition: "color 0.3s" }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = "#ef4444")}
                   onMouseLeave={(e) => (e.currentTarget.style.color = "#4a4a4a")}
                 >Déconnexion</button>
               </div>
             ) : (
               <button type="button" onClick={() => navigate("/login")}
-                style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.22em", textTransform: "uppercase", padding: "7px 16px", border: "1px solid #3a3a3a", background: "transparent", color: "#e8e8e8", cursor: "pointer", transition: "border-color 0.3s" }}
+                style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.22em", textTransform: "uppercase", padding: "7px 16px", border: "1px solid var(--border-3)", background: "transparent", color: "var(--text-5)", cursor: "pointer", transition: "border-color 0.3s" }}
                 onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#e8e8e8"; }}
                 onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#3a3a3a"; }}
               >Connexion</button>
@@ -130,9 +130,9 @@ const Navbar = () => {
           style={{ flexDirection: "column", gap: "5px", background: "transparent", border: "none", cursor: "pointer", padding: "4px", zIndex: 110 }}
           aria-label="Menu"
         >
-          <span style={{ display: "block", width: "22px", height: "1.5px", background: mobileOpen ? "#a3e635" : "#e8e8e8", transition: "transform 0.3s, opacity 0.3s", transform: mobileOpen ? "translateY(6.5px) rotate(45deg)" : "none" }} />
-          <span style={{ display: "block", width: "22px", height: "1.5px", background: "#e8e8e8", transition: "opacity 0.3s", opacity: mobileOpen ? 0 : 1 }} />
-          <span style={{ display: "block", width: "22px", height: "1.5px", background: mobileOpen ? "#a3e635" : "#e8e8e8", transition: "transform 0.3s, opacity 0.3s", transform: mobileOpen ? "translateY(-6.5px) rotate(-45deg)" : "none" }} />
+          <span style={{ display: "block", width: "22px", height: "1.5px", background: mobileOpen ? "var(--accent)" : "var(--text-5)", transition: "transform 0.3s, opacity 0.3s", transform: mobileOpen ? "translateY(6.5px) rotate(45deg)" : "none" }} />
+          <span style={{ display: "block", width: "22px", height: "1.5px", background: "var(--text-5)", transition: "opacity 0.3s", opacity: mobileOpen ? 0 : 1 }} />
+          <span style={{ display: "block", width: "22px", height: "1.5px", background: mobileOpen ? "var(--accent)" : "var(--text-5)", transition: "transform 0.3s, opacity 0.3s", transform: mobileOpen ? "translateY(-6.5px) rotate(-45deg)" : "none" }} />
         </button>
       </nav>
 
@@ -140,7 +140,7 @@ const Navbar = () => {
       {mobileOpen && (
         <div style={{
           position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-          background: "#0a0a0a", zIndex: 99,
+          background: "var(--bg-primary)", zIndex: 99,
           display: "flex", flexDirection: "column",
           padding: "100px 32px 48px",
           overflowY: "auto",
@@ -150,21 +150,21 @@ const Navbar = () => {
             item.to.startsWith("#") ? (
               <button key={item.label} type="button"
                 onClick={() => handleScrollLink(item.to.replace("#", ""))}
-                style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.8rem", letterSpacing: "0.25em", color: "#7a7a7a", fontWeight: 500, background: "transparent", border: "none", borderBottom: "1px solid #1a1a1a", cursor: "pointer", padding: "18px 0", textAlign: "left", transition: "color 0.2s" }}
+                style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.8rem", letterSpacing: "0.25em", color: "var(--text-2)", fontWeight: 500, background: "transparent", border: "none", borderBottom: "1px solid var(--border-1)", cursor: "pointer", padding: "18px 0", textAlign: "left", transition: "color 0.2s" }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "#e8e8e8")}
                 onMouseLeave={(e) => (e.currentTarget.style.color = "#7a7a7a")}
               >{item.label}</button>
             ) : (
               <Link key={item.label} to={item.to}
                 onClick={() => setMobileOpen(false)}
-                style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.8rem", letterSpacing: "0.25em", color: item.highlight ? "#a3e635" : "#7a7a7a", fontWeight: 500, textDecoration: "none", borderBottom: "1px solid #1a1a1a", padding: "18px 0", display: "block", transition: "color 0.2s" }}
+                style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.8rem", letterSpacing: "0.25em", color: item.highlight ? "var(--accent)" : "var(--text-2)", fontWeight: 500, textDecoration: "none", borderBottom: "1px solid var(--border-1)", padding: "18px 0", display: "block", transition: "color 0.2s" }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "#f0f0f0")}
                 onMouseLeave={(e) => (e.currentTarget.style.color = item.highlight ? "#a3e635" : "#7a7a7a")}
               >{item.label}</Link>
             )
           ))}
 
-          <div style={{ padding: "18px 0", borderBottom: "1px solid #1a1a1a" }}>
+          <div style={{ padding: "18px 0", borderBottom: "1px solid var(--border-1)" }}>
             <ThemeToggle showLabel={true} />
           </div>
 
@@ -173,7 +173,7 @@ const Navbar = () => {
             {user ? (
               <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                 <Link to="/dashboard" onClick={() => setMobileOpen(false)}
-                  style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", letterSpacing: "0.15em", color: "#7a7a7a", textDecoration: "none" }}
+                  style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", letterSpacing: "0.15em", color: "var(--text-2)", textDecoration: "none" }}
                 >{user?.user_metadata?.full_name ?? user?.email}</Link>
                 <button type="button" onClick={() => { setMobileOpen(false); signOut().then(() => navigate("/login")); }}
                   style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "#ef4444", background: "transparent", border: "1px solid #3a1a1a", padding: "10px 16px", cursor: "pointer", textAlign: "left" }}
@@ -181,7 +181,7 @@ const Navbar = () => {
               </div>
             ) : (
               <button type="button" onClick={() => { setMobileOpen(false); navigate("/login"); }}
-                style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", letterSpacing: "0.22em", textTransform: "uppercase", padding: "12px 24px", border: "1px solid #3a3a3a", background: "transparent", color: "#e8e8e8", cursor: "pointer", width: "100%" }}
+                style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", letterSpacing: "0.22em", textTransform: "uppercase", padding: "12px 24px", border: "1px solid var(--border-3)", background: "transparent", color: "var(--text-5)", cursor: "pointer", width: "100%" }}
               >Connexion</button>
             )}
           </div>
@@ -220,26 +220,26 @@ const SideRight = () => {
   if (theme === "light") return null;
   return (
     <div className="side-elements" style={{ position: "fixed", right: "18px", top: "50%", transform: "translateY(-50%) rotate(90deg)", zIndex: 50 }}>
-      <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.6rem", letterSpacing: "0.35em", color: "#4a4a4a", fontWeight: 500, textTransform: "uppercase" }}>SCROLL</span>
+      <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.6rem", letterSpacing: "0.35em", color: "var(--text-3)", fontWeight: 500, textTransform: "uppercase" }}>SCROLL</span>
     </div>
   );
 };
 
 // ─── HERO ─────────────────────────────────────────────
 const Hero: React.FC<{ isSignedIn: boolean; onSignIn: () => void; searchBar: React.ReactNode }> = ({ isSignedIn, searchBar }) => (
-  <section style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", background: "#161616", position: "relative", padding: "0 60px" }}>
-    <span style={{ position: "absolute", bottom: "40px", left: "50%", transform: "translateX(-50%)", fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.2em", color: "#4a4a4a" }}>.01</span>
+  <section style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", background: "var(--bg-hero)", position: "relative", padding: "0 60px" }}>
+    <span style={{ position: "absolute", bottom: "40px", left: "50%", transform: "translateX(-50%)", fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.2em", color: "var(--text-3)" }}>.01</span>
 
-    <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.7rem", letterSpacing: "0.3em", color: "#a3e635", textTransform: "uppercase", marginBottom: "24px", fontWeight: 500 }}>
+    <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.7rem", letterSpacing: "0.3em", color: "var(--accent)", textTransform: "uppercase", marginBottom: "24px", fontWeight: 500 }}>
       Diagnostic de présence IA
     </p>
-    <h1 className="reveal otarcytitle" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(5rem, 14vw, 11rem)", letterSpacing: "0.04em", color: "#f0f0f0", lineHeight: 0.9, textTransform: "uppercase" }}>
+    <h1 className="reveal otarcytitle" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(5rem, 14vw, 11rem)", letterSpacing: "0.04em", color: "var(--text-1)", lineHeight: 0.9, textTransform: "uppercase" }}>
       OTARCY
     </h1>
-    <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.82rem", letterSpacing: "0.22em", color: "#7a7a7a", marginTop: "28px", textTransform: "uppercase", fontWeight: 300, maxWidth: "520px" }}>
+    <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.82rem", letterSpacing: "0.22em", color: "var(--text-2)", marginTop: "28px", textTransform: "uppercase", fontWeight: 300, maxWidth: "520px" }}>
       Votre site est-il visible pour les IAs ?
     </p>
-    <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", letterSpacing: "0.15em", color: "#4a4a4a", marginTop: "12px", fontWeight: 300 }}>
+    <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", letterSpacing: "0.15em", color: "var(--text-3)", marginTop: "12px", fontWeight: 300 }}>
       ChatGPT · Claude · Gemini · Perplexity
     </p>
 
@@ -283,9 +283,9 @@ const NewsletterSection = () => {
     <section
       id="newsletter"
       style={{
-        background: "#0a0a0a",
-        borderTop: "1px solid #1a1a1a",
-        borderBottom: "1px solid #1a1a1a",
+        background: "var(--bg-primary)",
+        borderTop: "1px solid var(--border-1)",
+        borderBottom: "1px solid var(--border-1)",
         padding: "80px 60px",
         position: "relative",
         overflow: "hidden",
@@ -294,25 +294,25 @@ const NewsletterSection = () => {
       <div style={{ maxWidth: "640px", margin: "0 auto" }}>
         {/* Label section */}
         <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "32px" }}>
-          <span style={{ fontSize: "0.65rem", letterSpacing: "0.3em", color: "#a3e635", textTransform: "uppercase", fontFamily: "'Raleway', sans-serif", fontWeight: 500 }}>
+          <span style={{ fontSize: "0.65rem", letterSpacing: "0.3em", color: "var(--accent)", textTransform: "uppercase", fontFamily: "'Raleway', sans-serif", fontWeight: 500 }}>
             .04 — Newsletter
           </span>
-          <div style={{ flex: 1, height: "1px", background: "linear-gradient(90deg, #a3e635 0%, transparent 100%)" }} />
+          <div style={{ flex: 1, height: "1px", background: "linear-gradient(90deg, var(--accent) 0%, transparent 100%)" }} />
         </div>
 
         {/* Titre */}
-        <h2 className="reveal" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2.5rem, 5vw, 4rem)", letterSpacing: "0.06em", color: "#f0f0f0", lineHeight: 0.95, margin: "0 0 10px 0" }}>
+        <h2 className="reveal" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2.5rem, 5vw, 4rem)", letterSpacing: "0.06em", color: "var(--text-1)", lineHeight: 0.95, margin: "0 0 10px 0" }}>
           LE BRIEF{" "}
-          <em style={{ color: "#a3e635", fontStyle: "italic" }}>AIO</em>
+          <em style={{ color: "var(--accent)", fontStyle: "italic" }}>AIO</em>
         </h2>
 
         {/* Cadence */}
-        <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.2em", color: "#4a4a4a", textTransform: "uppercase", margin: "0 0 20px 0" }}>
+        <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.2em", color: "var(--text-3)", textTransform: "uppercase", margin: "0 0 20px 0" }}>
           Chaque dimanche matin — 5 min de veille AIO
         </p>
 
         {/* Description */}
-        <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.82rem", color: "#7a7a7a", lineHeight: 1.9, fontWeight: 300, margin: "0 0 36px 0", maxWidth: "520px" }}>
+        <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.82rem", color: "var(--text-2)", lineHeight: 1.9, fontWeight: 300, margin: "0 0 36px 0", maxWidth: "520px" }}>
           Les dernières évolutions de l'AI Optimization, les marques qui gagnent de la visibilité auprès de ChatGPT, Claude et Perplexity — et ce que ça change concrètement pour votre stratégie.
         </p>
 
@@ -323,8 +323,8 @@ const NewsletterSection = () => {
             "1 marque analysée sous l'angle IA",
             "1 action concrète à implémenter",
           ].map((item, i) => (
-            <li key={i} style={{ display: "flex", alignItems: "center", gap: "10px", fontFamily: "'Raleway', sans-serif", fontSize: "0.76rem", color: "#7a7a7a", fontWeight: 300 }}>
-              <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: "#a3e635", flexShrink: 0 }} />
+            <li key={i} style={{ display: "flex", alignItems: "center", gap: "10px", fontFamily: "'Raleway', sans-serif", fontSize: "0.76rem", color: "var(--text-2)", fontWeight: 300 }}>
+              <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: "var(--accent)", flexShrink: 0 }} />
               {item}
             </li>
           ))}
@@ -332,16 +332,16 @@ const NewsletterSection = () => {
 
         {/* Formulaire */}
         {status === "success" ? (
-          <div style={{ border: "1px solid #a3e635", padding: "20px 24px", display: "flex", alignItems: "center", gap: "12px" }}>
-            <span style={{ color: "#a3e635", fontSize: "18px" }}>✓</span>
+          <div style={{ border: "1px solid var(--accent)", padding: "20px 24px", display: "flex", alignItems: "center", gap: "12px" }}>
+            <span style={{ color: "var(--accent)", fontSize: "18px" }}>✓</span>
             <div>
-              <p style={{ fontFamily: "'Raleway', sans-serif", color: "#a3e635", margin: 0, fontSize: "0.76rem", fontWeight: 600, letterSpacing: "0.05em" }}>Inscription confirmée</p>
-              <p style={{ fontFamily: "'Raleway', sans-serif", color: "#4a4a4a", margin: "4px 0 0 0", fontSize: "0.68rem", letterSpacing: "0.05em" }}>Prochain Brief AIO — dimanche matin dans votre boîte.</p>
+              <p style={{ fontFamily: "'Raleway', sans-serif", color: "var(--accent)", margin: 0, fontSize: "0.76rem", fontWeight: 600, letterSpacing: "0.05em" }}>Inscription confirmée</p>
+              <p style={{ fontFamily: "'Raleway', sans-serif", color: "var(--text-3)", margin: "4px 0 0 0", fontSize: "0.68rem", letterSpacing: "0.05em" }}>Prochain Brief AIO — dimanche matin dans votre boîte.</p>
             </div>
           </div>
         ) : (
           <div>
-            <div style={{ display: "flex", border: "1px solid #2a2a2a" }}>
+            <div style={{ display: "flex", border: "1px solid var(--border-2)" }}>
               <input
                 type="email"
                 placeholder="votre@email.com"
@@ -349,9 +349,9 @@ const NewsletterSection = () => {
                 onChange={(e) => { setEmail(e.target.value); if (status === "error") setStatus("idle"); }}
                 onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
                 style={{
-                  flex: 1, background: "#111", border: "none", outline: "none",
-                  padding: "13px 16px", color: "#f0f0f0", fontSize: "0.76rem",
-                  fontFamily: "'Raleway', sans-serif", caretColor: "#a3e635",
+                  flex: 1, background: "var(--bg-input-nl)", border: "none", outline: "none",
+                  padding: "13px 16px", color: "var(--text-1)", fontSize: "0.76rem",
+                  fontFamily: "'Raleway', sans-serif", caretColor: "var(--accent)",
                 }}
               />
               <button
@@ -359,8 +359,8 @@ const NewsletterSection = () => {
                 onClick={handleSubmit}
                 disabled={status === "loading"}
                 style={{
-                  background: status === "loading" ? "#1a2a0a" : "#a3e635",
-                  border: "none", padding: "13px 24px", color: "#0a0a0a",
+                  background: status === "loading" ? "#1a2a0a" : "var(--accent)",
+                  border: "none", padding: "13px 24px", color: "var(--bg-primary)",
                   fontSize: "0.66rem", fontWeight: 700, fontFamily: "'Raleway', sans-serif",
                   letterSpacing: "0.22em", cursor: status === "loading" ? "wait" : "pointer",
                   textTransform: "uppercase", transition: "opacity 0.2s", whiteSpace: "nowrap",
@@ -376,7 +376,7 @@ const NewsletterSection = () => {
               <p style={{ fontFamily: "'Raleway', sans-serif", color: "#ef4444", fontSize: "0.68rem", margin: "8px 0 0 0", letterSpacing: "0.05em" }}>{errorMsg}</p>
             )}
 
-            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", color: "#a3e635", margin: "12px 0 0 0", letterSpacing: "0.1em" }}>
+            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", color: "var(--accent)", margin: "12px 0 0 0", letterSpacing: "0.1em" }}>
               Gratuit. Aucun spam. Désabonnement en 1 clic.
             </p>
           </div>
@@ -389,17 +389,17 @@ const NewsletterSection = () => {
 
 // ─── FOOTER ───────────────────────────────────────────────────────────────────
 const Footer = () => (
-  <footer style={{ background: "#0a0a0a", borderTop: "1px solid #1a1a1a", padding: "60px 60px 40px" }}>
+  <footer style={{ background: "var(--bg-primary)", borderTop: "1px solid var(--border-1)", padding: "60px 60px 40px" }}>
     <div style={{ maxWidth: "860px", margin: "0 auto" }}>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "40px", marginBottom: "48px" }}>
 
         {/* Colonne 1 — Identité */}
         <div>
           <div style={{ marginBottom: "20px" }}>
-            <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.4rem", letterSpacing: "0.15em", color: "#f0f0f0", display: "block", lineHeight: 0.9 }}>OT</span>
-            <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.4rem", letterSpacing: "0.15em", color: "#7a7a7a", display: "block", lineHeight: 0.9 }}>CY</span>
+            <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.4rem", letterSpacing: "0.15em", color: "var(--text-1)", display: "block", lineHeight: 0.9 }}>OT</span>
+            <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.4rem", letterSpacing: "0.15em", color: "var(--text-2)", display: "block", lineHeight: 0.9 }}>CY</span>
           </div>
-          <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "#4a4a4a", lineHeight: 1.8, fontWeight: 300, maxWidth: "200px" }}>
+          <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "var(--text-3)", lineHeight: 1.8, fontWeight: 300, maxWidth: "200px" }}>
             Le diagnostic de présence IA pour les PME.
           </p>
           <div style={{ display: "flex", gap: "16px", marginTop: "20px" }}>
@@ -427,7 +427,7 @@ const Footer = () => (
 
         {/* Colonne 2 — Produit */}
         <div>
-          <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", letterSpacing: "0.3em", color: "#3a3a3a", textTransform: "uppercase", marginBottom: "16px" }}>
+          <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", letterSpacing: "0.3em", color: "var(--border-3)", textTransform: "uppercase", marginBottom: "16px" }}>
             Produit
           </p>
           {[
@@ -438,13 +438,13 @@ const Footer = () => (
             item.scroll ? (
               <button key={item.label} type="button"
                 onClick={() => document.getElementById("audit")?.scrollIntoView({ behavior: "smooth" })}
-                style={{ display: "block", fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "#4a4a4a", background: "transparent", border: "none", cursor: "pointer", padding: "0 0 10px 0", letterSpacing: "0.05em", transition: "color 0.2s" }}
+                style={{ display: "block", fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "var(--text-3)", background: "transparent", border: "none", cursor: "pointer", padding: "0 0 10px 0", letterSpacing: "0.05em", transition: "color 0.2s" }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "#f0f0f0")}
                 onMouseLeave={(e) => (e.currentTarget.style.color = "#4a4a4a")}
               >{item.label}</button>
             ) : (
               <Link key={item.label} to={item.to}
-                style={{ display: "block", fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "#4a4a4a", textDecoration: "none", marginBottom: "10px", letterSpacing: "0.05em", transition: "color 0.2s" }}
+                style={{ display: "block", fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "var(--text-3)", textDecoration: "none", marginBottom: "10px", letterSpacing: "0.05em", transition: "color 0.2s" }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "#f0f0f0")}
                 onMouseLeave={(e) => (e.currentTarget.style.color = "#4a4a4a")}
               >{item.label}</Link>
@@ -454,7 +454,7 @@ const Footer = () => (
 
         {/* Colonne 3 — Ressources */}
         <div>
-          <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", letterSpacing: "0.3em", color: "#3a3a3a", textTransform: "uppercase", marginBottom: "16px" }}>
+          <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", letterSpacing: "0.3em", color: "var(--border-3)", textTransform: "uppercase", marginBottom: "16px" }}>
             Ressources
           </p>
           {[
@@ -465,13 +465,13 @@ const Footer = () => (
             item.scroll ? (
               <button key={item.label} type="button"
                 onClick={() => document.getElementById("newsletter")?.scrollIntoView({ behavior: "smooth" })}
-                style={{ display: "block", fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "#4a4a4a", background: "transparent", border: "none", cursor: "pointer", padding: "0 0 10px 0", letterSpacing: "0.05em", transition: "color 0.2s" }}
+                style={{ display: "block", fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "var(--text-3)", background: "transparent", border: "none", cursor: "pointer", padding: "0 0 10px 0", letterSpacing: "0.05em", transition: "color 0.2s" }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "#a3e635")}
                 onMouseLeave={(e) => (e.currentTarget.style.color = "#4a4a4a")}
               >{item.label}</button>
             ) : (
               <Link key={item.label} to={item.to}
-                style={{ display: "block", fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "#4a4a4a", textDecoration: "none", marginBottom: "10px", letterSpacing: "0.05em", transition: "color 0.2s" }}
+                style={{ display: "block", fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "var(--text-3)", textDecoration: "none", marginBottom: "10px", letterSpacing: "0.05em", transition: "color 0.2s" }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "#a3e635")}
                 onMouseLeave={(e) => (e.currentTarget.style.color = "#4a4a4a")}
               >{item.label}</Link>
@@ -482,8 +482,8 @@ const Footer = () => (
       </div>
 
       {/* Bas de footer */}
-      <div style={{ borderTop: "1px solid #1a1a1a", paddingTop: "24px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
-        <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", color: "#2a2a2a", letterSpacing: "0.05em" }}>
+      <div style={{ borderTop: "1px solid var(--border-1)", paddingTop: "24px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
+        <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", color: "var(--border-2)", letterSpacing: "0.05em" }}>
           © 2025 Otarcy France — Bordeaux, Gironde
         </p>
       </div>
@@ -533,7 +533,7 @@ const Index = () => {
   useReveal([]);
 
   return (
-    <div style={{ background: "#0f0f0f", minHeight: "100vh" }}>
+    <div style={{ background: "var(--bg-page)", minHeight: "100vh" }}>
       <Navbar />
       <SideLeft />
       <SideRight />
@@ -552,15 +552,15 @@ const Index = () => {
                 style={{
                   flex: 1,
                   background: "transparent",
-                  border: "1px solid #2a2a2a",
+                  border: "1px solid var(--border-2)",
                   borderRight: "none",
                   padding: "13px 18px",
-                  color: "#f0f0f0",
+                  color: "var(--text-1)",
                   fontFamily: "'Raleway', sans-serif",
                   fontSize: "0.76rem",
                   letterSpacing: "0.08em",
                   outline: "none",
-                  caretColor: "#a3e635",
+                  caretColor: "var(--accent)",
                 }}
               />
               <button
@@ -573,8 +573,8 @@ const Index = () => {
                   letterSpacing: "0.22em",
                   textTransform: "uppercase",
                   padding: "13px 28px",
-                  background: loading ? "#555" : "#a3e635",
-                  color: "#0f0f0f",
+                  background: loading ? "#555" : "var(--accent)",
+                  color: "var(--bg-page)",
                   border: "none",
                   cursor: loading ? "not-allowed" : "pointer",
                   fontWeight: 600,
@@ -588,7 +588,7 @@ const Index = () => {
               </button>
             </div>
             {!isSignedIn && (
-              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", letterSpacing: "0.15em", color: "#4a4a4a", textAlign: "center" }}>
+              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", letterSpacing: "0.15em", color: "var(--text-3)", textAlign: "center" }}>
                 3 audits offerts — sans carte bancaire
               </p>
             )}
