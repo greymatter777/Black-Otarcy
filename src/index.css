@@ -1,5 +1,51 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Raleway:wght@300;400;500;600&display=swap');
 
+:root[data-theme="dark"] {
+  --bg-primary: #0a0a0a;
+  --bg-page: #0f0f0f;
+  --bg-hero: #161616;
+  --bg-card: #0f0f0f;
+  --bg-card-inner: #161616;
+  --bg-nav: rgba(15,15,15,0.97);
+  --bg-input: transparent;
+  --bg-input-nl: #111111;
+  --border-1: #1a1a1a;
+  --border-2: #2a2a2a;
+  --border-3: #3a3a3a;
+  --text-1: #f0f0f0;
+  --text-2: #7a7a7a;
+  --text-3: #4a4a4a;
+  --text-4: #d4d4d4;
+  --text-5: #e8e8e8;
+  --text-footer: #2a2a2a;
+  --accent: #a3e635;
+  --accent-fg: #0f0f0f;
+  --side-display: flex;
+}
+
+:root[data-theme="light"] {
+  --bg-primary: #f5f5f0;
+  --bg-page: #f5f5f0;
+  --bg-hero: #eeede8;
+  --bg-card: #ffffff;
+  --bg-card-inner: #f0f0eb;
+  --bg-nav: rgba(255,255,255,0.97);
+  --bg-input: #ffffff;
+  --bg-input-nl: #ffffff;
+  --border-1: #e8e8e2;
+  --border-2: #d4d4cc;
+  --border-3: #c0c0b8;
+  --text-1: #0f0f0a;
+  --text-2: #6a6a62;
+  --text-3: #b0b0a8;
+  --text-4: #2a2a22;
+  --text-5: #1a1a12;
+  --text-footer: #d4d4cc;
+  --accent: #7ab82a;
+  --accent-fg: #ffffff;
+  --side-display: none;
+}
+
 * {
   margin: 0;
   padding: 0;
