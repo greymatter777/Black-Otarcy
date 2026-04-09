@@ -51,9 +51,7 @@ const AuditCard: React.FC<{ audit: AuditRecord; onClick: () => void }> = ({ audi
   const date = new Date(audit.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
   const hostname = (() => { try { return new URL(audit.url).hostname; } catch { return audit.url ?? "URL inconnue"; } })();
   return (
-    <div onClick={onClick} style={{ padding: "24px 28px", border: "1px solid var(--border-2)", background: "var(--bg-hero)", cursor: "pointer", transition: "border-color 0.25s, background 0.25s", display: "flex", alignItems: "center", gap: "24px" }}
-      onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = "#4a4a4a"; (e.currentTarget as HTMLDivElement).style.background = "#1c1c1c"; }}
-      onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = "var(--border-2)"; (e.currentTarget as HTMLDivElement).style.background = "var(--bg-hero)"; }}>
+    <div onClick={onClick} style={{ padding: "24px 28px", border: "1px solid var(--border-2)", background: "var(--bg-hero)", cursor: "pointer", transition: "border-color 0.25s, background 0.25s", display: "flex", alignItems: "center", gap: "24px" }}>
       <ScoreRing score={audit.score} size={64} />
       <div style={{ flex: 1, minWidth: 0 }}>
         <h3 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.4rem", letterSpacing: "0.08em", color: "var(--text-1)", marginBottom: "4px" }}>{hostname.toUpperCase()}</h3>
