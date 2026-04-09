@@ -26,20 +26,31 @@ function niveauColor(niveau: string): string {
 }
 
 const ScoreRing: React.FC<{ score: number; size?: number }> = ({ score, size = 70 }) => {
-  const circumference = 2 * Math.PI * 18;
+  const r = size * 0.375;
+  const cx = size / 2;
+  const cy = size / 2;
+  const circumference = 2 * Math.PI * r;
   const progress = (score / 100) * circumference;
   const color = score >= 76 ? "#a3e635" : score >= 56 ? "#f0f0f0" : "#ef4444";
+  const strokeW = size * 0.055;
   return (
     <div style={{ position: "relative", width: size, height: size, flexShrink: 0 }}>
-      <svg width={size} height={size} viewBox="0 0 48 48" shapeRendering="geometricPrecision" style={{ transform: "rotate(-90deg)" }}>
-        <circle cx={24} cy={24} r={18} fill="none" stroke="#2a2a2a" strokeWidth="3" />
-        <circle cx={24} cy={24} r={18} fill="none" stroke={color} strokeWidth="3"
-          strokeDasharray={circumference} strokeDashoffset={circumference - progress}
-          strokeLinecap="round" style={{ transition: "stroke-dashoffset 1s cubic-bezier(.22,1,.36,1)" }} />
+      <svg
+        width={size}
+        height={size}
+        viewBox={`0 0 ${size} ${size}`}
+        style={{ transform: "rotate(-90deg)", display: "block" }}
+      >
+        <circle cx={cx} cy={cy} r={r} fill="none" stroke="#2a2a2a" strokeWidth={strokeW} />
+        <circle cx={cx} cy={cy} r={r} fill="none" stroke={color} strokeWidth={strokeW}
+          strokeDasharray={circumference}
+          strokeDashoffset={circumference - progress}
+          strokeLinecap="round"
+          style={{ transition: "stroke-dashoffset 1s cubic-bezier(.22,1,.36,1)" }} />
       </svg>
       <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-        <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: `${size * 0.28}px`, color: "var(--text-1)", lineHeight: 1 }}>{score}</span>
-        <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: `${size * 0.12}px`, color: "var(--text-2)" }}>/100</span>
+        <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: `${size * 0.28}px`, color: "var(--text-1)", lineHeight: 1, WebkitFontSmoothing: "antialiased" }}>{score}</span>
+        <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: `${size * 0.13}px`, color: "var(--text-2)", WebkitFontSmoothing: "antialiased" }}>/100</span>
       </div>
     </div>
   );
