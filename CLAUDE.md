@@ -16,7 +16,7 @@ Instructions pour Claude Code. Lire entièrement avant de modifier quoi que ce s
 
 ---
 
-## État d'avancement — Session 07/04/2026
+## État d'avancement — Session 09/04/2026
 
 | Étape | Fichier | Statut |
 |-------|---------|--------|
@@ -30,8 +30,10 @@ Instructions pour Claude Code. Lire entièrement avant de modifier quoi que ce s
 | 7 | src/pages/PerceptionResult.tsx | ✅ Créé + déployé |
 | 8 | src/App.tsx | ✅ Routes /score /audit /perception /about + redirects secteurs → /pricing |
 | 9 | src/pages/Index.tsx | ✅ Nettoyage home — barre URL dans Hero, sections WhyAio/About/AuditSection supprimées |
-| 10 | src/pages/About.tsx | ✅ Créé — contient Navbar, AboutSection, WhyAio, Footer |
+| 10 | src/pages/About.tsx | ✅ Refactorisée — utilise Navbar + Footer partagés depuis src/components/ |
 | 11 | src/pages/Dashboard.tsx | ✅ Réécrit — nouveau modèle URL/score-100, criteres/quick_wins/plan_long_terme |
+| 12 | src/components/Navbar.tsx | ✅ Extrait — composant partagé avec ThemeToggle intégré |
+| 13 | src/components/Footer.tsx | ✅ Extrait — composant partagé |
 
 **Prochaine étape : Étape 4 — api/llm-perception.ts (bloquée sur OPENROUTER_API_KEY)**
 
@@ -72,6 +74,8 @@ Lire la skill concernée AVANT toute intervention dans le domaine correspondant.
 | react-otarcy | `.claude/skills/react-otarcy/SKILL.md` | Tout composant, page, style, ou élément UI |
 | vercel-api | `.claude/skills/vercel-api/SKILL.md` | Tout fichier dans /api/, fetch externe, CORS, retry |
 | supabase-otarcy | `.claude/skills/supabase-otarcy/SKILL.md` | Toute interaction DB, auth, plan, quota |
+| blog-writer-aio | `.claude/skills/blog-writer-aio/SKILL.md` | Tout article de blog, guide, contenu web, page pilier |
+| OKLM | `.claude/skills/OKLM/SKILL.md` | Quand l'utilisateur écrit `OKLM` — mise à jour CLAUDE.md + context.md |
 
 ---
 

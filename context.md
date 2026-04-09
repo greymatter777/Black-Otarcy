@@ -218,3 +218,27 @@ Une skill = des décisions résolues, pas des conseils génériques. Chaque règ
 - Intégré dans `About.tsx` : desktop (avant auth) + mobile overlay (avant bloc auth)
 - `SideLeft` et `SideRight` masqués en mode light (`if (theme === "light") return null`)
 - Migration couleurs : 153 occurrences hardcodées → variables CSS (`var(--bg-primary)`, `var(--accent)`, etc.) dans `Index.tsx` + `About.tsx` — handlers hover et attributs SVG intacts
+
+---
+
+## Session 09/04/2026 — Refacto Navbar/Footer + skill blog-writer-aio
+
+### Modifications effectuées
+
+| Fichier | Modification |
+|---------|-------------|
+| src/components/Navbar.tsx | ✅ Extrait en composant partagé — ThemeToggle intégré, desktop + mobile |
+| src/components/Footer.tsx | ✅ Extrait en composant partagé |
+| src/pages/Index.tsx | ✅ Utilise Navbar + Footer depuis src/components/ |
+| src/pages/About.tsx | ✅ Utilise Navbar + Footer depuis src/components/ |
+| .claude/skills/blog-writer-aio/SKILL.md | ✅ Skill créée — rédacteur web AIO/GEO/SEO |
+| .claude/skills/OKLM/SKILL.md | ✅ Skill créée — mise à jour CLAUDE.md + context.md |
+
+### Reste à faire — mis à jour session 09/04
+
+1. **Étape 4 — `api/llm-perception.ts`** : bloquée sur `OPENROUTER_API_KEY`
+2. **`ANTHROPIC_API_KEY`** : ajouter dans Vercel pour activer la synthèse Claude dans `api/audit.ts`
+3. **Pages secteurs** : supprimer les fichiers devenus orphelins (`AioCoaching.tsx` etc.)
+4. **index.html** : meta tags et Schema.org à mettre à jour
+5. ~~Refacto Navbar/Footer~~ ✅ Done session 09/04
+6. **DNS otarcy.app** : vérifier réactivation
