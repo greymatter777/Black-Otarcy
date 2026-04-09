@@ -105,8 +105,11 @@ function checkSchemaOrg(html: string): CheckResult {
   while ((match = scriptRegex.exec(html)) !== null) {
     try {
       const parsed = JSON.parse(match[1]);
-      if (Array.isArray(parsed)) schemas.push(...parsed);
-      else schemas.push(parsed);
+      const nodes = Array.isArray(parsed) ? parsed : [parsed];
+      for (const node of nodes) {
+        if (node["@graph"] && Array.isArray(node["@graph"])) schemas.push(...node["@graph"]);
+        else schemas.push(node);
+      }
     } catch { }
   }
   if (schemas.length === 0) return { statut: "ko", points: 0, max: MAX, detail: "Aucun Schema.org détecté (JSON-LD).", impact: "Les IAs ne peuvent pas identifier votre entité ni votre activité." };
