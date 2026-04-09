@@ -99,6 +99,20 @@ const Footer = () => (
         <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", color: "var(--border-2)", letterSpacing: "0.05em" }}>
           © 2025 Otarcy France — Bordeaux, Gironde
         </p>
+        <nav style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
+          {[
+            { label: "Contact", to: "/contact" },
+            { label: "CGV", to: "/cgv" },
+            { label: "Mentions légales", to: "/mentions-legales" },
+            { label: "Politique de confidentialité", to: "/politique-confidentialite" },
+          ].map((item) => (
+            <Link key={item.to} to={item.to}
+              style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", color: "var(--border-2)", letterSpacing: "0.05em", textDecoration: "none", transition: "color 0.2s" }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--text-1)")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--border-2)")}
+            >{item.label}</Link>
+          ))}
+        </nav>
       </div>
     </div>
   </footer>
