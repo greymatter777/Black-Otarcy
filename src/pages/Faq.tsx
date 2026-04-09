@@ -18,86 +18,60 @@ function useReveal() {
 // ─── QUESTIONS ────────────────────────────────────────────────────────────────
 const FAQ = [
   {
-    categorie: "Comprendre l'AIO",
+    categorie: "Le diagnostic",
     couleur: "var(--accent)",
     questions: [
       {
-        q: "Qu'est-ce que l'AIO (AI Optimization) ?",
-        r: "L'AIO, ou AI Optimization, est la discipline qui consiste à rendre une marque, une entreprise ou un contenu visible dans les réponses générées par les intelligences artificielles conversationnelles comme ChatGPT, Claude, Gemini ou Perplexity. Contrairement au SEO traditionnel centré sur Google, l'AIO optimise la façon dont les IA perçoivent, comprennent et citent une marque.",
+        q: "Qu'est-ce que le diagnostic de présence IA ?",
+        r: "Le diagnostic de présence IA vérifie si les signaux techniques que les IAs utilisent pour détecter et citer un site sont en place : Schema.org, crawlers IA autorisés, llms.txt, FAQ structurée, E-E-A-T, Wikidata, Open Graph, HTTPS, Sitemap, Meta tags. Chaque critère est vérifié par parsing HTML — aucune estimation.",
       },
       {
-        q: "Quelle est la différence entre AIO et SEO ?",
-        r: "Le SEO optimise pour les algorithmes de classement de Google — il vise à faire remonter des liens dans les résultats de recherche. L'AIO optimise pour la compréhension sémantique des LLMs — il vise à faire apparaître une marque dans les réponses générées par les IA. Les deux sont complémentaires : un bon SEO améliore la visibilité web générale, un bon AIO améliore la visibilité dans les réponses IA. Mais les techniques sont différentes : l'AIO privilégie la clarté des entités, la cohérence entre sources et le contenu structuré en Q&A.",
+        q: "Comment est calculé le score /100 ?",
+        r: "Le score est calculé côté serveur en vérifiant 10 critères techniques. Chaque critère a un poids défini (ex : Accès crawlers IA 15 pts, Schema.org 15 pts, E-E-A-T 15 pts). Le total est normalisé sur 100.",
       },
       {
-        q: "Pourquoi les IA citent-elles certaines marques et pas d'autres ?",
-        r: "Les LLMs construisent leur représentation du monde à partir des textes sur lesquels ils ont été entraînés. Ils citent les marques qui sont décrites de façon claire, cohérente et répétée dans de nombreuses sources. Si votre marque est décrite différemment sur votre site, votre LinkedIn et dans la presse, les LLMs peinent à construire une représentation fiable — et préfèrent citer des marques dont l'identité est sans ambiguïté.",
+        q: "Combien de temps dure un audit ?",
+        r: "Entre 5 et 15 secondes selon la taille et la complexité du site analysé.",
       },
       {
-        q: "L'AIO est-il réservé aux grandes entreprises ?",
-        r: "Non — c'est même l'inverse. Les grandes entreprises ont une notoriété naturelle qui les fait déjà apparaître dans les LLMs. Les PME, elles, doivent construire activement leur présence IA. L'AIO est la discipline qui permet aux petites et moyennes entreprises de rivaliser sur ce terrain en optimisant des signaux accessibles : cohérence du positionnement, structure du contenu, présence multi-sources.",
+        q: "Mon site doit-il être en français ?",
+        r: "Non. Otarcy analyse les signaux techniques qui sont indépendants de la langue du contenu.",
       },
     ],
   },
   {
-    categorie: "Otarcy & son fonctionnement",
+    categorie: "Les critères",
     couleur: "#60a5fa",
     questions: [
       {
-        q: "Qu'est-ce qu'Otarcy exactement ?",
-        r: "Otarcy est le premier outil SaaS français d'AI Optimization (AIO) pour les PME. Il permet à n'importe quelle entreprise d'analyser sa visibilité auprès des intelligences artificielles, d'obtenir un score AIO sur 10, et de recevoir un plan d'action personnalisé pour améliorer sa présence dans les réponses de ChatGPT, Claude, Gemini et Perplexity.",
+        q: "Qu'est-ce que le llms.txt ?",
+        r: "Le llms.txt est un fichier texte placé à la racine de votre site (comme robots.txt) qui donne aux LLMs des instructions explicites sur votre activité, vos services et votre positionnement. Son absence prive les IAs d'un contexte structuré sur votre marque.",
       },
       {
-        q: "Comment fonctionne l'audit Otarcy concrètement ?",
-        r: "L'utilisateur saisit le nom de sa marque. Otarcy interroge le modèle Groq (llama-3.3-70b) pour analyser en temps réel comment les LLMs perçoivent cette marque. L'audit génère un score AIO sur 10, une analyse des forces et faiblesses, des recommandations priorisées, et pour les plans Pro et Agence : une analyse SWOT complète, des KPIs de marque, des templates LinkedIn et un plan de contenu.",
+        q: "Qu'est-ce que le E-E-A-T et pourquoi est-ce important ?",
+        r: "E-E-A-T signifie Experience, Expertise, Authoritativeness, Trustworthiness. Ce sont les signaux que les IAs utilisent pour évaluer la crédibilité d'un site : page À propos, mentions légales, CGV, politique de confidentialité, page contact. Leur absence réduit la confiance accordée par les modèles.",
       },
       {
-        q: "Combien d'audits puis-je faire gratuitement ?",
-        r: "Le plan Découverte (gratuit, sans carte bancaire) offre 3 audits. Les plans AIO Essentiel (19€/mois) et AIO Expert (99€/mois) donnent accès à des audits illimités et à des fonctionnalités avancées comme le SWOT, les KPIs, l'export PDF et les templates LinkedIn.",
-      },
-      {
-        q: "Les résultats d'Otarcy sont-ils fiables ?",
-        r: "Otarcy utilise un LLM de pointe (llama-3.3-70b via Groq) pour simuler la façon dont les IAs perçoivent une marque. Les résultats reflètent l'état actuel de la représentation de votre marque dans les modèles de langage. Comme tout outil basé sur l'IA, les analyses sont des indicateurs fiables — pas des certitudes absolues. Nous recommandons de combiner l'audit Otarcy avec des tests manuels dans ChatGPT et Perplexity.",
+        q: "Pourquoi Schema.org est-il critique ?",
+        r: "Schema.org est un vocabulaire structuré que les IAs lisent pour comprendre ce qu'est votre organisation, votre produit, vos prix et votre localisation. Sans lui, les IAs doivent inférer ces informations — avec un risque d'erreur élevé.",
       },
     ],
   },
   {
-    categorie: "Stratégie & mise en œuvre",
+    categorie: "Plans & compte",
     couleur: "#f97316",
     questions: [
       {
-        q: "Par où commencer pour optimiser ma marque pour les IA ?",
-        r: "La première étape est de tester comment les IA vous perçoivent aujourd'hui : demandez à ChatGPT et Perplexity « qui est [nom de votre marque] ? » et notez les résultats. Ensuite, les 3 actions prioritaires sont : (1) définir une phrase de positionnement claire et la répliquer sur toutes vos sources, (2) ajouter un balisage Schema.org sur votre site, (3) créer une page FAQ structurée. Un audit Otarcy vous donnera un plan d'action personnalisé en quelques secondes.",
+        q: "Quelle est la différence entre les plans ?",
+        r: "Le plan Gratuit donne accès à 1 audit avec score global. Le plan Essentiel (19€/mois) donne accès aux audits illimités avec détail par critère et plan d'action. Le plan Expert (99€/mois) inclut en plus la perception réelle par ChatGPT, Claude et Perplexity.",
       },
       {
-        q: "Combien de temps faut-il pour voir des résultats AIO ?",
-        r: "Les LLMs intègrent les nouvelles informations lors de leurs phases d'entraînement, qui ont lieu tous les quelques mois. Pour les IAs avec recherche web en temps réel (Perplexity, ChatGPT avec recherche), les améliorations peuvent être visibles en quelques semaines. Pour les modèles sans accès web, les changements sont visibles sur les modèles mis à jour, généralement dans un délai de 3 à 6 mois. C'est pourquoi l'AIO est un investissement long terme — commencer tôt donne un avantage durable.",
+        q: "Puis-je analyser le site d'un client ?",
+        r: "Oui. Otarcy analyse n'importe quelle URL publique — votre propre site ou celui d'un client ou concurrent.",
       },
       {
-        q: "Le contenu de mon site suffit-il pour être visible dans les IA ?",
-        r: "Non. La visibilité IA repose sur la triangulation de plusieurs sources. Un LLM compare ce que dit votre site avec ce que disent votre LinkedIn, les mentions presse, les annuaires, les avis clients. Si ces sources sont cohérentes, votre marque est représentée clairement. Si elles divergent, le LLM produit une représentation floue — ou vous ignore. Il faut donc une stratégie multi-sources, pas seulement un site bien écrit.",
-      },
-      {
-        q: "Faut-il avoir un blog pour faire de l'AIO ?",
-        r: "Un blog aide, mais ce n'est pas indispensable. Ce qui compte le plus pour l'AIO, c'est la qualité et la cohérence du contenu existant, pas la quantité. Une page À propos bien structurée en Q&A, une page FAQ, un balisage Schema.org et une bio LinkedIn alignée ont plus d'impact qu'un blog de 50 articles mal optimisés. Cela dit, produire du contenu de référence (glossaires, études de cas, données originales) renforce progressivement l'autorité thématique de votre marque.",
-      },
-    ],
-  },
-  {
-    categorie: "Abonnement & données",
-    couleur: "var(--text-2)",
-    questions: [
-      {
-        q: "Mes données sont-elles sécurisées ?",
-        r: "Otarcy utilise Supabase pour l'authentification et le stockage des données, avec Row Level Security (RLS) activé — chaque utilisateur n'accède qu'à ses propres données. Les paiements sont gérés par Stripe, qui est certifié PCI-DSS. Vos données ne sont jamais revendues ni utilisées pour entraîner des modèles d'IA tiers.",
-      },
-      {
-        q: "Puis-je annuler mon abonnement à tout moment ?",
-        r: "Oui. Les abonnements Otarcy sont mensuels et sans engagement. Vous pouvez annuler à tout moment depuis votre tableau de bord. Après annulation, vous conservez l'accès aux fonctionnalités de votre plan jusqu'à la fin de la période payée.",
-      },
-      {
-        q: "Otarcy propose-t-il des tarifs pour les agences ?",
-        r: "Le plan AIO Expert (99€/mois) est conçu pour les agences et consultants marketing. Il inclut des audits illimités, la stratégie marketing IA complète et les Quick Wins. Pour des besoins spécifiques ou des volumes importants, contactez-nous directement via LinkedIn.",
+        q: "Comment résilier mon abonnement ?",
+        r: "La résiliation se fait à tout moment depuis votre dashboard, sans engagement ni frais.",
       },
     ],
   },
@@ -158,7 +132,7 @@ export default function Faq() {
             QUESTIONS FRÉQUENTES
           </h1>
           <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.88rem", color: "var(--text-2)", lineHeight: 1.9, fontWeight: 300, maxWidth: "580px" }}>
-            {totalQuestions} questions sur l'AI Optimization, le fonctionnement d'Otarcy et la stratégie AIO pour les PME françaises.
+            {totalQuestions} questions sur le diagnostic de présence IA, les critères techniques vérifiés et les plans Otarcy.
           </p>
         </div>
       </section>
@@ -184,7 +158,7 @@ export default function Faq() {
                   const key = `${ci}-${qi}`;
                   const isOpen = ouvert === key;
                   return (
-                    <div key={qi} style={{ background: "var(--bg-page)" }}>
+                    <div key={qi} style={{ background: isOpen ? "var(--bg-primary)" : "var(--bg-page)", transition: "background 0.2s" }}>
                       <button
                         type="button"
                         onClick={() => toggle(key)}
@@ -194,24 +168,27 @@ export default function Faq() {
                           display: "flex", justifyContent: "space-between", alignItems: "flex-start",
                           gap: "16px",
                         }}
-                        onMouseEnter={(e) => { (e.currentTarget.parentElement as HTMLDivElement).style.background = "#111"; }}
-                        onMouseLeave={(e) => { if (!isOpen) (e.currentTarget.parentElement as HTMLDivElement).style.background = "#0f0f0f"; }}
+                        onMouseEnter={(e) => { (e.currentTarget.parentElement as HTMLDivElement).style.background = "var(--bg-primary)"; }}
+                        onMouseLeave={(e) => { if (!isOpen) (e.currentTarget.parentElement as HTMLDivElement).style.background = "var(--bg-page)"; }}
                       >
-                        <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.82rem", color: isOpen ? "var(--text-1)" : "var(--text-4)", fontWeight: isOpen ? 600 : 400, lineHeight: 1.5, margin: 0, flex: 1 }}>
+                        <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.78rem", color: "var(--text-1)", fontWeight: 600, lineHeight: 1.5, margin: 0, flex: 1 }}>
                           {item.q}
                         </p>
-                        <span style={{ color: isOpen ? "var(--accent)" : "var(--text-3)", fontSize: "1rem", flexShrink: 0, transition: "transform 0.2s", transform: isOpen ? "rotate(45deg)" : "rotate(0deg)", display: "inline-block", marginTop: "2px" }}>
-                          +
+                        <span style={{ color: "var(--accent)", fontSize: "0.85rem", flexShrink: 0, display: "inline-block", marginTop: "2px", fontFamily: "'Raleway', sans-serif", fontWeight: 400 }}>
+                          {isOpen ? "↓" : "→"}
                         </span>
                       </button>
 
-                      {isOpen && (
-                        <div style={{ padding: "0 24px 24px", borderTop: "1px solid var(--border-1)" }}>
-                          <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.78rem", color: "var(--text-2)", lineHeight: 1.9, fontWeight: 300, margin: "16px 0 0 0" }}>
-                            {item.r}
-                          </p>
+                      {/* Animation hauteur via grid trick */}
+                      <div style={{ display: "grid", gridTemplateRows: isOpen ? "1fr" : "0fr", transition: "grid-template-rows 0.28s ease", overflow: "hidden" }}>
+                        <div style={{ minHeight: 0 }}>
+                          <div style={{ padding: "0 24px 24px", borderTop: "1px solid var(--border-1)" }}>
+                            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.76rem", color: "var(--text-2)", lineHeight: 1.7, fontWeight: 300, margin: "16px 0 0 0" }}>
+                              {item.r}
+                            </p>
+                          </div>
                         </div>
-                      )}
+                      </div>
                     </div>
                   );
                 })}
@@ -236,7 +213,7 @@ export default function Faq() {
             >
               <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.1rem", letterSpacing: "0.08em", color: "#60a5fa", marginBottom: "8px" }}>TARIFS →</p>
               <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "var(--text-2)", fontWeight: 300, lineHeight: 1.6 }}>
-                Comparez les plans Découverte, AIO Essentiel et AIO Expert.
+                Comparez les plans Gratuit, Essentiel et Expert.
               </p>
             </Link>
           </div>
@@ -245,18 +222,18 @@ export default function Faq() {
           <div className="reveal" style={{ padding: "32px", border: "1px solid var(--accent)", background: "var(--bg-primary)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "24px", flexWrap: "wrap" }}>
             <div>
               <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.3rem", letterSpacing: "0.08em", color: "var(--text-1)", marginBottom: "6px" }}>
-                PRÊT POUR L'AUDIT AIO ?
+                PRÊT POUR LE DIAGNOSTIC ?
               </p>
               <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.75rem", color: "var(--text-2)", fontWeight: 300 }}>
-                3 audits gratuits — sans carte bancaire.
+                1 audit gratuit — sans carte bancaire.
               </p>
             </div>
-            <Link to="/#audit"
+            <Link to="/"
               style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.22em", textTransform: "uppercase", padding: "12px 28px", background: "var(--accent)", color: "var(--bg-page)", textDecoration: "none", fontWeight: 600, whiteSpace: "nowrap" }}
               onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
               onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
             >
-              Auditer ma marque →
+              Lancer le diagnostic →
             </Link>
           </div>
         </div>

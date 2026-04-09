@@ -14,6 +14,10 @@ import ScoreResult from "./pages/ScoreResult";
 import AuditResult from "./pages/AuditResult";
 import PerceptionResult from "./pages/PerceptionResult";
 import About from "./pages/About";
+import MentionsLegales from "./pages/MentionsLegales";
+import PolitiqueConfidentialite from "./pages/PolitiqueConfidentialite";
+import CGV from "./pages/CGV";
+import Contact from "./pages/Contact";
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -55,6 +59,10 @@ function App() {
           <Route path="/glossaire" element={<Glossaire />} />
           <Route path="/faq" element={<Faq />} />
           <Route path="/about" element={<About />} />
+          <Route path="/mentions-legales" element={<MentionsLegales />} />
+          <Route path="/politique-confidentialite" element={<PolitiqueConfidentialite />} />
+          <Route path="/cgv" element={<CGV />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/aio-coaching" element={<Navigate to="/pricing" replace />} />
           <Route path="/aio-ecommerce" element={<Navigate to="/pricing" replace />} />
           <Route path="/aio-immobilier" element={<Navigate to="/pricing" replace />} />
