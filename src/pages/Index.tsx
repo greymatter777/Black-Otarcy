@@ -227,6 +227,73 @@ const Index = () => {
   const isSignedIn = !!user;
 
   useEffect(() => {
+    const script = document.createElement("script");
+    script.type = "application/ld+json";
+    script.id = "faq-schema";
+    script.text = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Qu'est-ce que le diagnostic de présence IA ?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Le diagnostic de présence IA vérifie si les signaux techniques que les IAs utilisent pour détecter et citer un site sont en place : Schema.org, crawlers IA autorisés, llms.txt, FAQ structurée, E-E-A-T, Wikidata, Open Graph, HTTPS, Sitemap, Meta tags. Chaque critère est vérifié par parsing HTML — aucune estimation." }
+        },
+        {
+          "@type": "Question",
+          "name": "Comment est calculé le score /100 ?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Le score est calculé côté serveur en vérifiant 10 critères techniques. Chaque critère a un poids défini (ex : Accès crawlers IA 15 pts, Schema.org 15 pts, E-E-A-T 15 pts). Le total est normalisé sur 100." }
+        },
+        {
+          "@type": "Question",
+          "name": "Combien de temps dure un audit ?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Entre 5 et 15 secondes selon la taille et la complexité du site analysé." }
+        },
+        {
+          "@type": "Question",
+          "name": "Mon site doit-il être en français ?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Non. Otarcy analyse les signaux techniques qui sont indépendants de la langue du contenu." }
+        },
+        {
+          "@type": "Question",
+          "name": "Qu'est-ce que le llms.txt ?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Le llms.txt est un fichier texte placé à la racine de votre site (comme robots.txt) qui donne aux LLMs des instructions explicites sur votre activité, vos services et votre positionnement. Son absence prive les IAs d'un contexte structuré sur votre marque." }
+        },
+        {
+          "@type": "Question",
+          "name": "Qu'est-ce que le E-E-A-T et pourquoi est-ce important ?",
+          "acceptedAnswer": { "@type": "Answer", "text": "E-E-A-T signifie Experience, Expertise, Authoritativeness, Trustworthiness. Ce sont les signaux que les IAs utilisent pour évaluer la crédibilité d'un site : page À propos, mentions légales, CGV, politique de confidentialité, page contact. Leur absence réduit la confiance accordée par les modèles." }
+        },
+        {
+          "@type": "Question",
+          "name": "Pourquoi Schema.org est-il critique ?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Schema.org est un vocabulaire structuré que les IAs lisent pour comprendre ce qu'est votre organisation, votre produit, vos prix et votre localisation. Sans lui, les IAs doivent inférer ces informations — avec un risque d'erreur élevé." }
+        },
+        {
+          "@type": "Question",
+          "name": "Quelle est la différence entre les plans ?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Le plan Gratuit donne accès à 1 audit avec score global. Le plan Essentiel (19€/mois) donne accès aux audits illimités avec détail par critère et plan d'action. Le plan Expert (99€/mois) inclut en plus la perception réelle par ChatGPT, Claude et Perplexity." }
+        },
+        {
+          "@type": "Question",
+          "name": "Puis-je analyser le site d'un client ?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Oui. Otarcy analyse n'importe quelle URL publique — votre propre site ou celui d'un client ou concurrent." }
+        },
+        {
+          "@type": "Question",
+          "name": "Comment résilier mon abonnement ?",
+          "acceptedAnswer": { "@type": "Answer", "text": "La résiliation se fait à tout moment depuis votre dashboard, sans engagement ni frais." }
+        }
+      ]
+    });
+    document.head.appendChild(script);
+    return () => {
+      const el = document.getElementById("faq-schema");
+      if (el) el.remove();
+    };
+  }, []);
+
+  useEffect(() => {
     if (isSignedIn && user) {
       authFetch("/api/user-status")
         .then((r) => r.json())
