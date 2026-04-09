@@ -27,8 +27,7 @@ function niveauColor(niveau: string): string {
 
 const ScoreRing: React.FC<{ score: number; size?: number }> = ({ score, size = 70 }) => {
   const strokeWidth = 4;
-  const padding = strokeWidth / 2 + 2;
-  const r = (size / 2) - padding;
+  const r = (size / 2) - strokeWidth - 1;
   const cx = size / 2;
   const cy = size / 2;
   const circumference = 2 * Math.PI * r;
@@ -38,10 +37,10 @@ const ScoreRing: React.FC<{ score: number; size?: number }> = ({ score, size = 7
   return (
     <div style={{ position: "relative", width: size, height: size, flexShrink: 0 }}>
       <svg
-        width={size * 2}
-        height={size * 2}
+        width={size}
+        height={size}
         viewBox={`0 0 ${size} ${size}`}
-        style={{ transform: "rotate(-90deg) scale(0.5)", transformOrigin: "top left", display: "block" }}
+        style={{ transform: "rotate(-90deg)", display: "block", overflow: "visible" }}
       >
         <circle cx={cx} cy={cy} r={r} fill="none" stroke="#2a2a2a" strokeWidth={strokeWidth} />
         <circle
