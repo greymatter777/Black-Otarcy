@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 // ─── HOOK REVEAL ──────────────────────────────────────────────────────────────
 function useReveal() {
@@ -110,7 +112,7 @@ export default function Glossaire() {
   const totalTermes = TERMES.reduce((acc, g) => acc + g.items.length, 0);
 
   return (
-    <div style={{ background: "#0a0a0a", minHeight: "100vh" }}>
+    <div style={{ background: "var(--bg-primary)", minHeight: "100vh" }}>
 
       {/* Schema.org DefinedTermSet */}
       <script
@@ -141,53 +143,30 @@ export default function Glossaire() {
         }}
       />
 
-      {/* ── NAVBAR SIMPLE ── */}
-      <nav style={{
-        position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "20px 36px",
-        background: "rgba(10,10,10,0.95)",
-        borderBottom: "1px solid #1a1a1a",
-        backdropFilter: "blur(12px)",
-      }}>
-        <Link to="/" style={{ display: "flex", flexDirection: "column", lineHeight: 0.9, textDecoration: "none" }}>
-          <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.15rem", letterSpacing: "0.15em", color: "#f0f0f0" }}>OT</span>
-          <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.15rem", letterSpacing: "0.15em", color: "#7a7a7a" }}>CY</span>
-        </Link>
-        <div style={{ display: "flex", gap: "24px", alignItems: "center" }}>
-          <Link to="/" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.7rem", letterSpacing: "0.2em", color: "#7a7a7a", textDecoration: "none" }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "#f0f0f0")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "#7a7a7a")}
-          >← ACCUEIL</Link>
-          <Link to="/faq" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.7rem", letterSpacing: "0.2em", color: "#7a7a7a", textDecoration: "none" }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "#f0f0f0")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "#7a7a7a")}
-          >FAQ</Link>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* ── HERO ── */}
-      <section style={{ paddingTop: "140px", paddingBottom: "60px", padding: "140px 60px 60px", borderBottom: "1px solid #1a1a1a" }}>
+      <section style={{ paddingTop: "140px", paddingBottom: "60px", padding: "140px 60px 60px", borderBottom: "1px solid var(--border-1)" }}>
         <div style={{ maxWidth: "860px", margin: "0 auto" }}>
-          <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.3em", color: "#a3e635", textTransform: "uppercase", marginBottom: "16px", fontWeight: 500 }}>
+          <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.3em", color: "var(--accent)", textTransform: "uppercase", marginBottom: "16px", fontWeight: 500 }}>
             Ressource — Glossaire
           </p>
-          <h1 className="reveal" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2.5rem, 5vw, 4.5rem)", letterSpacing: "0.06em", color: "#f0f0f0", lineHeight: 0.95, marginBottom: "24px" }}>
+          <h1 className="reveal" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2.5rem, 5vw, 4.5rem)", letterSpacing: "0.06em", color: "var(--text-1)", lineHeight: 0.95, marginBottom: "24px" }}>
             GLOSSAIRE AIO
           </h1>
-          <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.88rem", color: "#7a7a7a", lineHeight: 1.9, fontWeight: 300, maxWidth: "580px", marginBottom: "0" }}>
+          <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.88rem", color: "var(--text-2)", lineHeight: 1.9, fontWeight: 300, maxWidth: "580px", marginBottom: "0" }}>
             {totalTermes} termes essentiels pour comprendre l'AI Optimization et optimiser la visibilité de votre marque auprès de ChatGPT, Claude, Gemini et Perplexity.
           </p>
         </div>
       </section>
 
       {/* ── RECHERCHE + FILTRE ── */}
-      <section style={{ padding: "40px 60px", borderBottom: "1px solid #1a1a1a", background: "#0f0f0f" }}>
+      <section style={{ padding: "40px 60px", borderBottom: "1px solid var(--border-1)", background: "var(--bg-page)" }}>
         <div style={{ maxWidth: "860px", margin: "0 auto" }}>
 
           {/* Barre de recherche */}
-          <div style={{ display: "flex", border: "1px solid #2a2a2a", marginBottom: "24px", background: "#111" }}>
-            <span style={{ padding: "12px 16px", color: "#4a4a4a", fontFamily: "'Raleway', sans-serif", fontSize: "0.76rem" }}>⌕</span>
+          <div style={{ display: "flex", border: "1px solid var(--border-2)", marginBottom: "24px", background: "var(--bg-input-nl)" }}>
+            <span style={{ padding: "12px 16px", color: "var(--text-3)", fontFamily: "'Raleway', sans-serif", fontSize: "0.76rem" }}>⌕</span>
             <input
               type="text"
               placeholder="Rechercher un terme..."
@@ -195,13 +174,13 @@ export default function Glossaire() {
               onChange={(e) => { setRecherche(e.target.value); setLettreActive(null); }}
               style={{
                 flex: 1, background: "transparent", border: "none", outline: "none",
-                padding: "12px 0", color: "#f0f0f0", fontSize: "0.76rem",
-                fontFamily: "'Raleway', sans-serif", caretColor: "#a3e635",
+                padding: "12px 0", color: "var(--text-1)", fontSize: "0.76rem",
+                fontFamily: "'Raleway', sans-serif", caretColor: "var(--accent)",
               }}
             />
             {recherche && (
               <button type="button" onClick={() => setRecherche("")}
-                style={{ padding: "12px 16px", background: "transparent", border: "none", color: "#4a4a4a", cursor: "pointer", fontFamily: "'Raleway', sans-serif", fontSize: "0.76rem" }}>
+                style={{ padding: "12px 16px", background: "transparent", border: "none", color: "var(--text-3)", cursor: "pointer", fontFamily: "'Raleway', sans-serif", fontSize: "0.76rem" }}>
                 ✕
               </button>
             )}
@@ -214,9 +193,9 @@ export default function Glossaire() {
               style={{
                 fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", letterSpacing: "0.15em",
                 padding: "4px 12px", border: "1px solid", cursor: "pointer", transition: "all 0.2s",
-                background: !lettreActive && !recherche ? "#a3e635" : "transparent",
-                borderColor: !lettreActive && !recherche ? "#a3e635" : "#3a3a3a",
-                color: !lettreActive && !recherche ? "#0a0a0a" : "#7a7a7a",
+                background: !lettreActive && !recherche ? "var(--accent)" : "transparent",
+                borderColor: !lettreActive && !recherche ? "var(--accent)" : "var(--border-3)",
+                color: !lettreActive && !recherche ? "var(--bg-primary)" : "var(--text-2)",
               }}>
               TOUS
             </button>
@@ -226,9 +205,9 @@ export default function Glossaire() {
                 style={{
                   fontFamily: "'Bebas Neue', sans-serif", fontSize: "1rem", letterSpacing: "0.1em",
                   padding: "2px 10px", border: "1px solid", cursor: "pointer", transition: "all 0.2s",
-                  background: lettreActive === l ? "#a3e635" : "transparent",
-                  borderColor: lettreActive === l ? "#a3e635" : "#3a3a3a",
-                  color: lettreActive === l ? "#0a0a0a" : "#7a7a7a",
+                  background: lettreActive === l ? "var(--accent)" : "transparent",
+                  borderColor: lettreActive === l ? "var(--accent)" : "var(--border-3)",
+                  color: lettreActive === l ? "var(--bg-primary)" : "var(--text-2)",
                 }}>
                 {l}
               </button>
@@ -243,7 +222,7 @@ export default function Glossaire() {
 
           {termesFiltres.length === 0 ? (
             <div style={{ textAlign: "center", padding: "80px 0" }}>
-              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.82rem", color: "#4a4a4a" }}>
+              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.82rem", color: "var(--text-3)" }}>
                 Aucun terme trouvé pour « {recherche} »
               </p>
             </div>
@@ -252,23 +231,23 @@ export default function Glossaire() {
               <div key={groupe.lettre} className="reveal" style={{ marginBottom: "48px" }}>
                 {/* Lettre */}
                 <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "24px" }}>
-                  <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "3rem", color: "#a3e635", lineHeight: 1 }}>
+                  <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "3rem", color: "var(--accent)", lineHeight: 1 }}>
                     {groupe.lettre}
                   </span>
-                  <div style={{ flex: 1, height: "1px", background: "linear-gradient(90deg, #2a2a2a 0%, transparent 100%)" }} />
+                  <div style={{ flex: 1, height: "1px", background: "linear-gradient(90deg, var(--border-2) 0%, transparent 100%)" }} />
                 </div>
 
                 {/* Items */}
-                <div style={{ display: "flex", flexDirection: "column", gap: "1px", background: "#1a1a1a" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "1px", background: "var(--border-1)" }}>
                   {groupe.items.map((item, i) => (
-                    <div key={i} style={{ background: "#0f0f0f", padding: "20px 24px" }}
+                    <div key={i} style={{ background: "var(--bg-page)", padding: "20px 24px" }}
                       onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.background = "#111"; }}
                       onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.background = "#0f0f0f"; }}
                     >
-                      <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.82rem", color: "#f0f0f0", fontWeight: 600, marginBottom: "8px", letterSpacing: "0.02em" }}>
+                      <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.82rem", color: "var(--text-1)", fontWeight: 600, marginBottom: "8px", letterSpacing: "0.02em" }}>
                         {item.terme}
                       </p>
-                      <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.76rem", color: "#7a7a7a", lineHeight: 1.8, fontWeight: 300 }}>
+                      <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.76rem", color: "var(--text-2)", lineHeight: 1.8, fontWeight: 300 }}>
                         {item.definition}
                       </p>
                     </div>
@@ -279,17 +258,17 @@ export default function Glossaire() {
           )}
 
           {/* CTA bas de page */}
-          <div className="reveal" style={{ marginTop: "60px", padding: "32px", border: "1px solid #a3e635", background: "#0a0a0a", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "24px", flexWrap: "wrap" }}>
+          <div className="reveal" style={{ marginTop: "60px", padding: "32px", border: "1px solid var(--accent)", background: "var(--bg-primary)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "24px", flexWrap: "wrap" }}>
             <div>
-              <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.3rem", letterSpacing: "0.08em", color: "#f0f0f0", marginBottom: "6px" }}>
+              <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.3rem", letterSpacing: "0.08em", color: "var(--text-1)", marginBottom: "6px" }}>
                 TESTEZ VOTRE SCORE AIO
               </p>
-              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.75rem", color: "#7a7a7a", fontWeight: 300 }}>
+              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.75rem", color: "var(--text-2)", fontWeight: 300 }}>
                 Découvrez comment ChatGPT, Claude et Gemini perçoivent votre marque.
               </p>
             </div>
             <Link to="/#audit"
-              style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.22em", textTransform: "uppercase", padding: "12px 28px", background: "#a3e635", color: "#0f0f0f", textDecoration: "none", fontWeight: 600, whiteSpace: "nowrap" }}
+              style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.22em", textTransform: "uppercase", padding: "12px 28px", background: "var(--accent)", color: "var(--bg-page)", textDecoration: "none", fontWeight: 600, whiteSpace: "nowrap" }}
               onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
               onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
             >
@@ -298,6 +277,8 @@ export default function Glossaire() {
           </div>
         </div>
       </section>
+
+      <Footer />
     </div>
   );
 }

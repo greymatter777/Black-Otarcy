@@ -209,7 +209,7 @@ Une skill = des décisions résolues, pas des conseils génériques. Chaque règ
 
 ---
 
-## Session 07/04/2026 — ThemeToggle intégration navbars
+## Session 07/04/2026 — ThemeToggle + migration CSS variables
 
 - `ThemeContext` + CSS variables dark/light créés (`src/lib/ThemeContext.tsx`)
 - Script anti-flash ajouté dans `index.html`
@@ -217,3 +217,4 @@ Une skill = des décisions résolues, pas des conseils génériques. Chaque règ
 - Intégré dans `Index.tsx` : desktop (avant auth) + mobile overlay (avant bloc auth)
 - Intégré dans `About.tsx` : desktop (avant auth) + mobile overlay (avant bloc auth)
 - `SideLeft` et `SideRight` masqués en mode light (`if (theme === "light") return null`)
+- Migration couleurs : 153 occurrences hardcodées → variables CSS (`var(--bg-primary)`, `var(--accent)`, etc.) dans `Index.tsx` + `About.tsx` — handlers hover et attributs SVG intacts

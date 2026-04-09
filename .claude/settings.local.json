@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(ls \"C:\\\\Windows\\\\Dev\\\\otarcy agency black\"/*.md)"
+      "Bash(ls \"C:\\\\Windows\\\\Dev\\\\otarcy agency black\"/*.md)",
+      "Bash(node -e ':*)",
+      "Bash(node:*)"
     ]
   }
 }

@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 // ─── Schema.org JSON-LD ───────────────────────────────────────────────────────
 const schemaJsonLd = {
@@ -107,7 +109,7 @@ const quickWins = [
       "Ajoutez un JSON-LD Product sur chaque fiche : nom, description, prix, disponibilité, marque, avis agrégés. C'est le signal le plus direct pour que ChatGPT cite vos produits dans ses recommandations.",
     duree: "2-4h",
     impact: "Très élevé",
-    impactColor: "#a3e635",
+    impactColor: "var(--accent)",
   },
   {
     numero: "02",
@@ -116,7 +118,7 @@ const quickWins = [
       "Une page dédiée qui répond explicitement à : Qui êtes-vous ? Qu'est-ce qui vous différencie ? Pour qui ? Fabriqué où ? Avec quoi ? Les IAs utilisent ces pages pour construire leurs réponses sur votre secteur.",
     duree: "3h",
     impact: "Élevé",
-    impactColor: "#a3e635",
+    impactColor: "var(--accent)",
   },
   {
     numero: "03",
@@ -125,7 +127,7 @@ const quickWins = [
       "Chaque description doit nommer explicitement : matière, origine géographique, usage principal, cas d'usage secondaires, différenciateur vs concurrents. Les IAs lisent le texte — donnez-leur les entités dont elles ont besoin.",
     duree: "1h/produit",
     impact: "Élevé",
-    impactColor: "#a3e635",
+    impactColor: "var(--accent)",
   },
   {
     numero: "04",
@@ -143,7 +145,7 @@ const quickWins = [
       "Identifiez les questions que vos clients posent à ChatGPT avant d'acheter (ex: 'quelle différence entre X et Y ?', 'comment choisir un bon Z ?'). Créez un article pour chacune. Vous devenez la source que l'IA cite.",
     duree: "3h/article",
     impact: "Très élevé",
-    impactColor: "#a3e635",
+    impactColor: "var(--accent)",
   },
 ];
 
@@ -204,7 +206,7 @@ function FaqAccordion({ items }: { items: typeof faqItems }) {
       {items.map((item, i) => {
         const isOpen = openIndex === i;
         return (
-          <div key={i} style={{ borderTop: "1px solid #2a2a2a", padding: "16px 0" }}>
+          <div key={i} style={{ borderTop: "1px solid var(--border-2)", padding: "16px 0" }}>
             <button
               onClick={() => setOpenIndex(isOpen ? null : i)}
               style={{
@@ -223,7 +225,7 @@ function FaqAccordion({ items }: { items: typeof faqItems }) {
                 style={{
                   fontFamily: "'Raleway', sans-serif",
                   fontSize: "0.82rem",
-                  color: "#f0f0f0",
+                  color: "var(--text-1)",
                   fontWeight: 500,
                   lineHeight: 1.5,
                 }}
@@ -234,7 +236,7 @@ function FaqAccordion({ items }: { items: typeof faqItems }) {
                 style={{
                   fontFamily: "'Bebas Neue', sans-serif",
                   fontSize: "1.2rem",
-                  color: isOpen ? "#a3e635" : "#4a4a4a",
+                  color: isOpen ? "var(--accent)" : "var(--text-3)",
                   flexShrink: 0,
                   transition: "color 0.2s",
                 }}
@@ -247,7 +249,7 @@ function FaqAccordion({ items }: { items: typeof faqItems }) {
                 style={{
                   fontFamily: "'Raleway', sans-serif",
                   fontSize: "0.78rem",
-                  color: "#d4d4d4",
+                  color: "var(--text-4)",
                   lineHeight: 1.7,
                   fontWeight: 300,
                   marginTop: "12px",
@@ -271,9 +273,9 @@ export default function AioEcommerce() {
   return (
     <div
       style={{
-        background: "#0a0a0a",
+        background: "var(--bg-primary)",
         minHeight: "100vh",
-        color: "#f0f0f0",
+        color: "var(--text-1)",
         fontFamily: "'Raleway', sans-serif",
       }}
     >
@@ -283,6 +285,8 @@ export default function AioEcommerce() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaJsonLd) }}
       />
 
+      <Navbar />
+
       {/* ── HERO ────────────────────────────────────────────────────────── */}
       <section style={{ padding: "100px 60px 80px", maxWidth: "860px", margin: "0 auto" }}>
         <p
@@ -291,7 +295,7 @@ export default function AioEcommerce() {
             fontFamily: "'Raleway', sans-serif",
             fontSize: "0.65rem",
             letterSpacing: "0.3em",
-            color: "#a3e635",
+            color: "var(--accent)",
             textTransform: "uppercase",
             marginBottom: "24px",
             fontWeight: 500,
@@ -307,20 +311,20 @@ export default function AioEcommerce() {
             fontSize: "clamp(2.8rem, 7vw, 5.5rem)",
             letterSpacing: "0.04em",
             lineHeight: 1.05,
-            color: "#f0f0f0",
+            color: "var(--text-1)",
             marginBottom: "32px",
           }}
         >
           AIO pour les
           <br />
-          <span style={{ color: "#a3e635" }}>E-commerces</span>
+          <span style={{ color: "var(--accent)" }}>E-commerces</span>
         </h1>
 
         <p
           className="reveal"
           style={{
             fontSize: "0.88rem",
-            color: "#d4d4d4",
+            color: "var(--text-4)",
             lineHeight: 1.9,
             fontWeight: 300,
             maxWidth: "600px",
@@ -342,8 +346,8 @@ export default function AioEcommerce() {
                 letterSpacing: "0.22em",
                 textTransform: "uppercase",
                 padding: "13px 32px",
-                background: "#a3e635",
-                color: "#0f0f0f",
+                background: "var(--accent)",
+                color: "var(--bg-page)",
                 fontWeight: 600,
                 border: "none",
                 cursor: "pointer",
@@ -363,19 +367,19 @@ export default function AioEcommerce() {
                 letterSpacing: "0.22em",
                 textTransform: "uppercase",
                 padding: "13px 32px",
-                border: "1px solid #3a3a3a",
+                border: "1px solid var(--border-3)",
                 background: "transparent",
-                color: "#7a7a7a",
+                color: "var(--text-2)",
                 cursor: "pointer",
                 transition: "border-color 0.3s, color 0.3s",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "#e8e8e8";
-                e.currentTarget.style.color = "#e8e8e8";
+                e.currentTarget.style.borderColor = "var(--text-5)";
+                e.currentTarget.style.color = "var(--text-5)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "#3a3a3a";
-                e.currentTarget.style.color = "#7a7a7a";
+                e.currentTarget.style.borderColor = "var(--border-3)";
+                e.currentTarget.style.color = "var(--text-2)";
               }}
             >
               Glossaire AIO
@@ -390,8 +394,8 @@ export default function AioEcommerce() {
           padding: "60px",
           maxWidth: "860px",
           margin: "0 auto",
-          borderTop: "1px solid #2a2a2a",
-          borderBottom: "1px solid #2a2a2a",
+          borderTop: "1px solid var(--border-2)",
+          borderBottom: "1px solid var(--border-2)",
         }}
       >
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
@@ -403,20 +407,20 @@ export default function AioEcommerce() {
             <div
               key={i}
               className="reveal"
-              style={{ padding: "24px", border: "1px solid #2a2a2a", background: "#0f0f0f" }}
+              style={{ padding: "24px", border: "1px solid var(--border-2)", background: "var(--bg-page)" }}
             >
               <p
                 style={{
                   fontFamily: "'Bebas Neue', sans-serif",
                   fontSize: "3.5rem",
-                  color: "#a3e635",
+                  color: "var(--accent)",
                   lineHeight: 1,
                   marginBottom: "8px",
                 }}
               >
                 {stat.chiffre}
               </p>
-              <p style={{ fontSize: "0.72rem", color: "#7a7a7a", lineHeight: 1.5, fontWeight: 300 }}>
+              <p style={{ fontSize: "0.72rem", color: "var(--text-2)", lineHeight: 1.5, fontWeight: 300 }}>
                 {stat.label}
               </p>
             </div>
@@ -432,7 +436,7 @@ export default function AioEcommerce() {
             fontFamily: "'Raleway', sans-serif",
             fontSize: "0.65rem",
             letterSpacing: "0.3em",
-            color: "#a3e635",
+            color: "var(--accent)",
             textTransform: "uppercase",
             marginBottom: "16px",
             fontWeight: 500,
@@ -446,7 +450,7 @@ export default function AioEcommerce() {
             fontFamily: "'Bebas Neue', sans-serif",
             fontSize: "clamp(2.5rem, 5vw, 4rem)",
             letterSpacing: "0.04em",
-            color: "#f0f0f0",
+            color: "var(--text-1)",
             marginBottom: "48px",
             lineHeight: 1.1,
           }}
@@ -463,8 +467,8 @@ export default function AioEcommerce() {
               className="reveal"
               style={{
                 padding: "28px",
-                border: "1px solid #2a2a2a",
-                background: "#0f0f0f",
+                border: "1px solid var(--border-2)",
+                background: "var(--bg-page)",
                 borderLeft: `2px solid ${item.color}`,
               }}
             >
@@ -476,13 +480,13 @@ export default function AioEcommerce() {
                       fontFamily: "'Bebas Neue', sans-serif",
                       fontSize: "1.1rem",
                       letterSpacing: "0.06em",
-                      color: "#f0f0f0",
+                      color: "var(--text-1)",
                       marginBottom: "10px",
                     }}
                   >
                     {item.titre}
                   </p>
-                  <p style={{ fontSize: "0.78rem", color: "#d4d4d4", lineHeight: 1.7, fontWeight: 300 }}>
+                  <p style={{ fontSize: "0.78rem", color: "var(--text-4)", lineHeight: 1.7, fontWeight: 300 }}>
                     {item.description}
                   </p>
                 </div>
@@ -500,7 +504,7 @@ export default function AioEcommerce() {
             fontFamily: "'Raleway', sans-serif",
             fontSize: "0.65rem",
             letterSpacing: "0.3em",
-            color: "#a3e635",
+            color: "var(--accent)",
             textTransform: "uppercase",
             marginBottom: "16px",
             fontWeight: 500,
@@ -514,7 +518,7 @@ export default function AioEcommerce() {
             fontFamily: "'Bebas Neue', sans-serif",
             fontSize: "clamp(2.5rem, 5vw, 4rem)",
             letterSpacing: "0.04em",
-            color: "#f0f0f0",
+            color: "var(--text-1)",
             marginBottom: "40px",
             lineHeight: 1.1,
           }}
@@ -524,13 +528,13 @@ export default function AioEcommerce() {
           avant et après AIO
         </h2>
 
-        <div className="reveal" style={{ padding: "28px", border: "1px solid #2a2a2a", background: "#0f0f0f" }}>
+        <div className="reveal" style={{ padding: "28px", border: "1px solid var(--border-2)", background: "var(--bg-page)" }}>
           <p
             style={{
               fontFamily: "'Raleway', sans-serif",
               fontSize: "0.58rem",
               letterSpacing: "0.3em",
-              color: "#7a7a7a",
+              color: "var(--text-2)",
               textTransform: "uppercase",
               marginBottom: "20px",
             }}
@@ -542,24 +546,24 @@ export default function AioEcommerce() {
             <div
               style={{
                 padding: "20px",
-                background: "#161616",
-                border: "1px solid #2a2a2a",
+                background: "var(--bg-hero)",
+                border: "1px solid var(--border-2)",
                 borderLeft: "2px solid #ef4444",
               }}
             >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-                <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1rem", letterSpacing: "0.08em", color: "#f0f0f0" }}>
+                <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1rem", letterSpacing: "0.08em", color: "var(--text-1)" }}>
                   AVANT
                 </p>
                 <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2rem", color: "#ef4444" }}>
                   {auditExemple.score}
-                  <span style={{ fontSize: "0.9rem", color: "#4a4a4a" }}>/10</span>
+                  <span style={{ fontSize: "0.9rem", color: "var(--text-3)" }}>/10</span>
                 </p>
               </div>
               {auditExemple.lacunes.map((l, i) => (
                 <div key={i} style={{ display: "flex", gap: "10px", marginBottom: "8px", alignItems: "flex-start" }}>
                   <span style={{ color: "#ef4444", fontSize: "0.7rem", marginTop: "2px", flexShrink: 0 }}>✕</span>
-                  <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "#7a7a7a", lineHeight: 1.5, fontWeight: 300 }}>
+                  <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "var(--text-2)", lineHeight: 1.5, fontWeight: 300 }}>
                     {l}
                   </p>
                 </div>
@@ -569,24 +573,24 @@ export default function AioEcommerce() {
             <div
               style={{
                 padding: "20px",
-                background: "#161616",
-                border: "1px solid #2a2a2a",
-                borderLeft: "2px solid #a3e635",
+                background: "var(--bg-hero)",
+                border: "1px solid var(--border-2)",
+                borderLeft: "2px solid var(--accent)",
               }}
             >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-                <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1rem", letterSpacing: "0.08em", color: "#f0f0f0" }}>
+                <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1rem", letterSpacing: "0.08em", color: "var(--text-1)" }}>
                   APRÈS
                 </p>
-                <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2rem", color: "#a3e635" }}>
+                <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2rem", color: "var(--accent)" }}>
                   {auditExemple.apresOptimisation}
-                  <span style={{ fontSize: "0.9rem", color: "#4a4a4a" }}>/10</span>
+                  <span style={{ fontSize: "0.9rem", color: "var(--text-3)" }}>/10</span>
                 </p>
               </div>
               {auditExemple.actionsRealisees.map((a, i) => (
                 <div key={i} style={{ display: "flex", gap: "10px", marginBottom: "8px", alignItems: "flex-start" }}>
-                  <span style={{ color: "#a3e635", fontSize: "0.7rem", marginTop: "2px", flexShrink: 0 }}>→</span>
-                  <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "#d4d4d4", lineHeight: 1.5, fontWeight: 300 }}>
+                  <span style={{ color: "var(--accent)", fontSize: "0.7rem", marginTop: "2px", flexShrink: 0 }}>→</span>
+                  <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "var(--text-4)", lineHeight: 1.5, fontWeight: 300 }}>
                     {a}
                   </p>
                 </div>
@@ -598,9 +602,9 @@ export default function AioEcommerce() {
             style={{
               fontFamily: "'Raleway', sans-serif",
               fontSize: "0.62rem",
-              color: "#4a4a4a",
+              color: "var(--text-3)",
               fontStyle: "italic",
-              borderTop: "1px solid #2a2a2a",
+              borderTop: "1px solid var(--border-2)",
               paddingTop: "14px",
               marginTop: "16px",
             }}
@@ -618,7 +622,7 @@ export default function AioEcommerce() {
             fontFamily: "'Raleway', sans-serif",
             fontSize: "0.65rem",
             letterSpacing: "0.3em",
-            color: "#a3e635",
+            color: "var(--accent)",
             textTransform: "uppercase",
             marginBottom: "16px",
             fontWeight: 500,
@@ -632,7 +636,7 @@ export default function AioEcommerce() {
             fontFamily: "'Bebas Neue', sans-serif",
             fontSize: "clamp(2.5rem, 5vw, 4rem)",
             letterSpacing: "0.04em",
-            color: "#f0f0f0",
+            color: "var(--text-1)",
             marginBottom: "40px",
             lineHeight: 1.1,
           }}
@@ -647,7 +651,7 @@ export default function AioEcommerce() {
             <div
               key={i}
               className="reveal"
-              style={{ padding: "24px", border: "1px solid #2a2a2a", background: "#0f0f0f" }}
+              style={{ padding: "24px", border: "1px solid var(--border-2)", background: "var(--bg-page)" }}
             >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
@@ -656,7 +660,7 @@ export default function AioEcommerce() {
                       fontFamily: "'Bebas Neue', sans-serif",
                       fontSize: "0.85rem",
                       letterSpacing: "0.15em",
-                      color: "#a3e635",
+                      color: "var(--accent)",
                     }}
                   >
                     {qw.numero}
@@ -666,7 +670,7 @@ export default function AioEcommerce() {
                       fontFamily: "'Bebas Neue', sans-serif",
                       fontSize: "1.1rem",
                       letterSpacing: "0.06em",
-                      color: "#f0f0f0",
+                      color: "var(--text-1)",
                     }}
                   >
                     {qw.titre}
@@ -678,9 +682,9 @@ export default function AioEcommerce() {
                       fontFamily: "'Raleway', sans-serif",
                       fontSize: "0.58rem",
                       letterSpacing: "0.1em",
-                      color: "#7a7a7a",
+                      color: "var(--text-2)",
                       padding: "2px 8px",
-                      border: "1px solid #2a2a2a",
+                      border: "1px solid var(--border-2)",
                     }}
                   >
                     {qw.duree}
@@ -699,7 +703,7 @@ export default function AioEcommerce() {
                   </span>
                 </div>
               </div>
-              <p style={{ fontSize: "0.78rem", color: "#d4d4d4", lineHeight: 1.7, fontWeight: 300 }}>
+              <p style={{ fontSize: "0.78rem", color: "var(--text-4)", lineHeight: 1.7, fontWeight: 300 }}>
                 {qw.detail}
               </p>
             </div>
@@ -715,7 +719,7 @@ export default function AioEcommerce() {
             fontFamily: "'Raleway', sans-serif",
             fontSize: "0.65rem",
             letterSpacing: "0.3em",
-            color: "#a3e635",
+            color: "var(--accent)",
             textTransform: "uppercase",
             marginBottom: "16px",
             fontWeight: 500,
@@ -729,7 +733,7 @@ export default function AioEcommerce() {
             fontFamily: "'Bebas Neue', sans-serif",
             fontSize: "clamp(2.5rem, 5vw, 4rem)",
             letterSpacing: "0.04em",
-            color: "#f0f0f0",
+            color: "var(--text-1)",
             marginBottom: "40px",
             lineHeight: 1.1,
           }}
@@ -741,7 +745,7 @@ export default function AioEcommerce() {
 
         <div
           className="reveal"
-          style={{ padding: "24px 28px", border: "1px solid #2a2a2a", background: "#0f0f0f" }}
+          style={{ padding: "24px 28px", border: "1px solid var(--border-2)", background: "var(--bg-page)" }}
         >
           <FaqAccordion items={faqItems} />
         </div>
@@ -751,14 +755,14 @@ export default function AioEcommerce() {
       <section style={{ padding: "0 60px 100px", maxWidth: "860px", margin: "0 auto" }}>
         <div
           className="reveal"
-          style={{ padding: "48px", border: "1px solid #a3e635", background: "#0a0a0a" }}
+          style={{ padding: "48px", border: "1px solid var(--accent)", background: "var(--bg-primary)" }}
         >
           <p
             style={{
               fontFamily: "'Raleway', sans-serif",
               fontSize: "0.65rem",
               letterSpacing: "0.3em",
-              color: "#a3e635",
+              color: "var(--accent)",
               textTransform: "uppercase",
               marginBottom: "16px",
               fontWeight: 500,
@@ -771,7 +775,7 @@ export default function AioEcommerce() {
               fontFamily: "'Bebas Neue', sans-serif",
               fontSize: "clamp(2rem, 4vw, 3rem)",
               letterSpacing: "0.04em",
-              color: "#f0f0f0",
+              color: "var(--text-1)",
               marginBottom: "16px",
               lineHeight: 1.1,
             }}
@@ -783,7 +787,7 @@ export default function AioEcommerce() {
           <p
             style={{
               fontSize: "0.78rem",
-              color: "#7a7a7a",
+              color: "var(--text-2)",
               lineHeight: 1.7,
               fontWeight: 300,
               marginBottom: "32px",
@@ -804,8 +808,8 @@ export default function AioEcommerce() {
                   letterSpacing: "0.22em",
                   textTransform: "uppercase",
                   padding: "13px 32px",
-                  background: "#a3e635",
-                  color: "#0f0f0f",
+                  background: "var(--accent)",
+                  color: "var(--bg-page)",
                   fontWeight: 600,
                   border: "none",
                   cursor: "pointer",
@@ -825,19 +829,19 @@ export default function AioEcommerce() {
                   letterSpacing: "0.22em",
                   textTransform: "uppercase",
                   padding: "13px 32px",
-                  border: "1px solid #3a3a3a",
+                  border: "1px solid var(--border-3)",
                   background: "transparent",
-                  color: "#7a7a7a",
+                  color: "var(--text-2)",
                   cursor: "pointer",
                   transition: "border-color 0.3s, color 0.3s",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "#e8e8e8";
-                  e.currentTarget.style.color = "#e8e8e8";
+                  e.currentTarget.style.borderColor = "var(--text-5)";
+                  e.currentTarget.style.color = "var(--text-5)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "#3a3a3a";
-                  e.currentTarget.style.color = "#7a7a7a";
+                  e.currentTarget.style.borderColor = "var(--border-3)";
+                  e.currentTarget.style.color = "var(--text-2)";
                 }}
               >
                 Voir les offres
@@ -853,7 +857,7 @@ export default function AioEcommerce() {
               fontFamily: "'Raleway', sans-serif",
               fontSize: "0.58rem",
               letterSpacing: "0.3em",
-              color: "#4a4a4a",
+              color: "var(--text-3)",
               textTransform: "uppercase",
               marginBottom: "14px",
             }}
@@ -870,19 +874,19 @@ export default function AioEcommerce() {
                   fontSize: "0.62rem",
                   letterSpacing: "0.15em",
                   textTransform: "uppercase",
-                  color: "#4a4a4a",
+                  color: "var(--text-3)",
                   padding: "6px 14px",
-                  border: "1px solid #2a2a2a",
+                  border: "1px solid var(--border-2)",
                   textDecoration: "none",
                   transition: "color 0.2s, border-color 0.2s",
                 }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLAnchorElement).style.color = "#a3e635";
-                  (e.currentTarget as HTMLAnchorElement).style.borderColor = "#a3e635";
+                  (e.currentTarget as HTMLAnchorElement).style.color = "var(--accent)";
+                  (e.currentTarget as HTMLAnchorElement).style.borderColor = "var(--accent)";
                 }}
                 onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLAnchorElement).style.color = "#4a4a4a";
-                  (e.currentTarget as HTMLAnchorElement).style.borderColor = "#2a2a2a";
+                  (e.currentTarget as HTMLAnchorElement).style.color = "var(--text-3)";
+                  (e.currentTarget as HTMLAnchorElement).style.borderColor = "var(--border-2)";
                 }}
               >
                 {s.label}
@@ -891,6 +895,8 @@ export default function AioEcommerce() {
           </div>
         </div>
       </section>
+
+      <Footer />
     </div>
   );
 }

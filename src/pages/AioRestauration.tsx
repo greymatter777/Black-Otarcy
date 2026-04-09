@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 const schemaJsonLd = {
   "@context": "https://schema.org",
@@ -85,22 +87,22 @@ const quickWins = [
   {
     numero: "01", titre: "Ajouter Schema.org Restaurant sur votre site",
     detail: "Intégrez un JSON-LD Restaurant avec : nom, type de cuisine, adresse précise, horaires, fourchette de prix, menu URL et lien vers vos avis. C'est le signal de base qu'attendent ChatGPT et Perplexity pour identifier et recommander un restaurant.",
-    duree: "1h", impact: "Très élevé", impactColor: "#a3e635",
+    duree: "1h", impact: "Très élevé", impactColor: "var(--accent)",
   },
   {
     numero: "02", titre: "Publier votre carte en HTML structuré",
     detail: "Remplacez le PDF ou l'image de menu par une page HTML avec vos plats nommés, ingrédients principaux, origine des produits et mentions allergènes. Les IAs lisent le texte — une carte en HTML balisé est un signal AIO majeur.",
-    duree: "3h", impact: "Très élevé", impactColor: "#a3e635",
+    duree: "3h", impact: "Très élevé", impactColor: "var(--accent)",
   },
   {
     numero: "03", titre: "Créer une page Concept & Histoire en Q&A",
     detail: "Répondez explicitement à : Qui est le chef ? Quelle est son histoire ? D'où viennent vos produits ? Pour quelle occasion venir ? Quelle est votre différence avec les autres restaurants du quartier ? Ces réponses sont exactement ce que les IAs utilisent pour construire leurs recommandations.",
-    duree: "2h", impact: "Élevé", impactColor: "#a3e635",
+    duree: "2h", impact: "Élevé", impactColor: "var(--accent)",
   },
   {
     numero: "04", titre: "Structurer vos avis avec plats mentionnés",
     detail: "Intégrez sur votre site des avis Schema.org Review qui citent des plats spécifiques, l'occasion de visite et le ressenti. Un avis qui dit 'le risotto aux truffes était exceptionnel pour notre anniversaire' vaut dix fois plus qu'une note générique pour les IAs.",
-    duree: "2h", impact: "Élevé", impactColor: "#a3e635",
+    duree: "2h", impact: "Élevé", impactColor: "var(--accent)",
   },
   {
     numero: "05", titre: "Créer des pages par occasion de visite",
@@ -151,15 +153,15 @@ function FaqAccordion({ items }: { items: typeof faqItems }) {
       {items.map((item, i) => {
         const isOpen = openIndex === i;
         return (
-          <div key={i} style={{ borderTop: "1px solid #2a2a2a", padding: "16px 0" }}>
+          <div key={i} style={{ borderTop: "1px solid var(--border-2)", padding: "16px 0" }}>
             <button
               onClick={() => setOpenIndex(isOpen ? null : i)}
               style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "flex-start", background: "transparent", border: "none", cursor: "pointer", textAlign: "left", gap: "16px" }}
             >
-              <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.82rem", color: "#f0f0f0", fontWeight: 500, lineHeight: 1.5 }}>{item.question}</span>
-              <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.2rem", color: isOpen ? "#a3e635" : "#4a4a4a", flexShrink: 0, transition: "color 0.2s" }}>{isOpen ? "−" : "+"}</span>
+              <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.82rem", color: "var(--text-1)", fontWeight: 500, lineHeight: 1.5 }}>{item.question}</span>
+              <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.2rem", color: isOpen ? "var(--accent)" : "var(--text-3)", flexShrink: 0, transition: "color 0.2s" }}>{isOpen ? "−" : "+"}</span>
             </button>
-            {isOpen && <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.78rem", color: "#d4d4d4", lineHeight: 1.7, fontWeight: 300, marginTop: "12px", paddingRight: "24px" }}>{item.reponse}</p>}
+            {isOpen && <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.78rem", color: "var(--text-4)", lineHeight: 1.7, fontWeight: 300, marginTop: "12px", paddingRight: "24px" }}>{item.reponse}</p>}
           </div>
         );
       })}
@@ -170,18 +172,20 @@ function FaqAccordion({ items }: { items: typeof faqItems }) {
 export default function AioRestauration() {
   useReveal();
   return (
-    <div style={{ background: "#0a0a0a", minHeight: "100vh", color: "#f0f0f0", fontFamily: "'Raleway', sans-serif" }}>
+    <div style={{ background: "var(--bg-primary)", minHeight: "100vh", color: "var(--text-1)", fontFamily: "'Raleway', sans-serif" }}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaJsonLd) }} />
+
+      <Navbar />
 
       {/* HERO */}
       <section style={{ padding: "100px 60px 80px", maxWidth: "860px", margin: "0 auto" }}>
-        <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.3em", color: "#a3e635", textTransform: "uppercase", marginBottom: "24px", fontWeight: 500 }}>
+        <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.3em", color: "var(--accent)", textTransform: "uppercase", marginBottom: "24px", fontWeight: 500 }}>
           Secteur — Restauration
         </p>
-        <h1 className="reveal" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2.8rem, 7vw, 5.5rem)", letterSpacing: "0.04em", lineHeight: 1.05, color: "#f0f0f0", marginBottom: "32px" }}>
-          AIO pour les<br /><span style={{ color: "#a3e635" }}>Restaurants</span>
+        <h1 className="reveal" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2.8rem, 7vw, 5.5rem)", letterSpacing: "0.04em", lineHeight: 1.05, color: "var(--text-1)", marginBottom: "32px" }}>
+          AIO pour les<br /><span style={{ color: "var(--accent)" }}>Restaurants</span>
         </h1>
-        <p className="reveal" style={{ fontSize: "0.88rem", color: "#d4d4d4", lineHeight: 1.9, fontWeight: 300, maxWidth: "600px", marginBottom: "40px" }}>
+        <p className="reveal" style={{ fontSize: "0.88rem", color: "var(--text-4)", lineHeight: 1.9, fontWeight: 300, maxWidth: "600px", marginBottom: "40px" }}>
           Vos clients demandent à ChatGPT "où manger une bonne cuisine italienne à Nantes ?" avant même d'ouvrir Google Maps. Si votre restaurant n'est pas structuré pour les IAs, vous n'existez pas dans leur réponse — et le restaurant d'en face peut vous y devancer.
         </p>
         <div className="reveal" style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
@@ -199,16 +203,16 @@ export default function AioRestauration() {
       </section>
 
       {/* STATS */}
-      <section style={{ padding: "60px", maxWidth: "860px", margin: "0 auto", borderTop: "1px solid #2a2a2a", borderBottom: "1px solid #2a2a2a" }}>
+      <section style={{ padding: "60px", maxWidth: "860px", margin: "0 auto", borderTop: "1px solid var(--border-2)", borderBottom: "1px solid var(--border-2)" }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
           {[
             { chiffre: "54%", label: "des clients cherchent un restaurant via IA ou assistant vocal en 2025" },
             { chiffre: "6×", label: "plus de réservations directes pour un restaurant cité par les IAs locales" },
             { chiffre: "3 sem.", label: "pour apparaître dans les réponses IA locales avec Schema.org Restaurant" },
           ].map((stat, i) => (
-            <div key={i} className="reveal" style={{ padding: "24px", border: "1px solid #2a2a2a", background: "#0f0f0f" }}>
-              <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "3.5rem", color: "#a3e635", lineHeight: 1, marginBottom: "8px" }}>{stat.chiffre}</p>
-              <p style={{ fontSize: "0.72rem", color: "#7a7a7a", lineHeight: 1.5, fontWeight: 300 }}>{stat.label}</p>
+            <div key={i} className="reveal" style={{ padding: "24px", border: "1px solid var(--border-2)", background: "var(--bg-page)" }}>
+              <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "3.5rem", color: "var(--accent)", lineHeight: 1, marginBottom: "8px" }}>{stat.chiffre}</p>
+              <p style={{ fontSize: "0.72rem", color: "var(--text-2)", lineHeight: 1.5, fontWeight: 300 }}>{stat.label}</p>
             </div>
           ))}
         </div>
@@ -216,18 +220,18 @@ export default function AioRestauration() {
 
       {/* PROBLÈME */}
       <section style={{ padding: "100px 60px", maxWidth: "860px", margin: "0 auto" }}>
-        <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.3em", color: "#a3e635", textTransform: "uppercase", marginBottom: "16px", fontWeight: 500 }}>.01 — Le problème</p>
-        <h2 className="reveal" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2.5rem, 5vw, 4rem)", letterSpacing: "0.04em", color: "#f0f0f0", marginBottom: "48px", lineHeight: 1.1 }}>
+        <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.3em", color: "var(--accent)", textTransform: "uppercase", marginBottom: "16px", fontWeight: 500 }}>.01 — Le problème</p>
+        <h2 className="reveal" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2.5rem, 5vw, 4rem)", letterSpacing: "0.04em", color: "var(--text-1)", marginBottom: "48px", lineHeight: 1.1 }}>
           Pourquoi les IAs ignorent<br />la plupart des restaurants
         </h2>
         <div style={{ display: "grid", gap: "16px" }}>
           {problemSignals.map((item, i) => (
-            <div key={i} className="reveal" style={{ padding: "28px", border: "1px solid #2a2a2a", background: "#0f0f0f", borderLeft: `2px solid ${item.color}` }}>
+            <div key={i} className="reveal" style={{ padding: "28px", border: "1px solid var(--border-2)", background: "var(--bg-page)", borderLeft: `2px solid ${item.color}` }}>
               <div style={{ display: "flex", alignItems: "flex-start", gap: "20px" }}>
                 <span style={{ fontSize: "1.4rem", flexShrink: 0 }}>{item.icon}</span>
                 <div>
-                  <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.1rem", letterSpacing: "0.06em", color: "#f0f0f0", marginBottom: "10px" }}>{item.titre}</p>
-                  <p style={{ fontSize: "0.78rem", color: "#d4d4d4", lineHeight: 1.7, fontWeight: 300 }}>{item.description}</p>
+                  <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.1rem", letterSpacing: "0.06em", color: "var(--text-1)", marginBottom: "10px" }}>{item.titre}</p>
+                  <p style={{ fontSize: "0.78rem", color: "var(--text-4)", lineHeight: 1.7, fontWeight: 300 }}>{item.description}</p>
                 </div>
               </div>
             </div>
@@ -237,39 +241,39 @@ export default function AioRestauration() {
 
       {/* AUDIT EXEMPLE */}
       <section style={{ padding: "0 60px 100px", maxWidth: "860px", margin: "0 auto" }}>
-        <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.3em", color: "#a3e635", textTransform: "uppercase", marginBottom: "16px", fontWeight: 500 }}>.02 — Exemple concret</p>
-        <h2 className="reveal" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2.5rem, 5vw, 4rem)", letterSpacing: "0.04em", color: "#f0f0f0", marginBottom: "40px", lineHeight: 1.1 }}>
+        <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.3em", color: "var(--accent)", textTransform: "uppercase", marginBottom: "16px", fontWeight: 500 }}>.02 — Exemple concret</p>
+        <h2 className="reveal" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2.5rem, 5vw, 4rem)", letterSpacing: "0.04em", color: "var(--text-1)", marginBottom: "40px", lineHeight: 1.1 }}>
           Un audit réel,<br />avant et après AIO
         </h2>
-        <div className="reveal" style={{ padding: "28px", border: "1px solid #2a2a2a", background: "#0f0f0f" }}>
-          <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", letterSpacing: "0.3em", color: "#7a7a7a", textTransform: "uppercase", marginBottom: "20px" }}>Cas anonymisé — {auditExemple.marque}</p>
+        <div className="reveal" style={{ padding: "28px", border: "1px solid var(--border-2)", background: "var(--bg-page)" }}>
+          <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", letterSpacing: "0.3em", color: "var(--text-2)", textTransform: "uppercase", marginBottom: "20px" }}>Cas anonymisé — {auditExemple.marque}</p>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-            <div style={{ padding: "20px", background: "#161616", border: "1px solid #2a2a2a", borderLeft: "2px solid #ef4444" }}>
+            <div style={{ padding: "20px", background: "var(--bg-hero)", border: "1px solid var(--border-2)", borderLeft: "2px solid #ef4444" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-                <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1rem", letterSpacing: "0.08em", color: "#f0f0f0" }}>AVANT</p>
-                <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2rem", color: "#ef4444" }}>{auditExemple.score}<span style={{ fontSize: "0.9rem", color: "#4a4a4a" }}>/10</span></p>
+                <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1rem", letterSpacing: "0.08em", color: "var(--text-1)" }}>AVANT</p>
+                <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2rem", color: "#ef4444" }}>{auditExemple.score}<span style={{ fontSize: "0.9rem", color: "var(--text-3)" }}>/10</span></p>
               </div>
               {auditExemple.lacunes.map((l, i) => (
                 <div key={i} style={{ display: "flex", gap: "10px", marginBottom: "8px", alignItems: "flex-start" }}>
                   <span style={{ color: "#ef4444", fontSize: "0.7rem", marginTop: "2px", flexShrink: 0 }}>✕</span>
-                  <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "#7a7a7a", lineHeight: 1.5, fontWeight: 300 }}>{l}</p>
+                  <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "var(--text-2)", lineHeight: 1.5, fontWeight: 300 }}>{l}</p>
                 </div>
               ))}
             </div>
-            <div style={{ padding: "20px", background: "#161616", border: "1px solid #2a2a2a", borderLeft: "2px solid #a3e635" }}>
+            <div style={{ padding: "20px", background: "var(--bg-hero)", border: "1px solid var(--border-2)", borderLeft: "2px solid var(--accent)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-                <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1rem", letterSpacing: "0.08em", color: "#f0f0f0" }}>APRÈS</p>
-                <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2rem", color: "#a3e635" }}>{auditExemple.apresOptimisation}<span style={{ fontSize: "0.9rem", color: "#4a4a4a" }}>/10</span></p>
+                <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1rem", letterSpacing: "0.08em", color: "var(--text-1)" }}>APRÈS</p>
+                <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2rem", color: "var(--accent)" }}>{auditExemple.apresOptimisation}<span style={{ fontSize: "0.9rem", color: "var(--text-3)" }}>/10</span></p>
               </div>
               {auditExemple.actionsRealisees.map((a, i) => (
                 <div key={i} style={{ display: "flex", gap: "10px", marginBottom: "8px", alignItems: "flex-start" }}>
-                  <span style={{ color: "#a3e635", fontSize: "0.7rem", marginTop: "2px", flexShrink: 0 }}>→</span>
-                  <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "#d4d4d4", lineHeight: 1.5, fontWeight: 300 }}>{a}</p>
+                  <span style={{ color: "var(--accent)", fontSize: "0.7rem", marginTop: "2px", flexShrink: 0 }}>→</span>
+                  <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "var(--text-4)", lineHeight: 1.5, fontWeight: 300 }}>{a}</p>
                 </div>
               ))}
             </div>
           </div>
-          <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", color: "#4a4a4a", fontStyle: "italic", borderTop: "1px solid #2a2a2a", paddingTop: "14px", marginTop: "16px" }}>
+          <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", color: "var(--text-3)", fontStyle: "italic", borderTop: "1px solid var(--border-2)", paddingTop: "14px", marginTop: "16px" }}>
             💡 Résultat obtenu en 3 semaines. Le restaurant est désormais cité par ChatGPT sur 5 requêtes locales. Données issues d'un audit Otarcy réel, marque anonymisée.
           </p>
         </div>
@@ -277,24 +281,24 @@ export default function AioRestauration() {
 
       {/* QUICK WINS */}
       <section style={{ padding: "0 60px 100px", maxWidth: "860px", margin: "0 auto" }}>
-        <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.3em", color: "#a3e635", textTransform: "uppercase", marginBottom: "16px", fontWeight: 500 }}>.03 — Quick Wins</p>
-        <h2 className="reveal" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2.5rem, 5vw, 4rem)", letterSpacing: "0.04em", color: "#f0f0f0", marginBottom: "40px", lineHeight: 1.1 }}>
+        <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.3em", color: "var(--accent)", textTransform: "uppercase", marginBottom: "16px", fontWeight: 500 }}>.03 — Quick Wins</p>
+        <h2 className="reveal" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2.5rem, 5vw, 4rem)", letterSpacing: "0.04em", color: "var(--text-1)", marginBottom: "40px", lineHeight: 1.1 }}>
           5 actions concrètes<br />pour remplir vos tables via les IAs
         </h2>
         <div style={{ display: "grid", gap: "16px" }}>
           {quickWins.map((qw, i) => (
-            <div key={i} className="reveal" style={{ padding: "24px", border: "1px solid #2a2a2a", background: "#0f0f0f" }}>
+            <div key={i} className="reveal" style={{ padding: "24px", border: "1px solid var(--border-2)", background: "var(--bg-page)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-                  <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.85rem", letterSpacing: "0.15em", color: "#a3e635" }}>{qw.numero}</span>
-                  <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.1rem", letterSpacing: "0.06em", color: "#f0f0f0" }}>{qw.titre}</p>
+                  <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.85rem", letterSpacing: "0.15em", color: "var(--accent)" }}>{qw.numero}</span>
+                  <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.1rem", letterSpacing: "0.06em", color: "var(--text-1)" }}>{qw.titre}</p>
                 </div>
                 <div style={{ display: "flex", gap: "8px", flexShrink: 0 }}>
-                  <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", letterSpacing: "0.1em", color: "#7a7a7a", padding: "2px 8px", border: "1px solid #2a2a2a" }}>{qw.duree}</span>
+                  <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", letterSpacing: "0.1em", color: "var(--text-2)", padding: "2px 8px", border: "1px solid var(--border-2)" }}>{qw.duree}</span>
                   <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", letterSpacing: "0.1em", color: qw.impactColor, padding: "2px 8px", border: `1px solid ${qw.impactColor}` }}>{qw.impact}</span>
                 </div>
               </div>
-              <p style={{ fontSize: "0.78rem", color: "#d4d4d4", lineHeight: 1.7, fontWeight: 300 }}>{qw.detail}</p>
+              <p style={{ fontSize: "0.78rem", color: "var(--text-4)", lineHeight: 1.7, fontWeight: 300 }}>{qw.detail}</p>
             </div>
           ))}
         </div>
@@ -302,23 +306,23 @@ export default function AioRestauration() {
 
       {/* FAQ */}
       <section style={{ padding: "0 60px 100px", maxWidth: "860px", margin: "0 auto" }}>
-        <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.3em", color: "#a3e635", textTransform: "uppercase", marginBottom: "16px", fontWeight: 500 }}>.04 — Questions fréquentes</p>
-        <h2 className="reveal" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2.5rem, 5vw, 4rem)", letterSpacing: "0.04em", color: "#f0f0f0", marginBottom: "40px", lineHeight: 1.1 }}>
+        <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.3em", color: "var(--accent)", textTransform: "uppercase", marginBottom: "16px", fontWeight: 500 }}>.04 — Questions fréquentes</p>
+        <h2 className="reveal" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2.5rem, 5vw, 4rem)", letterSpacing: "0.04em", color: "var(--text-1)", marginBottom: "40px", lineHeight: 1.1 }}>
           AIO & Restauration —<br />tout ce qu'il faut savoir
         </h2>
-        <div className="reveal" style={{ padding: "24px 28px", border: "1px solid #2a2a2a", background: "#0f0f0f" }}>
+        <div className="reveal" style={{ padding: "24px 28px", border: "1px solid var(--border-2)", background: "var(--bg-page)" }}>
           <FaqAccordion items={faqItems} />
         </div>
       </section>
 
       {/* CTA FINAL */}
       <section style={{ padding: "0 60px 100px", maxWidth: "860px", margin: "0 auto" }}>
-        <div className="reveal" style={{ padding: "48px", border: "1px solid #a3e635", background: "#0a0a0a" }}>
-          <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.3em", color: "#a3e635", textTransform: "uppercase", marginBottom: "16px", fontWeight: 500 }}>Passez à l'action</p>
-          <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2rem, 4vw, 3rem)", letterSpacing: "0.04em", color: "#f0f0f0", marginBottom: "16px", lineHeight: 1.1 }}>
+        <div className="reveal" style={{ padding: "48px", border: "1px solid var(--accent)", background: "var(--bg-primary)" }}>
+          <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.3em", color: "var(--accent)", textTransform: "uppercase", marginBottom: "16px", fontWeight: 500 }}>Passez à l'action</p>
+          <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2rem, 4vw, 3rem)", letterSpacing: "0.04em", color: "var(--text-1)", marginBottom: "16px", lineHeight: 1.1 }}>
             Découvrez le score AIO<br />de votre restaurant
           </h2>
-          <p style={{ fontSize: "0.78rem", color: "#7a7a7a", lineHeight: 1.7, fontWeight: 300, marginBottom: "32px", maxWidth: "480px" }}>
+          <p style={{ fontSize: "0.78rem", color: "var(--text-2)", lineHeight: 1.7, fontWeight: 300, marginBottom: "32px", maxWidth: "480px" }}>
             Otarcy analyse votre restaurant et vous donne un score AIO + des recommandations concrètes pour apparaître dans les réponses de ChatGPT, Perplexity et Claude quand vos clients cherchent où manger.
           </p>
           <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
@@ -336,11 +340,11 @@ export default function AioRestauration() {
         </div>
 
         <div className="reveal" style={{ marginTop: "40px" }}>
-          <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", letterSpacing: "0.3em", color: "#4a4a4a", textTransform: "uppercase", marginBottom: "14px" }}>Autres secteurs</p>
+          <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", letterSpacing: "0.3em", color: "var(--text-3)", textTransform: "uppercase", marginBottom: "14px" }}>Autres secteurs</p>
           <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
             {autresSecteurs.map((s) => (
               <Link key={s.to} to={s.to}
-                style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "#4a4a4a", padding: "6px 14px", border: "1px solid #2a2a2a", textDecoration: "none", transition: "color 0.2s, border-color 0.2s" }}
+                style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-3)", padding: "6px 14px", border: "1px solid var(--border-2)", textDecoration: "none", transition: "color 0.2s, border-color 0.2s" }}
                 onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#a3e635"; (e.currentTarget as HTMLAnchorElement).style.borderColor = "#a3e635"; }}
                 onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#4a4a4a"; (e.currentTarget as HTMLAnchorElement).style.borderColor = "#2a2a2a"; }}
               >
@@ -350,6 +354,8 @@ export default function AioRestauration() {
           </div>
         </div>
       </section>
+
+      <Footer />
     </div>
   );
 }

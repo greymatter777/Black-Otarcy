@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 // ─── HOOK REVEAL ──────────────────────────────────────────────────────────────
 function useReveal() {
@@ -17,7 +19,7 @@ function useReveal() {
 const FAQ = [
   {
     categorie: "Comprendre l'AIO",
-    couleur: "#a3e635",
+    couleur: "var(--accent)",
     questions: [
       {
         q: "Qu'est-ce que l'AIO (AI Optimization) ?",
@@ -83,7 +85,7 @@ const FAQ = [
   },
   {
     categorie: "Abonnement & données",
-    couleur: "#7a7a7a",
+    couleur: "var(--text-2)",
     questions: [
       {
         q: "Mes données sont-elles sécurisées ?",
@@ -111,7 +113,7 @@ export default function Faq() {
   const toggle = (key: string) => setOuvert(ouvert === key ? null : key);
 
   return (
-    <div style={{ background: "#0a0a0a", minHeight: "100vh" }}>
+    <div style={{ background: "var(--bg-primary)", minHeight: "100vh" }}>
 
       {/* Schema.org FAQPage */}
       <script
@@ -144,41 +146,18 @@ export default function Faq() {
         }}
       />
 
-      {/* ── NAVBAR ── */}
-      <nav style={{
-        position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "20px 36px",
-        background: "rgba(10,10,10,0.95)",
-        borderBottom: "1px solid #1a1a1a",
-        backdropFilter: "blur(12px)",
-      }}>
-        <Link to="/" style={{ display: "flex", flexDirection: "column", lineHeight: 0.9, textDecoration: "none" }}>
-          <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.15rem", letterSpacing: "0.15em", color: "#f0f0f0" }}>OT</span>
-          <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.15rem", letterSpacing: "0.15em", color: "#7a7a7a" }}>CY</span>
-        </Link>
-        <div style={{ display: "flex", gap: "24px", alignItems: "center" }}>
-          <Link to="/" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.7rem", letterSpacing: "0.2em", color: "#7a7a7a", textDecoration: "none" }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "#f0f0f0")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "#7a7a7a")}
-          >← ACCUEIL</Link>
-          <Link to="/glossaire" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.7rem", letterSpacing: "0.2em", color: "#7a7a7a", textDecoration: "none" }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "#f0f0f0")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "#7a7a7a")}
-          >GLOSSAIRE</Link>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* ── HERO ── */}
-      <section style={{ paddingTop: "140px", padding: "140px 60px 60px", borderBottom: "1px solid #1a1a1a" }}>
+      <section style={{ paddingTop: "140px", padding: "140px 60px 60px", borderBottom: "1px solid var(--border-1)" }}>
         <div style={{ maxWidth: "860px", margin: "0 auto" }}>
-          <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.3em", color: "#a3e635", textTransform: "uppercase", marginBottom: "16px", fontWeight: 500 }}>
+          <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.3em", color: "var(--accent)", textTransform: "uppercase", marginBottom: "16px", fontWeight: 500 }}>
             Ressource — FAQ
           </p>
-          <h1 className="reveal" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2.5rem, 5vw, 4.5rem)", letterSpacing: "0.06em", color: "#f0f0f0", lineHeight: 0.95, marginBottom: "24px" }}>
+          <h1 className="reveal" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2.5rem, 5vw, 4.5rem)", letterSpacing: "0.06em", color: "var(--text-1)", lineHeight: 0.95, marginBottom: "24px" }}>
             QUESTIONS FRÉQUENTES
           </h1>
-          <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.88rem", color: "#7a7a7a", lineHeight: 1.9, fontWeight: 300, maxWidth: "580px" }}>
+          <p className="reveal" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.88rem", color: "var(--text-2)", lineHeight: 1.9, fontWeight: 300, maxWidth: "580px" }}>
             {totalQuestions} questions sur l'AI Optimization, le fonctionnement d'Otarcy et la stratégie AIO pour les PME françaises.
           </p>
         </div>
@@ -200,12 +179,12 @@ export default function Faq() {
               </div>
 
               {/* Questions */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "1px", background: "#1a1a1a" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1px", background: "var(--border-1)" }}>
                 {categorie.questions.map((item, qi) => {
                   const key = `${ci}-${qi}`;
                   const isOpen = ouvert === key;
                   return (
-                    <div key={qi} style={{ background: "#0f0f0f" }}>
+                    <div key={qi} style={{ background: "var(--bg-page)" }}>
                       <button
                         type="button"
                         onClick={() => toggle(key)}
@@ -218,17 +197,17 @@ export default function Faq() {
                         onMouseEnter={(e) => { (e.currentTarget.parentElement as HTMLDivElement).style.background = "#111"; }}
                         onMouseLeave={(e) => { if (!isOpen) (e.currentTarget.parentElement as HTMLDivElement).style.background = "#0f0f0f"; }}
                       >
-                        <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.82rem", color: isOpen ? "#f0f0f0" : "#d4d4d4", fontWeight: isOpen ? 600 : 400, lineHeight: 1.5, margin: 0, flex: 1 }}>
+                        <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.82rem", color: isOpen ? "var(--text-1)" : "var(--text-4)", fontWeight: isOpen ? 600 : 400, lineHeight: 1.5, margin: 0, flex: 1 }}>
                           {item.q}
                         </p>
-                        <span style={{ color: isOpen ? "#a3e635" : "#4a4a4a", fontSize: "1rem", flexShrink: 0, transition: "transform 0.2s", transform: isOpen ? "rotate(45deg)" : "rotate(0deg)", display: "inline-block", marginTop: "2px" }}>
+                        <span style={{ color: isOpen ? "var(--accent)" : "var(--text-3)", fontSize: "1rem", flexShrink: 0, transition: "transform 0.2s", transform: isOpen ? "rotate(45deg)" : "rotate(0deg)", display: "inline-block", marginTop: "2px" }}>
                           +
                         </span>
                       </button>
 
                       {isOpen && (
-                        <div style={{ padding: "0 24px 24px", borderTop: "1px solid #1a1a1a" }}>
-                          <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.78rem", color: "#7a7a7a", lineHeight: 1.9, fontWeight: 300, margin: "16px 0 0 0" }}>
+                        <div style={{ padding: "0 24px 24px", borderTop: "1px solid var(--border-1)" }}>
+                          <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.78rem", color: "var(--text-2)", lineHeight: 1.9, fontWeight: 300, margin: "16px 0 0 0" }}>
                             {item.r}
                           </p>
                         </div>
@@ -242,38 +221,38 @@ export default function Faq() {
 
           {/* Liens vers ressources */}
           <div className="reveal" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "48px" }}>
-            <Link to="/glossaire" style={{ textDecoration: "none", padding: "24px", border: "1px solid #2a2a2a", background: "#0f0f0f", display: "block", transition: "border-color 0.2s" }}
+            <Link to="/glossaire" style={{ textDecoration: "none", padding: "24px", border: "1px solid var(--border-2)", background: "var(--bg-page)", display: "block", transition: "border-color 0.2s" }}
               onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "#a3e635"; }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "#2a2a2a"; }}
             >
-              <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.1rem", letterSpacing: "0.08em", color: "#a3e635", marginBottom: "8px" }}>GLOSSAIRE AIO →</p>
-              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "#7a7a7a", fontWeight: 300, lineHeight: 1.6 }}>
+              <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.1rem", letterSpacing: "0.08em", color: "var(--accent)", marginBottom: "8px" }}>GLOSSAIRE AIO →</p>
+              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "var(--text-2)", fontWeight: 300, lineHeight: 1.6 }}>
                 Tous les termes essentiels de l'AI Optimization définis clairement.
               </p>
             </Link>
-            <Link to="/pricing" style={{ textDecoration: "none", padding: "24px", border: "1px solid #2a2a2a", background: "#0f0f0f", display: "block", transition: "border-color 0.2s" }}
+            <Link to="/pricing" style={{ textDecoration: "none", padding: "24px", border: "1px solid var(--border-2)", background: "var(--bg-page)", display: "block", transition: "border-color 0.2s" }}
               onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "#60a5fa"; }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "#2a2a2a"; }}
             >
               <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.1rem", letterSpacing: "0.08em", color: "#60a5fa", marginBottom: "8px" }}>TARIFS →</p>
-              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "#7a7a7a", fontWeight: 300, lineHeight: 1.6 }}>
+              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "var(--text-2)", fontWeight: 300, lineHeight: 1.6 }}>
                 Comparez les plans Découverte, AIO Essentiel et AIO Expert.
               </p>
             </Link>
           </div>
 
           {/* CTA */}
-          <div className="reveal" style={{ padding: "32px", border: "1px solid #a3e635", background: "#0a0a0a", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "24px", flexWrap: "wrap" }}>
+          <div className="reveal" style={{ padding: "32px", border: "1px solid var(--accent)", background: "var(--bg-primary)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "24px", flexWrap: "wrap" }}>
             <div>
-              <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.3rem", letterSpacing: "0.08em", color: "#f0f0f0", marginBottom: "6px" }}>
+              <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.3rem", letterSpacing: "0.08em", color: "var(--text-1)", marginBottom: "6px" }}>
                 PRÊT POUR L'AUDIT AIO ?
               </p>
-              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.75rem", color: "#7a7a7a", fontWeight: 300 }}>
+              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.75rem", color: "var(--text-2)", fontWeight: 300 }}>
                 3 audits gratuits — sans carte bancaire.
               </p>
             </div>
             <Link to="/#audit"
-              style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.22em", textTransform: "uppercase", padding: "12px 28px", background: "#a3e635", color: "#0f0f0f", textDecoration: "none", fontWeight: 600, whiteSpace: "nowrap" }}
+              style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.22em", textTransform: "uppercase", padding: "12px 28px", background: "var(--accent)", color: "var(--bg-page)", textDecoration: "none", fontWeight: 600, whiteSpace: "nowrap" }}
               onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
               onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
             >
@@ -282,6 +261,8 @@ export default function Faq() {
           </div>
         </div>
       </section>
+
+      <Footer />
     </div>
   );
 }
