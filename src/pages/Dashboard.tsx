@@ -289,6 +289,7 @@ const Dashboard: React.FC = () => {
   const [selected, setSelected] = useState<AuditRecord | null>(null);
   const [plan, setPlan] = useState<string>("free");
   const [auditsLeft, setAuditsLeft] = useState<number>(0);
+  const [selectedUrl, setSelectedUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) { navigate("/login"); return; }
@@ -305,6 +306,16 @@ const Dashboard: React.FC = () => {
       .catch(console.error);
   }, [user, navigate]);
 
+  useEffect(() => {
+    const urlList = Object.keys(audits.reduce((acc, a) => {
+      let host = a.url;
+      try { host = new URL(a.url).hostname; } catch {}
+      acc[host] = true;
+      return acc;
+    }, {} as Record<string, true>));
+    if (urlList.length > 0 && !selectedUrl) setSelectedUrl(urlList[0]);
+  }, [audits.length]);
+
   const displayName = user?.user_metadata?.full_name ?? user?.email ?? "";
 
   // Grouper les audits par hostname
@@ -317,15 +328,9 @@ const Dashboard: React.FC = () => {
   }, {} as Record<string, AuditRecord[]>);
 
   const urlList = Object.keys(auditsByUrl);
-  const [selectedUrl, setSelectedUrl] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (urlList.length > 0 && !selectedUrl) setSelectedUrl(urlList[0]);
-  }, [urlList.length]);
-
   const filteredAudits = selectedUrl ? (auditsByUrl[selectedUrl] ?? []) : [];
-  const latestAudit = filteredAudits.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0] ?? null;
-  const progression = filteredAudits.length >= 2
+  const latestAudit = filteredAudits.slice().sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0] ?? null;
+  const progression = filteredAudits.length >= 2 && latestAudit
     ? latestAudit.score - [...filteredAudits].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())[0].score
     : null;
 
