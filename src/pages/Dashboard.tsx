@@ -307,62 +307,206 @@ const Dashboard: React.FC = () => {
 
   const displayName = user?.user_metadata?.full_name ?? user?.email ?? "";
 
-  const scoreMoyen = audits.length > 0
-    ? (audits.reduce((acc, a) => acc + a.score, 0) / audits.length).toFixed(0) + "/100"
-    : "—";
+  // Grouper les audits par hostname
+  const auditsByUrl = audits.reduce((acc, a) => {
+    let host = a.url;
+    try { host = new URL(a.url).hostname; } catch {}
+    if (!acc[host]) acc[host] = [];
+    acc[host].push(a);
+    return acc;
+  }, {} as Record<string, AuditRecord[]>);
 
-  const dernierSite = audits[0]?.url
-    ? (() => { try { return new URL(audits[0].url).hostname; } catch { return audits[0].url ?? "URL inconnue"; } })()
-    : "—";
+  const urlList = Object.keys(auditsByUrl);
+  const [selectedUrl, setSelectedUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (urlList.length > 0 && !selectedUrl) setSelectedUrl(urlList[0]);
+  }, [urlList.length]);
+
+  const filteredAudits = selectedUrl ? (auditsByUrl[selectedUrl] ?? []) : [];
+  const latestAudit = filteredAudits.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0] ?? null;
+  const progression = filteredAudits.length >= 2
+    ? latestAudit.score - [...filteredAudits].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())[0].score
+    : null;
 
   return (
-    <div style={{ background: "var(--bg-page)", minHeight: "100vh" }}>
-      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "28px 36px", background: "var(--bg-nav)", backdropFilter: "blur(12px)", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+    <div style={{ background: "var(--bg-page)", minHeight: "100vh", fontFamily: "'Raleway', sans-serif" }}>
+      {/* NAV */}
+      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 32px", background: "var(--bg-nav)", backdropFilter: "blur(12px)", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
         <Link to="/" style={{ display: "flex", flexDirection: "column", lineHeight: 0.9, textDecoration: "none" }}>
-          <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.15rem", letterSpacing: "0.15em", color: "var(--text-1)" }}>OT</span>
-          <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.15rem", letterSpacing: "0.15em", color: "var(--text-2)" }}>AR</span>
+          <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.1rem", letterSpacing: "0.15em", color: "var(--text-1)" }}>OT</span>
+          <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.1rem", letterSpacing: "0.15em", color: "var(--text-2)" }}>AR</span>
         </Link>
-        <div style={{ display: "flex", gap: "24px", alignItems: "center" }}>
-          <Link to="/" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.7rem", letterSpacing: "0.2em", color: "var(--text-2)", textDecoration: "none", fontWeight: 500 }} onMouseEnter={(e) => (e.currentTarget.style.color = "#e8e8e8")} onMouseLeave={(e) => (e.currentTarget.style.color = "#7a7a7a")}>DIAGNOSTIC</Link>
-          <Link to="/pricing" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.7rem", letterSpacing: "0.2em", color: "var(--text-2)", textDecoration: "none", fontWeight: 500 }} onMouseEnter={(e) => (e.currentTarget.style.color = "#e8e8e8")} onMouseLeave={(e) => (e.currentTarget.style.color = "#7a7a7a")}>TARIFS</Link>
-          <button onClick={() => signOut().then(() => navigate("/login"))} style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-3)", background: "transparent", border: "none", cursor: "pointer", transition: "color 0.3s" }} onMouseEnter={(e) => (e.currentTarget.style.color = "#ef4444")} onMouseLeave={(e) => (e.currentTarget.style.color = "#4a4a4a")}>Déconnexion</button>
+        <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
+          <Link to="/" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", letterSpacing: "0.2em", color: "var(--text-2)", textDecoration: "none" }} onMouseEnter={e => e.currentTarget.style.color="#e8e8e8"} onMouseLeave={e => e.currentTarget.style.color="var(--text-2)"}>DIAGNOSTIC</Link>
+          <Link to="/pricing" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", letterSpacing: "0.2em", color: "var(--text-2)", textDecoration: "none" }} onMouseEnter={e => e.currentTarget.style.color="#e8e8e8"} onMouseLeave={e => e.currentTarget.style.color="var(--text-2)"}>TARIFS</Link>
+          <Link to="/" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", letterSpacing: "0.2em", padding: "8px 18px", background: "var(--accent)", color: "#0f0f0f", fontWeight: 600, textDecoration: "none" }}>+ AUDIT</Link>
+          <button onClick={() => signOut().then(() => navigate("/login"))} style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-3)", background: "transparent", border: "none", cursor: "pointer" }} onMouseEnter={e => e.currentTarget.style.color="#ef4444"} onMouseLeave={e => e.currentTarget.style.color="var(--text-3)"}>Déconnexion</button>
         </div>
       </nav>
 
-      <div style={{ maxWidth: "860px", margin: "0 auto", padding: "120px 40px 80px" }}>
-        <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.65rem", letterSpacing: "0.3em", color: "var(--text-2)", textTransform: "uppercase", marginBottom: "12px" }}>.04 — Dashboard</p>
-        <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2.5rem, 6vw, 4.5rem)", letterSpacing: "0.06em", color: "var(--text-1)", marginBottom: "8px" }}>MES AUDITS</h1>
-        <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "var(--text-2)", marginBottom: "48px", letterSpacing: "0.1em" }}>
-          {displayName} — Plan <span style={{ color: "var(--text-1)", textTransform: "capitalize" }}>{plan}</span>
-          {plan === "free" && (<span> · {auditsLeft} audit{auditsLeft > 1 ? "s" : ""} restant{auditsLeft > 1 ? "s" : ""} · <Link to="/pricing" style={{ color: "var(--accent)", textDecoration: "none" }}>Passer au Pro</Link></span>)}
-        </p>
+      {/* TWO-COLUMN LAYOUT */}
+      <div style={{ display: "grid", gridTemplateColumns: "260px 1fr", minHeight: "100vh", paddingTop: 57 }}>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px", marginBottom: "48px" }}>
-          {[
-            { label: "Audits total", value: audits.length },
-            { label: "Score moyen", value: scoreMoyen },
-            { label: "Dernier site", value: dernierSite.toUpperCase() },
-          ].map((stat, i) => (
-            <div key={i} style={{ padding: "20px", border: "1px solid var(--border-2)", background: "var(--bg-hero)" }}>
-              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", letterSpacing: "0.25em", color: "var(--text-2)", textTransform: "uppercase", marginBottom: "8px" }}>{stat.label}</p>
-              <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.8rem", color: "var(--text-1)", letterSpacing: "0.06em" }}>{stat.value}</p>
+        {/* SIDEBAR */}
+        <aside style={{ background: "#080808", borderRight: "1px solid #1a1a1a", padding: "32px 20px", display: "flex", flexDirection: "column", gap: 24, position: "sticky", top: 57, height: "calc(100vh - 57px)", overflowY: "auto" }}>
+          {/* User block */}
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+              <div style={{ width: 36, height: 36, borderRadius: "50%", background: "#1a1a1a", border: "1px solid #2a2a2a", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.7rem", color: "#7a7a7a", flexShrink: 0 }}>
+                {(displayName.charAt(0) || "U").toUpperCase()}
+              </div>
+              <div>
+                <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.68rem", color: "var(--text-1)", letterSpacing: "0.05em" }}>{displayName}</p>
+                <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.54rem", color: "var(--text-2)", letterSpacing: "0.1em", textTransform: "uppercase" }}>Plan <span style={{ color: "var(--accent)" }}>{plan}</span></p>
+              </div>
             </div>
-          ))}
-        </div>
+            {/* Quota bar */}
+            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.52rem", letterSpacing: "0.3em", color: "#3a3a3a", textTransform: "uppercase", marginBottom: 6 }}>Quota</p>
+            <div style={{ height: 2, background: "#2a2a2a" }}>
+              {plan === "free" && <div style={{ height: 2, background: "var(--accent)", borderRadius: 2, width: `${Math.max(0, Math.min(100, ((3 - auditsLeft) / 3) * 100))}%`, transition: "width 0.6s ease" }} />}
+              {plan !== "free" && <div style={{ height: 2, background: "var(--accent)", borderRadius: 2, width: "100%" }} />}
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4 }}>
+              <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.54rem", color: "#4a4a4a" }}>{plan === "free" ? `${auditsLeft} restant${auditsLeft > 1 ? "s" : ""}` : "Illimité"}</span>
+              {plan === "free" && <Link to="/pricing" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.54rem", color: "var(--accent)", textDecoration: "none" }}>Upgrade →</Link>}
+            </div>
+          </div>
 
-        {loading ? (
-          <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.75rem", color: "var(--text-2)", letterSpacing: "0.15em" }}>Chargement...</p>
-        ) : audits.length === 0 ? (
-          <div style={{ padding: "48px", border: "1px solid var(--border-2)", textAlign: "center" }}>
-            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.78rem", color: "var(--text-2)", marginBottom: "16px" }}>Aucun audit pour le moment</p>
-            <Link to="/" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--text-5)", textDecoration: "none", padding: "10px 20px", border: "1px solid var(--border-3)" }}>Lancer mon premier diagnostic →</Link>
+          {/* URL list */}
+          <div style={{ flex: 1 }}>
+            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.52rem", letterSpacing: "0.3em", color: "#3a3a3a", textTransform: "uppercase", marginBottom: 10 }}>URLs auditées</p>
+            {loading ? (
+              [1,2,3].map(i => <div key={i} className="skeleton-pulse" style={{ height: 52, background: "#161616", marginBottom: 6 }} />)
+            ) : urlList.length === 0 ? (
+              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", color: "#3a3a3a" }}>Aucun audit</p>
+            ) : (
+              urlList.map(url => {
+                const urlAudits = auditsByUrl[url];
+                const latest = [...urlAudits].sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
+                const isActive = selectedUrl === url;
+                return (
+                  <div key={url} onClick={() => setSelectedUrl(url)} style={{ padding: "10px 12px", border: `1px solid ${isActive ? "var(--accent)" : "#2a2a2a"}`, background: isActive ? "#0d0d0d" : "transparent", marginBottom: 6, cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center", transition: "border-color 0.2s" }}>
+                    <div style={{ minWidth: 0 }}>
+                      <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.62rem", color: "var(--text-4)", letterSpacing: "0.05em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 150 }}>{url}</p>
+                      <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.52rem", color: "#4a4a4a", letterSpacing: "0.08em", marginTop: 2 }}>{urlAudits.length} audit{urlAudits.length > 1 ? "s" : ""}</p>
+                    </div>
+                    <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1rem", color: niveauColor(latest.niveau), flexShrink: 0, marginLeft: 8 }}>{latest.score}</span>
+                  </div>
+                );
+              })
+            )}
           </div>
-        ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: "1px", background: "#2a2a2a" }}>
-            {audits.map((audit) => (<AuditCard key={audit.id} audit={audit} onClick={() => setSelected(audit)} />))}
-          </div>
-        )}
+
+          {/* Footer sidebar */}
+          <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.52rem", letterSpacing: "0.15em", color: "#3a3a3a", textTransform: "uppercase", cursor: "pointer" }} onMouseEnter={e => e.currentTarget.style.color="#ef4444"} onMouseLeave={e => e.currentTarget.style.color="#3a3a3a"} onClick={() => signOut().then(() => navigate("/login"))}>Déconnexion</p>
+        </aside>
+
+        {/* MAIN CONTENT */}
+        <main style={{ padding: "40px 44px 80px", overflowY: "auto" }}>
+          {!selectedUrl || urlList.length === 0 ? (
+            /* Empty state */
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "60vh", textAlign: "center" }}>
+              <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2rem", color: "#2a2a2a", letterSpacing: "0.1em", marginBottom: 16 }}>AUCUN AUDIT</p>
+              <Link to="/" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.66rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "#f0f0f0", textDecoration: "none", padding: "12px 28px", border: "1px solid #3a3a3a" }}>Lancer mon premier diagnostic →</Link>
+            </div>
+          ) : (
+            <>
+              {/* Header */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 28 }}>
+                <div>
+                  <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", letterSpacing: "0.3em", color: "var(--text-2)", textTransform: "uppercase", marginBottom: 6 }}>.04 — Dashboard</p>
+                  <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2rem, 4vw, 3rem)", letterSpacing: "0.06em", color: "var(--text-1)", lineHeight: 1 }}>{selectedUrl?.toUpperCase()}</h1>
+                  <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.6rem", color: "#4a4a4a", letterSpacing: "0.1em", marginTop: 4 }}>{filteredAudits.length} audit{filteredAudits.length > 1 ? "s" : ""} · dernier le {latestAudit ? new Date(latestAudit.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "—"}</p>
+                </div>
+                <Link to="/" style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", padding: "10px 22px", background: "var(--accent)", color: "#0f0f0f", fontWeight: 600, textDecoration: "none", flexShrink: 0 }}>Relancer →</Link>
+              </div>
+
+              {/* KPI row */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 20 }}>
+                {[
+                  { label: "Score actuel", value: latestAudit ? `${latestAudit.score}` : "—", unit: "/100", color: latestAudit ? niveauColor(latestAudit.niveau) : "var(--text-2)", hint: latestAudit?.niveau ?? "" },
+                  { label: "Progression", value: progression !== null ? `${progression > 0 ? "+" : ""}${progression}` : "—", unit: " pts", color: progression !== null ? (progression >= 0 ? "var(--accent)" : "#ef4444") : "var(--text-2)", hint: `sur ${filteredAudits.length} audits` },
+                  { label: "Quick Wins", value: latestAudit?.quick_wins?.length ?? "—", unit: "", color: "#f97316", hint: "actions identifiées" },
+                ].map((k, i) => (
+                  <div key={i} style={{ background: "var(--bg-hero)", border: "1px solid var(--border-2)", padding: "16px 18px" }}>
+                    <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.54rem", letterSpacing: "0.25em", color: "var(--text-2)", textTransform: "uppercase", marginBottom: 6 }}>{k.label}</p>
+                    <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2rem", color: k.color as string, lineHeight: 1 }}>{k.value}<span style={{ fontSize: "0.9rem", color: "var(--text-2)" }}>{k.unit}</span></p>
+                    <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.54rem", color: "#3a3a3a", marginTop: 4 }}>{k.hint}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Evolution chart */}
+              <div style={{ background: "var(--bg-hero)", border: "1px solid var(--border-2)", padding: "18px 20px", marginBottom: 20 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+                  <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.88rem", letterSpacing: "0.1em", color: "var(--text-1)" }}>ÉVOLUTION DU SCORE DE VISIBILITÉ</p>
+                  <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.5rem", letterSpacing: "0.15em", color: "var(--accent)", border: "1px solid var(--accent)", padding: "2px 6px", textTransform: "uppercase" }}>{selectedUrl}</span>
+                </div>
+                <ScoreEvolutionChart audits={filteredAudits} />
+              </div>
+
+              {/* Two charts row */}
+              {latestAudit && latestAudit.criteres && latestAudit.criteres.length > 0 && (
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 20 }}>
+                  {/* Donut */}
+                  <div style={{ background: "var(--bg-hero)", border: "1px solid var(--border-2)", padding: "18px 20px" }}>
+                    <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.82rem", letterSpacing: "0.1em", color: "var(--text-1)", marginBottom: 4 }}>RÉPARTITION CRITÈRES</p>
+                    <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.54rem", color: "#4a4a4a", letterSpacing: "0.1em", marginBottom: 14 }}>Dernier audit · {latestAudit.score}/100</p>
+                    <CriteriaDonut criteres={latestAudit.criteres} />
+                  </div>
+                  {/* Bar scores */}
+                  <div style={{ background: "var(--bg-hero)", border: "1px solid var(--border-2)", padding: "18px 20px" }}>
+                    <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.82rem", letterSpacing: "0.1em", color: "var(--text-1)", marginBottom: 4 }}>CRITÈRES DÉTAIL</p>
+                    <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.54rem", color: "#4a4a4a", letterSpacing: "0.1em", marginBottom: 14 }}>Scores par critère</p>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                      {latestAudit.criteres.map((c) => (
+                        <div key={c.nom}>
+                          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                            <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", color: "var(--text-2)", letterSpacing: "0.05em" }}>{c.titre}</span>
+                            <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.78rem", color: statutColor(c.statut) }}>{c.points}/{c.max}</span>
+                          </div>
+                          <div style={{ height: 2, background: "#2a2a2a", borderRadius: 2 }}>
+                            <div style={{ height: 2, width: `${(c.points / Math.max(c.max, 1)) * 100}%`, background: statutColor(c.statut), borderRadius: 2, transition: "width 0.8s ease" }} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Audit history */}
+              <div style={{ background: "var(--bg-hero)", border: "1px solid var(--border-2)" }}>
+                <div style={{ padding: "14px 18px", borderBottom: "1px solid #1a1a1a", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.88rem", letterSpacing: "0.1em", color: "var(--text-1)" }}>HISTORIQUE</p>
+                  <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.54rem", letterSpacing: "0.15em", color: "#4a4a4a", textTransform: "uppercase" }}>{filteredAudits.length} entrée{filteredAudits.length > 1 ? "s" : ""}</span>
+                </div>
+                {loading ? (
+                  [1,2,3].map(i => <SkeletonRow key={i} />)
+                ) : (
+                  [...filteredAudits].sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).map(audit => {
+                    const scores = [...(auditsByUrl[selectedUrl ?? ""] ?? [])].sort((a,b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()).map(a => a.score);
+                    const date = new Date(audit.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+                    return (
+                      <div key={audit.id} onClick={() => setSelected(audit)} style={{ padding: "12px 18px", display: "flex", alignItems: "center", gap: 14, borderBottom: "1px solid #1a1a1a", cursor: "pointer" }} onMouseEnter={e => e.currentTarget.style.background="#111"} onMouseLeave={e => e.currentTarget.style.background="transparent"}>
+                        <div style={{ width: 38, height: 38, borderRadius: "50%", border: `2px solid ${niveauColor(audit.niveau)}`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.82rem", color: niveauColor(audit.niveau), flexShrink: 0 }}>{audit.score}</div>
+                        <div style={{ flex: 1 }}>
+                          <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.88rem", letterSpacing: "0.08em", color: "var(--text-1)" }}>{date}</p>
+                          <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.52rem", letterSpacing: "0.1em", color: niveauColor(audit.niveau), padding: "1px 6px", border: `1px solid ${niveauColor(audit.niveau)}`, textTransform: "uppercase" }}>{audit.niveau}</span>
+                        </div>
+                        <MiniSparkline scores={scores} />
+                        <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.6rem", color: "#3a3a3a", marginLeft: 8 }}>→</span>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </>
+          )}
+        </main>
       </div>
+
       {selected && <AuditDetail audit={selected} onClose={() => setSelected(null)} />}
     </div>
   );
