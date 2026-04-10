@@ -177,6 +177,110 @@ const AuditDetail: React.FC<{ audit: AuditRecord; onClose: () => void }> = ({ au
   );
 };
 
+const SkeletonRow: React.FC = () => (
+  <div style={{ padding: "12px 18px", display: "flex", alignItems: "center", gap: "14px", borderBottom: "1px solid #1a1a1a" }}>
+    <div style={{ width: 38, height: 38, borderRadius: "50%", background: "#161616", flexShrink: 0 }} className="skeleton-pulse" />
+    <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 5 }}>
+      <div style={{ height: 11, width: 130, background: "#161616" }} className="skeleton-pulse" />
+      <div style={{ height: 8, width: 80, background: "#161616" }} className="skeleton-pulse" />
+    </div>
+  </div>
+);
+
+const MiniSparkline: React.FC<{ scores: number[] }> = ({ scores }) => {
+  const max = Math.max(...scores, 1);
+  return (
+    <div style={{ display: "flex", alignItems: "flex-end", gap: 2, height: 22, flexShrink: 0 }}>
+      {scores.slice(-4).map((s, i, arr) => (
+        <div key={i} style={{ width: 4, height: `${(s / max) * 100}%`, background: i === arr.length - 1 ? "#a3e635" : "#2a2a2a" }} />
+      ))}
+    </div>
+  );
+};
+
+const ScoreEvolutionChart: React.FC<{ audits: AuditRecord[] }> = ({ audits }) => {
+  const sorted = [...audits].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+  const W = 620, H = 130, padL = 28, padR = 20, padT = 14, padB = 22;
+  const innerW = W - padL - padR;
+  const innerH = H - padT - padB;
+  const toX = (i: number) => padL + (i / Math.max(sorted.length - 1, 1)) * innerW;
+  const toY = (s: number) => padT + innerH - (s / 100) * innerH;
+  const pts = sorted.map((a, i) => ({ x: toX(i), y: toY(a.score), score: a.score, date: new Date(a.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) }));
+  const polyline = pts.map(p => `${p.x},${p.y}`).join(" ");
+  const area = `M${pts[0]?.x ?? 0},${pts[0]?.y ?? padT} ` + pts.map(p => `L${p.x},${p.y}`).join(" ") + ` L${pts[pts.length-1]?.x ?? W},${H - padB} L${pts[0]?.x ?? 0},${H - padB} Z`;
+
+  if (sorted.length < 2) return (
+    <div style={{ height: 130, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.68rem", color: "#4a4a4a" }}>Auditez ce site plusieurs fois pour voir l'évolution.</p>
+    </div>
+  );
+
+  return (
+    <svg width="100%" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet" style={{ overflow: "visible" }}>
+      <defs>
+        <linearGradient id="evGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#a3e635" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#a3e635" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      {[100, 50, 0].map(v => (
+        <g key={v}>
+          <line x1={padL} y1={toY(v)} x2={W - padR} y2={toY(v)} stroke="#1a1a1a" strokeWidth="1" />
+          <text x={padL - 4} y={toY(v) + 3} fill="#3a3a3a" fontSize="8" fontFamily="Raleway,sans-serif" textAnchor="end">{v}</text>
+        </g>
+      ))}
+      <path d={area} fill="url(#evGrad)" />
+      <polyline points={polyline} fill="none" stroke="#a3e635" strokeWidth="1.5" strokeLinejoin="round" />
+      {pts.map((p, i) => (
+        <g key={i}>
+          <circle cx={p.x} cy={p.y} r={i === pts.length - 1 ? 4 : 3} fill={i === pts.length - 1 ? "#a3e635" : "#0f0f0f"} stroke="#a3e635" strokeWidth="1.5" />
+          <text x={p.x} y={H - padB + 12} fill={i === pts.length - 1 ? "#a3e635" : "#4a4a4a"} fontSize="9" fontFamily="Raleway,sans-serif" textAnchor="middle">{p.date}</text>
+          <text x={p.x} y={p.y - 7} fill={i === pts.length - 1 ? "#a3e635" : "#7a7a7a"} fontSize="9" fontFamily="Bebas Neue,sans-serif" textAnchor="middle">{p.score}</text>
+        </g>
+      ))}
+    </svg>
+  );
+};
+
+const CriteriaDonut: React.FC<{ criteres: AuditRecord["criteres"] }> = ({ criteres }) => {
+  const total = criteres.reduce((acc, c) => acc + c.max, 0) || 1;
+  const colors = ["#a3e635", "#60a5fa", "#f97316", "#4a4a4a", "#7a7a7a"];
+  const circumference = 2 * Math.PI * 28;
+  let offset = 0;
+  const score = criteres.reduce((acc, c) => acc + c.points, 0);
+  const maxScore = criteres.reduce((acc, c) => acc + c.max, 0);
+
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+      <svg width="78" height="78" viewBox="0 0 78 78" style={{ flexShrink: 0 }}>
+        <circle cx="39" cy="39" r="28" fill="none" stroke="#1a1a1a" strokeWidth="9" />
+        {criteres.map((c, i) => {
+          const dash = (c.max / total) * circumference;
+          const el = (
+            <circle key={c.nom} cx="39" cy="39" r="28" fill="none"
+              stroke={colors[i % colors.length]} strokeWidth="9"
+              strokeDasharray={`${dash} ${circumference}`}
+              strokeDashoffset={-offset}
+              transform="rotate(-90 39 39)" />
+          );
+          offset += dash;
+          return el;
+        })}
+        <text x="39" y="36" textAnchor="middle" fontFamily="Bebas Neue, sans-serif" fontSize="14" fill="#f0f0f0">{score}</text>
+        <text x="39" y="45" textAnchor="middle" fontFamily="Raleway, sans-serif" fontSize="6" fill="#4a4a4a">/{maxScore}</text>
+      </svg>
+      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+        {criteres.map((c, i) => (
+          <div key={c.nom} style={{ display: "flex", alignItems: "center", gap: 6, fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", color: "#7a7a7a", letterSpacing: "0.05em" }}>
+            <span style={{ width: 7, height: 7, background: colors[i % colors.length], flexShrink: 0 }} />
+            {c.titre} · {Math.round((c.max / total) * 100)}%
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const Dashboard: React.FC = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();

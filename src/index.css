@@ -168,6 +168,13 @@ textarea {
 
   /* Masquer ou déplacer les éléments fixes encombrants (SideLeft/SideRight) */
   .side-elements {
-    display: none; 
+    display: none;
   }
 }
+
+@keyframes skeleton-pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+.skeleton-pulse { animation: skeleton-pulse 1.5s ease-in-out infinite; }
