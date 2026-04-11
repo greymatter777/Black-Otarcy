@@ -239,6 +239,110 @@ Une skill = des décisions résolues, pas des conseils génériques. Chaque règ
 1. **Étape 4 — `api/llm-perception.ts`** : bloquée sur `OPENROUTER_API_KEY`
 2. **`ANTHROPIC_API_KEY`** : ajouter dans Vercel pour activer la synthèse Claude dans `api/audit.ts`
 3. **Pages secteurs** : supprimer les fichiers devenus orphelins (`AioCoaching.tsx` etc.)
-4. **index.html** : meta tags et Schema.org à mettre à jour
+4. ~~index.html~~ ✅ Done — meta tags, OG, Schema.org repositionnés session 09/04
 5. ~~Refacto Navbar/Footer~~ ✅ Done session 09/04
 6. **DNS otarcy.app** : vérifier réactivation
+
+---
+
+## Session 09/04/2026 — Pages légales + repositionnement index.html
+
+### Modifications effectuées
+
+| Fichier | Modification |
+|---------|-------------|
+| index.html | ✅ Titre, meta description, OG, Schema.org repositionnés — "diagnostic de présence IA" par URL |
+| src/pages/Contact.tsx | ✅ Créé — page légale Contact |
+| src/pages/CGV.tsx | ✅ Créé — Conditions Générales de Vente |
+| src/pages/MentionsLegales.tsx | ✅ Créé — Mentions légales |
+| src/pages/RGPD.tsx | ✅ Créé — Politique RGPD |
+| src/pages/Faq.tsx | ✅ Enrichie — signaux E-E-A-T ajoutés |
+| src/App.tsx | ✅ Routes /contact /cgv /mentions-legales /rgpd ajoutées |
+
+### Décisions techniques
+
+- **E-E-A-T dans la FAQ** : signaux Expertise/Autorité/Fiabilité ajoutés pour améliorer la crédibilité aux yeux des crawlers IA
+- **index.html** : Schema.org WebSite avec SearchAction + Organization mis à jour — URL cible otarcy.app
+- Pages légales créées avec Navbar + Footer partagés (src/components/)
+
+### Reste à faire
+
+1. **Étape 4 — `api/llm-perception.ts`** : bloquée sur `OPENROUTER_API_KEY`
+2. **`ANTHROPIC_API_KEY`** : ajouter dans Vercel
+3. **Pages secteurs orphelines** : supprimer `AioCoaching.tsx`, `Ecommerce.tsx`, `Immobilier.tsx`, `Restauration.tsx`, `Rh.tsx`, `Sante.tsx`
+4. **DNS otarcy.app** : vérifier réactivation
+
+---
+
+## Session 09/04/2026 (suite) — Schema.org statique + fix @graph
+
+### Modifications effectuées
+
+| Fichier | Modification |
+|---------|-------------|
+| index.html | ✅ Organization : `logo` ajouté, description mise à jour, Instagram `/otarcy.app/` corrigé |
+| index.html | ✅ WebSite : `potentialAction` SearchAction ajouté |
+| index.html | ✅ Bloc FAQPage JSON-LD statique ajouté — 10 Q/R extraites de Faq.tsx |
+| src/pages/Index.tsx | ✅ useEffect faq-schema supprimé (remplacé par bloc statique index.html) |
+| api/audit.ts | ✅ checkSchemaOrg : désimbrication @graph corrigée |
+| api/score.ts | ✅ checkSchemaOrg : désimbrication @graph corrigée |
+
+### Décisions techniques
+
+- **FAQPage statique** : `curl https://otarcy.app | grep FAQPage` confirmé en prod — crawlers sans JS peuvent lire le schema
+- **@graph fix** : sites utilisant `@graph` (pattern courant) scoraient faussement `warn` sur `schema_org` — fix appliqué dans les deux endpoints
+- **Validation curl** : `grep -o '"@type": *"[^"]*"'` — 10 types Schema.org confirmés dans le HTML statique
+
+### Reste à faire
+
+1. **Étape 4 — `api/llm-perception.ts`** : bloquée sur `OPENROUTER_API_KEY`
+2. **`ANTHROPIC_API_KEY`** : ajouter dans Vercel
+3. **Pages secteurs orphelines** : supprimer `AioCoaching.tsx`, `Ecommerce.tsx`, `Immobilier.tsx`, `Restauration.tsx`, `Rh.tsx`, `Sante.tsx`
+4. **DNS otarcy.app** : vérifier réactivation
+
+---
+
+## Session 09/04/2026 (suite 3) — Dashboard polissage UI
+
+### Modifications effectuées
+
+| Fichier | Modification |
+|---------|-------------|
+| src/pages/Dashboard.tsx | ✅ onMouseEnter/Leave supprimés sur AuditCard |
+| src/pages/Dashboard.tsx | ✅ ScoreRing : viewBox dynamique, strokeWidth fixe, overflow visible, antialiasing |
+| src/pages/Dashboard.tsx | ✅ AuditCard textes : WebkitFontSmoothing + textRendering |
+| src/pages/Dashboard.tsx | ✅ Liste : gap 1px + background séparateur, cartes en var(--bg-page) |
+
+### Décisions techniques
+
+- **Hover supprimé** : les effets `onMouseEnter/Leave` hardcodant `#1c1c1c`/`#4a4a4a` cassaient le thème light — supprimés sans remplacement
+- **ScoreRing final** : `viewBox` dynamique aligné sur `size`, `r = (size/2) - strokeWidth - 1` pour éviter le clipping, `overflow: "visible"` — pas de `scale()` hack
+- **Gap séparateur** : `gap: "1px"` + `background` sur le wrapper remplace les `border` individuels — rendu plus propre, compatible thème light
+
+---
+
+## Session 10/04/2026 — Dashboard two-column layout + nouveaux composants
+
+### Modifications effectuées
+
+| Fichier | Modification |
+|---------|-------------|
+| src/pages/Dashboard.tsx | ✅ Entièrement refondu — architecture two-column (sidebar + main) |
+| src/pages/Dashboard.tsx | ✅ Sidebar : navigation par URL, quota bar, avatar user |
+| src/pages/Dashboard.tsx | ✅ Main : KPIs contextuels, ScoreEvolutionChart, CriteriaDonut, barres critères, historique filtré |
+| src/pages/Dashboard.tsx | ✅ SkeletonRow, MiniSparkline, ScoreEvolutionChart, CriteriaDonut — nouveaux composants |
+| index.css | ✅ Animation skeleton-pulse ajoutée |
+
+### Décisions techniques
+
+- **Architecture two-column** : sidebar fixe à gauche liste les URLs uniques analysées — clic → filtre la zone principale sur cette URL
+- **Navigation contextuelle** : selectedUrl contrôle l'affichage — KPIs, graphique, donut, barres et historique filtré s'affichent pour l'URL active
+- **AuditDetail modal** : conservée sans modification — inchangée
+- **Squelettes** : `SkeletonRow` avec animation CSS `skeleton-pulse` — placeholder homogène pendant le fetch Supabase
+
+### Reste à faire
+
+1. **Étape 4 — `api/llm-perception.ts`** : bloquée sur `OPENROUTER_API_KEY`
+2. **`ANTHROPIC_API_KEY`** : ajouter dans Vercel
+3. **Pages secteurs orphelines** : supprimer `AioCoaching.tsx`, `Ecommerce.tsx`, `Immobilier.tsx`, `Restauration.tsx`, `Rh.tsx`, `Sante.tsx`
+4. **DNS otarcy.app** : vérifier réactivation

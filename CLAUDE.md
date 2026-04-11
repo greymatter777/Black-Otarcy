@@ -16,7 +16,7 @@ Instructions pour Claude Code. Lire entièrement avant de modifier quoi que ce s
 
 ---
 
-## État d'avancement — Session 09/04/2026
+## État d'avancement — Session 10/04/2026
 
 | Étape | Fichier | Statut |
 |-------|---------|--------|
@@ -28,12 +28,18 @@ Instructions pour Claude Code. Lire entièrement avant de modifier quoi que ce s
 | 5 | src/pages/ScoreResult.tsx | ✅ friendlyError() + ProtectedSiteState ajoutés |
 | 6 | src/pages/AuditResult.tsx | ✅ friendlyError() + ProtectedSiteState ajoutés |
 | 7 | src/pages/PerceptionResult.tsx | ✅ Créé + déployé |
-| 8 | src/App.tsx | ✅ Routes /score /audit /perception /about + redirects secteurs → /pricing |
+| 8 | src/App.tsx | ✅ Routes /score /audit /perception /about /contact /cgv /mentions-legales /rgpd + redirects secteurs |
 | 9 | src/pages/Index.tsx | ✅ Nettoyage home — barre URL dans Hero, sections WhyAio/About/AuditSection supprimées |
 | 10 | src/pages/About.tsx | ✅ Refactorisée — utilise Navbar + Footer partagés depuis src/components/ |
-| 11 | src/pages/Dashboard.tsx | ✅ Réécrit — nouveau modèle URL/score-100, criteres/quick_wins/plan_long_terme |
+| 11 | src/pages/Dashboard.tsx | ✅ Refondu — architecture two-column, sidebar URLs, composants SkeletonRow/MiniSparkline/ScoreEvolutionChart/CriteriaDonut |
 | 12 | src/components/Navbar.tsx | ✅ Extrait — composant partagé avec ThemeToggle intégré |
 | 13 | src/components/Footer.tsx | ✅ Extrait — composant partagé |
+| 14 | index.html | ✅ Meta tags, OG, Schema.org repositionnés — diagnostic présence IA par URL |
+| 15 | src/pages/Contact.tsx | ✅ Créé — page légale |
+| 16 | src/pages/CGV.tsx | ✅ Créé — page légale |
+| 17 | src/pages/MentionsLegales.tsx | ✅ Créé — page légale |
+| 18 | src/pages/RGPD.tsx | ✅ Créé — page légale |
+| 19 | src/pages/Faq.tsx | ✅ Enrichie — signaux E-E-A-T ajoutés |
 
 **Prochaine étape : Étape 4 — api/llm-perception.ts (bloquée sur OPENROUTER_API_KEY)**
 
@@ -317,7 +323,7 @@ OPENROUTER_API_KEY    ← workflow 2 dans api/llm-perception.ts
 - `src/lib/useAuthFetch.ts` — authFetch()
 - `prerender.mjs` — prerendering
 - `.github/workflows/digest.yml` — cron newsletter
-- Toutes les pages publiques (Index, Pricing, Glossaire, Faq, Blog, About)
+- Toutes les pages publiques (Index, Pricing, Glossaire, Faq, Blog, About, Contact, CGV, MentionsLegales, RGPD)
 
 ---
 
@@ -361,6 +367,57 @@ OPENROUTER_API_KEY    ← workflow 2 dans api/llm-perception.ts
 - 153 couleurs hardcodées remplacées par les variables CSS définies dans `index.css`
 - Table de correspondance appliquée : `#0a0a0a` → `var(--bg-primary)`, `#0f0f0f` → `var(--bg-page)`, `#161616` → `var(--bg-hero)`, `#111` → `var(--bg-input-nl)`, `rgba(15,15,15,...)` → `var(--bg-nav)`, `#1a1a1a` → `var(--border-1)`, `#2a2a2a` → `var(--border-2)`, `#3a3a3a` → `var(--border-3)`, `#f0f0f0` → `var(--text-1)`, `#7a7a7a` → `var(--text-2)`, `#4a4a4a` → `var(--text-3)`, `#d4d4d4` → `var(--text-4)`, `#e8e8e8` → `var(--text-5)`, `#a3e635` → `var(--accent)`
 - Intacts : `#ef4444` (erreur), `#60a5fa` (bleu), `#f97316` (orange), attributs SVG `stroke=/fill=`, handlers `onMouseEnter/Leave`
+
+---
+
+## Modifications session 09/04/2026 (suite) — Schema.org + FAQPage + fix @graph
+
+### Schema.org index.html — enrichissement
+- `index.html` : nœud `Organization` enrichi — `logo` ajouté (`og-image.png`), description mise à jour, Instagram corrigé (`/otarcy.app/` avec slash)
+- `index.html` : nœud `WebSite` — `potentialAction` (SearchAction) ajouté
+- `index.html` : bloc `FAQPage` JSON-LD **statique** ajouté dans `<head>` — 10 Q/R extraites de `Faq.tsx` — visible par tous les crawlers sans JS
+- `src/pages/Index.tsx` : `useEffect` d'injection du script `faq-schema` supprimé (remplacé par le bloc statique)
+
+### Fix critique — checkSchemaOrg @graph
+- `api/audit.ts` + `api/score.ts` : `checkSchemaOrg` ne désimbriçait pas les nœuds `@graph`
+- Un bloc `{ "@context": "...", "@graph": [...] }` retournait `@type: undefined` à la racine → `hasOrg = false`, `hasWeb = false` → 8 pts warn au lieu de 15 pts ok
+- Fix : désimbrication systématique — si `node["@graph"]` est un tableau, push ses enfants ; sinon push le nœud racine
+- Impact : sites avec Schema.org en `@graph` (dont otarcy.app lui-même) scorent désormais correctement
+
+---
+
+## Modifications session 09/04/2026 (suite 3) — Dashboard polissage UI
+
+### Dashboard.tsx — AuditCard + ScoreRing
+
+- `onMouseEnter` / `onMouseLeave` supprimés des cartes d'historique (`AuditCard`) — hover incompatible thème light
+- Couleurs hardcodées `#2a2a2a` et `#161616` dans `onMouseLeave` migrées vers `var(--border-2)` / `var(--bg-hero)` avant suppression
+- Liste des audits : `gap: "12px"` → `gap: "1px"` + `background: "#2a2a2a"` sur le wrapper — séparateur 1px par gap au lieu de bordures par item
+- Carte `AuditCard` : `border` + `transition` supprimés, `background: "var(--bg-hero)"` → `var(--bg-page)`
+- `ScoreRing` : refactorisé — `viewBox={`0 0 ${size} ${size}`}`, `strokeWidth=4`, `r=(size/2)-strokeWidth-1`, `overflow="visible"`, `WebkitFontSmoothing: "antialiased"` sur les spans score et `/100`
+- Textes `AuditCard` (hostname h3 + date p) : `WebkitFontSmoothing: "antialiased"` + `textRendering: "geometricPrecision"` ajoutés
+
+---
+
+## Modifications session 10/04/2026 — Dashboard two-column layout
+
+### Dashboard.tsx — refonte architecture
+
+- Réécrit entièrement : architecture two-column (sidebar fixe gauche + zone principale droite)
+- **Sidebar** : liste des URLs analysées (navigation par URL), quota bar (audits_used/limit), avatar utilisateur
+- **Main** : KPIs contextuels (score, niveau, date), graphique évolution SVG (`ScoreEvolutionChart`), donut répartition critères (`CriteriaDonut`), barres critères, historique filtré par URL sélectionnée
+- **`AuditDetail` modal** conservée sans modification
+
+### Nouveaux composants
+
+- `SkeletonRow` : placeholder animé pendant chargement — animation CSS `skeleton-pulse` dans `index.css`
+- `MiniSparkline` : mini graphique SVG inline pour afficher l'évolution d'un critère sur plusieurs audits
+- `ScoreEvolutionChart` : graphique SVG ligne — historique du score global pour l'URL sélectionnée
+- `CriteriaDonut` : donut SVG répartition ok/warn/ko des critères pour l'audit sélectionné
+
+### CSS ajouté
+
+- `index.css` : animation `@keyframes skeleton-pulse` + classe `.skeleton-pulse` ajoutée
 
 ---
 

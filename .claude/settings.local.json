@@ -3,7 +3,8 @@
     "allow": [
       "Bash(ls \"C:\\\\Windows\\\\Dev\\\\otarcy agency black\"/*.md)",
       "Bash(node -e ':*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(curl -s https://otarcy.app)"
     ]
   }
 }
