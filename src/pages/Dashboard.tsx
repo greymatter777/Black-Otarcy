@@ -245,29 +245,29 @@ const ScoreEvolutionChart: React.FC<{ audits: AuditRecord[] }> = ({ audits }) =>
 const CriteriaDonut: React.FC<{ criteres: AuditRecord["criteres"] }> = ({ criteres }) => {
   const total = criteres.reduce((acc, c) => acc + c.max, 0) || 1;
   const colors = ["#a3e635", "#60a5fa", "#f97316", "#4a4a4a", "#7a7a7a"];
-  const circumference = 2 * Math.PI * 28;
+  const circumference = 2 * Math.PI * 56;
   let offset = 0;
   const score = criteres.reduce((acc, c) => acc + c.points, 0);
   const maxScore = criteres.reduce((acc, c) => acc + c.max, 0);
 
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-      <svg width="78" height="78" viewBox="0 0 78 78" style={{ flexShrink: 0 }}>
-        <circle cx="39" cy="39" r="28" fill="none" stroke="#1a1a1a" strokeWidth="9" />
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14 }}>
+      <svg width="160" height="160" viewBox="0 0 160 160" style={{ flexShrink: 0 }}>
+        <circle cx="80" cy="80" r="56" fill="none" stroke="#1a1a1a" strokeWidth="18" />
         {criteres.map((c, i) => {
           const dash = (c.max / total) * circumference;
           const el = (
-            <circle key={c.nom} cx="39" cy="39" r="28" fill="none"
-              stroke={colors[i % colors.length]} strokeWidth="9"
+            <circle key={c.nom} cx="80" cy="80" r="56" fill="none"
+              stroke={colors[i % colors.length]} strokeWidth="18"
               strokeDasharray={`${dash} ${circumference}`}
               strokeDashoffset={-offset}
-              transform="rotate(-90 39 39)" />
+              transform="rotate(-90 80 80)" />
           );
           offset += dash;
           return el;
         })}
-        <text x="39" y="36" textAnchor="middle" fontFamily="Bebas Neue, sans-serif" fontSize="14" fill="#f0f0f0">{score}</text>
-        <text x="39" y="45" textAnchor="middle" fontFamily="Raleway, sans-serif" fontSize="6" fill="#4a4a4a">/{maxScore}</text>
+        <text x="80" y="72" textAnchor="middle" fontFamily="Bebas Neue, sans-serif" fontSize="28" fill="#f0f0f0">{score}</text>
+        <text x="80" y="90" textAnchor="middle" fontFamily="Raleway, sans-serif" fontSize="12" fill="#4a4a4a">/{maxScore}</text>
       </svg>
       <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
         {criteres.map((c, i) => (
@@ -290,6 +290,7 @@ const Dashboard: React.FC = () => {
   const [plan, setPlan] = useState<string>("free");
   const [auditsLeft, setAuditsLeft] = useState<number>(0);
   const [selectedUrl, setSelectedUrl] = useState<string | null>(null);
+  const [animated, setAnimated] = useState(false);
 
   useEffect(() => {
     if (!user) { navigate("/login"); return; }
@@ -315,6 +316,12 @@ const Dashboard: React.FC = () => {
     }, {} as Record<string, true>));
     if (urlList.length > 0 && !selectedUrl) setSelectedUrl(urlList[0]);
   }, [audits.length]);
+
+  useEffect(() => {
+    setAnimated(false);
+    const t = setTimeout(() => setAnimated(true), 100);
+    return () => clearTimeout(t);
+  }, [selectedUrl]);
 
   const displayName = user?.user_metadata?.full_name ?? user?.email ?? "";
 
@@ -379,7 +386,7 @@ const Dashboard: React.FC = () => {
           </div>
 
           {/* URL list */}
-          <div style={{ flex: 1 }}>
+          <div className="anim-delay-1" style={{ flex: 1 }}>
             <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.52rem", letterSpacing: "0.3em", color: "#3a3a3a", textTransform: "uppercase", marginBottom: 10 }}>URLs auditées</p>
             {loading ? (
               [1,2,3].map(i => <div key={i} className="skeleton-pulse" style={{ height: 52, background: "#161616", marginBottom: 6 }} />)
@@ -428,7 +435,7 @@ const Dashboard: React.FC = () => {
               </div>
 
               {/* KPI row */}
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 20 }}>
+              <div className="anim-delay-2" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 20 }}>
                 {[
                   { label: "Score actuel", value: latestAudit ? `${latestAudit.score}` : "—", unit: "/100", color: latestAudit ? niveauColor(latestAudit.niveau) : "var(--text-2)", hint: latestAudit?.niveau ?? "" },
                   { label: "Progression", value: progression !== null ? `${progression > 0 ? "+" : ""}${progression}` : "—", unit: " pts", color: progression !== null ? (progression >= 0 ? "var(--accent)" : "#ef4444") : "var(--text-2)", hint: `sur ${filteredAudits.length} audits` },
@@ -443,7 +450,7 @@ const Dashboard: React.FC = () => {
               </div>
 
               {/* Evolution chart */}
-              <div style={{ background: "var(--bg-hero)", border: "1px solid var(--border-2)", padding: "18px 20px", marginBottom: 20 }}>
+              <div className="anim-delay-3" style={{ background: "var(--bg-hero)", border: "1px solid var(--border-2)", padding: "18px 20px", marginBottom: 20 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
                   <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.88rem", letterSpacing: "0.1em", color: "var(--text-1)" }}>ÉVOLUTION DU SCORE DE VISIBILITÉ</p>
                   <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.5rem", letterSpacing: "0.15em", color: "var(--accent)", border: "1px solid var(--accent)", padding: "2px 6px", textTransform: "uppercase" }}>{selectedUrl}</span>
@@ -453,26 +460,26 @@ const Dashboard: React.FC = () => {
 
               {/* Two charts row */}
               {latestAudit && latestAudit.criteres && latestAudit.criteres.length > 0 && (
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 20 }}>
+                <div style={{ display: "flex", alignItems: "stretch", gap: 12, marginBottom: 20 }}>
                   {/* Donut */}
-                  <div style={{ background: "var(--bg-hero)", border: "1px solid var(--border-2)", padding: "18px 20px" }}>
+                  <div className="anim-delay-4" style={{ flex: 1, background: "var(--bg-hero)", border: "1px solid var(--border-2)", padding: "18px 20px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
                     <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.82rem", letterSpacing: "0.1em", color: "var(--text-1)", marginBottom: 4 }}>RÉPARTITION CRITÈRES</p>
                     <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.54rem", color: "#4a4a4a", letterSpacing: "0.1em", marginBottom: 14 }}>Dernier audit · {latestAudit.score}/100</p>
                     <CriteriaDonut criteres={latestAudit.criteres} />
                   </div>
                   {/* Bar scores */}
-                  <div style={{ background: "var(--bg-hero)", border: "1px solid var(--border-2)", padding: "18px 20px" }}>
+                  <div className="anim-delay-5" style={{ flex: 1, background: "var(--bg-hero)", border: "1px solid var(--border-2)", padding: "18px 20px", overflowY: "auto" }}>
                     <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.82rem", letterSpacing: "0.1em", color: "var(--text-1)", marginBottom: 4 }}>CRITÈRES DÉTAIL</p>
                     <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.54rem", color: "#4a4a4a", letterSpacing: "0.1em", marginBottom: 14 }}>Scores par critère</p>
                     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                      {latestAudit.criteres.map((c) => (
+                      {latestAudit.criteres.map((c, idx) => (
                         <div key={c.nom}>
                           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
                             <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", color: "var(--text-2)", letterSpacing: "0.05em" }}>{c.titre}</span>
                             <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.78rem", color: statutColor(c.statut) }}>{c.points}/{c.max}</span>
                           </div>
                           <div style={{ height: 2, background: "#2a2a2a", borderRadius: 2 }}>
-                            <div style={{ height: 2, width: `${(c.points / Math.max(c.max, 1)) * 100}%`, background: statutColor(c.statut), borderRadius: 2, transition: "width 0.8s ease" }} />
+                            <div style={{ height: 2, width: animated ? `${(c.points / Math.max(c.max, 1)) * 100}%` : "0%", background: statutColor(c.statut), borderRadius: 2, transition: "width 0.8s ease-out", transitionDelay: `${idx * 60}ms` }} />
                           </div>
                         </div>
                       ))}
@@ -482,7 +489,7 @@ const Dashboard: React.FC = () => {
               )}
 
               {/* Audit history */}
-              <div style={{ background: "var(--bg-hero)", border: "1px solid var(--border-2)" }}>
+              <div className="anim-delay-6" style={{ background: "var(--bg-hero)", border: "1px solid var(--border-2)" }}>
                 <div style={{ padding: "14px 18px", borderBottom: "1px solid #1a1a1a", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.88rem", letterSpacing: "0.1em", color: "var(--text-1)" }}>HISTORIQUE</p>
                   <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.54rem", letterSpacing: "0.15em", color: "#4a4a4a", textTransform: "uppercase" }}>{filteredAudits.length} entrée{filteredAudits.length > 1 ? "s" : ""}</span>
