@@ -242,42 +242,131 @@ const ScoreEvolutionChart: React.FC<{ audits: AuditRecord[] }> = ({ audits }) =>
   );
 };
 
-const CriteriaDonut: React.FC<{ criteres: AuditRecord["criteres"] }> = ({ criteres }) => {
-  const total = criteres.reduce((acc, c) => acc + c.max, 0) || 1;
-  const colors = ["#a3e635", "#60a5fa", "#f97316", "#4a4a4a", "#7a7a7a"];
-  const circumference = 2 * Math.PI * 56;
-  let offset = 0;
-  const score = criteres.reduce((acc, c) => acc + c.points, 0);
-  const maxScore = criteres.reduce((acc, c) => acc + c.max, 0);
+const CriteriaDonut: React.FC<{ criteres: AuditRecord["criteres"]; score: number }> = ({ criteres }) => {
+  const CRITERE_COLORS: Record<string, string> = {
+    "crawlers_ia":   "#a3e635",
+    "meta_onpage":   "#a3e635",
+    "schema_org":    "#60a5fa",
+    "wikidata":      "#60a5fa",
+    "eeat":          "#f97316",
+    "faq_glossaire": "#4a4a4a",
+    "llms_txt":      "#4a4a4a",
+    "sitemap":       "#3a3a3a",
+    "open_graph":    "#3a3a3a",
+    "https":         "#3a3a3a",
+  };
+  const CRITERE_OPACITY: Record<string, number> = {
+    "meta_onpage": 0.4,
+    "wikidata":    0.4,
+    "llms_txt":    0.5,
+    "open_graph":  0.5,
+    "https":       0.25,
+  };
+  const colorToMarkerId: Record<string, string> = {
+    "#a3e635": "donut-arr-green",
+    "#60a5fa": "donut-arr-blue",
+    "#f97316": "donut-arr-orange",
+    "#4a4a4a": "donut-arr-gray1",
+    "#3a3a3a": "donut-arr-gray2",
+  };
+  const markerDefs = [
+    { id: "donut-arr-green",  color: "#a3e635" },
+    { id: "donut-arr-blue",   color: "#60a5fa" },
+    { id: "donut-arr-orange", color: "#f97316" },
+    { id: "donut-arr-gray1",  color: "#4a4a4a" },
+    { id: "donut-arr-gray2",  color: "#3a3a3a" },
+  ];
+
+  const totalMax = criteres.reduce((acc, c) => acc + c.max, 0) || 1;
+  const circumference = 2 * Math.PI * 84;
+  let arcOffset = 0;
+  const arcs = criteres.map((c) => {
+    const dash = (c.max / totalMax) * circumference;
+    const seg = { ...c, dash, arcOffset };
+    arcOffset += dash;
+    return seg;
+  });
+
+  const getColor   = (nom: string) => CRITERE_COLORS[nom]  ?? "#3a3a3a";
+  const getOpacity = (nom: string) => CRITERE_OPACITY[nom] ?? 1;
+
+  const yPositions  = [22, 62, 102, 142, 182];
+  const leftCoords  = [[284,60],[278,84],[266,116],[270,146],[278,168]] as [number,number][];
+  const rightCoords = [[420,58],[424,92],[434,118],[436,136],[428,168]] as [number,number][];
+  const leftCriteres  = criteres.slice(0, 5);
+  const rightCriteres = criteres.slice(5, 10);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14 }}>
-      <svg width="160" height="160" viewBox="0 0 160 160" style={{ flexShrink: 0 }}>
-        <circle cx="80" cy="80" r="56" fill="none" stroke="#1a1a1a" strokeWidth="18" />
-        {criteres.map((c, i) => {
-          const dash = (c.max / total) * circumference;
-          const el = (
-            <circle key={c.nom} cx="80" cy="80" r="56" fill="none"
-              stroke={colors[i % colors.length]} strokeWidth="18"
-              strokeDasharray={`${dash} ${circumference}`}
-              strokeDashoffset={-offset}
-              transform="rotate(-90 80 80)" />
-          );
-          offset += dash;
-          return el;
-        })}
-        <text x="80" y="72" textAnchor="middle" fontFamily="Bebas Neue, sans-serif" fontSize="28" fill="#f0f0f0">{score}</text>
-        <text x="80" y="90" textAnchor="middle" fontFamily="Raleway, sans-serif" fontSize="12" fill="#4a4a4a">/{maxScore}</text>
-      </svg>
-      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-        {criteres.map((c, i) => (
-          <div key={c.nom} style={{ display: "flex", alignItems: "center", gap: 6, fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", color: "#7a7a7a", letterSpacing: "0.05em" }}>
-            <span style={{ width: 7, height: 7, background: colors[i % colors.length], flexShrink: 0 }} />
-            {c.titre} · {Math.round((c.max / total) * 100)}%
-          </div>
+    <svg width="100%" viewBox="0 0 700 250" style={{ overflow: "visible" }}>
+      <defs>
+        {markerDefs.map(({ id, color }) => (
+          <marker key={id} id={id} markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L6,3 Z" fill={color} />
+          </marker>
         ))}
-      </div>
-    </div>
+      </defs>
+
+      {/* Track fond */}
+      <circle cx="350" cy="125" r="84" fill="none" stroke="#1a1a1a" strokeWidth="7" />
+
+      {/* Arcs */}
+      {arcs.map((c) => {
+        const color   = getColor(c.nom);
+        const opacity = getOpacity(c.nom);
+        return (
+          <circle key={c.nom} cx="350" cy="125" r="84" fill="none"
+            stroke={color} strokeWidth="7"
+            strokeDasharray={`${c.dash} ${circumference}`}
+            strokeDashoffset={-c.arcOffset}
+            strokeLinecap="round"
+            strokeOpacity={opacity}
+            transform="rotate(-90 350 125)"
+          />
+        );
+      })}
+
+      {/* Centre */}
+      <text x="350" y="119" textAnchor="middle" fontFamily="'Raleway', sans-serif" fontSize="6" fill="#3a3a3a" letterSpacing="2">RÉPARTITION</text>
+      <text x="350" y="131" textAnchor="middle" fontFamily="'Raleway', sans-serif" fontSize="6" fill="#2a2a2a" letterSpacing="2">CRITÈRES</text>
+
+      {/* Critères GAUCHE */}
+      {leftCriteres.map((c, i) => {
+        const Y = yPositions[i];
+        const [ax, ay] = leftCoords[i];
+        const color    = getColor(c.nom);
+        const opacity  = getOpacity(c.nom);
+        const markerId = colorToMarkerId[color] ?? "donut-arr-gray2";
+        return (
+          <g key={`left-${c.nom}`}>
+            <line x1="238" y1={Y} x2={ax} y2={ay} stroke={color} strokeWidth="0.8" opacity="0.7" markerEnd={`url(#${markerId})`} />
+            <rect x="2" y={Y - 10} width="228" height="20" fill="#0a0a0a" />
+            <rect x="2" y={Y - 10} width="2" height="20" fill={color} opacity={opacity} />
+            <text x="224" y={Y + 4} textAnchor="end" fontSize="9" fontFamily="'Raleway', sans-serif" fill={opacity < 1 ? "#4a4a4a" : "#7a7a7a"}>
+              {c.titre} · <tspan fill={color}>{Math.round((c.max / totalMax) * 100)}%</tspan>
+            </text>
+          </g>
+        );
+      })}
+
+      {/* Critères DROITE */}
+      {rightCriteres.map((c, i) => {
+        const Y = yPositions[i];
+        const [ax, ay] = rightCoords[i];
+        const color    = getColor(c.nom);
+        const opacity  = getOpacity(c.nom);
+        const markerId = colorToMarkerId[color] ?? "donut-arr-gray2";
+        return (
+          <g key={`right-${c.nom}`}>
+            <line x1="462" y1={Y} x2={ax} y2={ay} stroke={color} strokeWidth="0.8" opacity="0.7" markerEnd={`url(#${markerId})`} />
+            <rect x="470" y={Y - 10} width="228" height="20" fill="#0a0a0a" />
+            <rect x="696" y={Y - 10} width="2" height="20" fill={color} opacity={opacity} />
+            <text x="474" y={Y + 4} textAnchor="start" fontSize="9" fontFamily="'Raleway', sans-serif" fill={opacity < 1 ? "#4a4a4a" : "#7a7a7a"}>
+              <tspan fill={color}>{Math.round((c.max / totalMax) * 100)}%</tspan> · {c.titre}
+            </text>
+          </g>
+        );
+      })}
+    </svg>
   );
 };
 
@@ -449,26 +538,21 @@ const Dashboard: React.FC = () => {
                 ))}
               </div>
 
-              {/* Evolution chart */}
-              <div className="anim-delay-3" style={{ background: "var(--bg-hero)", border: "1px solid var(--border-2)", padding: "18px 20px", marginBottom: 20 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-                  <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.88rem", letterSpacing: "0.1em", color: "var(--text-1)" }}>ÉVOLUTION DU SCORE DE VISIBILITÉ</p>
-                  <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.5rem", letterSpacing: "0.15em", color: "var(--accent)", border: "1px solid var(--accent)", padding: "2px 6px", textTransform: "uppercase" }}>{selectedUrl}</span>
-                </div>
-                <ScoreEvolutionChart audits={filteredAudits} />
-              </div>
-
-              {/* Two charts row */}
+              {/* ROW 1 : Évolution + Critères Détail — 1fr 1fr */}
               {latestAudit && latestAudit.criteres && latestAudit.criteres.length > 0 && (
-                <div style={{ display: "flex", alignItems: "stretch", gap: 12, marginBottom: 20 }}>
-                  {/* Donut */}
-                  <div className="anim-delay-4" style={{ flex: 1, background: "var(--bg-hero)", border: "1px solid var(--border-2)", padding: "18px 20px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-                    <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.82rem", letterSpacing: "0.1em", color: "var(--text-1)", marginBottom: 4 }}>RÉPARTITION CRITÈRES</p>
-                    <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.54rem", color: "#4a4a4a", letterSpacing: "0.1em", marginBottom: 14 }}>Dernier audit · {latestAudit.score}/100</p>
-                    <CriteriaDonut criteres={latestAudit.criteres} />
+                <div className="anim-delay-3" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 20 }}>
+
+                  {/* Évolution du score */}
+                  <div style={{ background: "var(--bg-hero)", border: "1px solid var(--border-2)", padding: "18px 20px", display: "flex", flexDirection: "column" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+                      <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.82rem", letterSpacing: "0.1em", color: "var(--text-1)" }}>ÉVOLUTION DU SCORE</p>
+                      <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.5rem", letterSpacing: "0.15em", color: "var(--accent)", border: "1px solid var(--accent)", padding: "2px 6px", textTransform: "uppercase" }}>{selectedUrl}</span>
+                    </div>
+                    <ScoreEvolutionChart audits={filteredAudits} />
                   </div>
-                  {/* Bar scores */}
-                  <div className="anim-delay-5" style={{ flex: 1, background: "var(--bg-hero)", border: "1px solid var(--border-2)", padding: "18px 20px", overflowY: "auto" }}>
+
+                  {/* Critères Détail */}
+                  <div className="anim-delay-4" style={{ background: "var(--bg-hero)", border: "1px solid var(--border-2)", padding: "18px 20px", overflowY: "auto" }}>
                     <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.82rem", letterSpacing: "0.1em", color: "var(--text-1)", marginBottom: 4 }}>CRITÈRES DÉTAIL</p>
                     <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.54rem", color: "#4a4a4a", letterSpacing: "0.1em", marginBottom: 14 }}>Scores par critère</p>
                     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -485,6 +569,27 @@ const Dashboard: React.FC = () => {
                       ))}
                     </div>
                   </div>
+                </div>
+              )}
+
+              {/* ROW 2 : Répartition critères — pleine largeur */}
+              {latestAudit && latestAudit.criteres && latestAudit.criteres.length > 0 && (
+                <div className="anim-delay-5" style={{ background: "var(--bg-hero)", border: "1px solid var(--border-2)", padding: "20px 24px", marginBottom: 20 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+                    <div>
+                      <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.82rem", letterSpacing: "0.1em", color: "var(--text-1)", marginBottom: 4 }}>RÉPARTITION CRITÈRES</p>
+                      <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.54rem", color: "#4a4a4a", letterSpacing: "0.1em" }}>
+                        Dernier audit · {new Date(latestAudit.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                      </p>
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                      <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2.2rem", color: "var(--text-1)", lineHeight: 1, letterSpacing: "0.02em" }}>
+                        {latestAudit.score}<span style={{ fontSize: "0.9rem", color: "#3a3a3a", letterSpacing: "0.1em" }}> /100</span>
+                      </p>
+                      <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.52rem", color: "var(--accent)", letterSpacing: "0.18em", textTransform: "uppercase", marginTop: 2 }}>Score AIO</p>
+                    </div>
+                  </div>
+                  <CriteriaDonut criteres={latestAudit.criteres} score={latestAudit.score} />
                 </div>
               )}
 
