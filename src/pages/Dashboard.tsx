@@ -242,107 +242,146 @@ const ScoreEvolutionChart: React.FC<{ audits: AuditRecord[] }> = ({ audits }) =>
   );
 };
 
+const CRITERE_COLOR = (nom: string): string => {
+  if (nom.includes("crawler")) return "#a3e635";
+  if (nom.includes("schema"))  return "#60a5fa";
+  if (nom.includes("eeat"))    return "#f97316";
+  if (nom.includes("faq"))     return "#818cf8";
+  if (nom.includes("llm"))     return "#34d399";
+  if (nom.includes("meta"))    return "#fb923c";
+  if (nom.includes("wikidata"))return "#38bdf8";
+  if (nom.includes("sitemap")) return "#a78bfa";
+  if (nom.includes("open_graph") || nom.includes("og")) return "#f472b6";
+  if (nom.includes("https"))   return "#4ade80";
+  return "#7a7a7a";
+};
+
+const CRITERE_OPACITY = (_nom: string): number => 1;
+
 const CriteriaDonut: React.FC<{ criteres: AuditRecord["criteres"]; score: number }> = ({ criteres, score }) => {
+  const CX = 350, CY = 125;
+  const BASE_R = 90, STEP = 8, SW = 5;
 
-  const groupScore = (keywords: string[]): number => {
-    const matches = criteres.filter(c => keywords.some(k => c.nom.toLowerCase().includes(k)));
-    if (matches.length === 0) return 0;
-    const pts = matches.reduce((acc, c) => acc + c.points, 0);
-    const max = matches.reduce((acc, c) => acc + c.max, 0);
-    return max === 0 ? 0 : pts / max;
-  };
-
-  const scoreGlobal  = score / 100;
-  const scoreTech    = groupScore(["crawler", "eeat", "eat", "meta", "onpage", "on_page", "sitemap", "https", "ssl", "open", "graph", "og"]);
-  const scoreContenu = groupScore(["schema", "wikidata", "faq", "glossaire", "llms"]);
-
-  const CX = 100, CY = 100;
-  const R_OUTER = 84, R_MID = 64, R_INNER = 46;
-  const SW_OUTER = 12, SW_MID = 10, SW_INNER = 8;
-
-  const arc = (r: number, pct: number) => {
+  const annotated = criteres.map((c, i) => {
+    const r = BASE_R - i * STEP;
+    const pct = c.points / Math.max(c.max, 1);
     const circ = 2 * Math.PI * r;
-    return { dash: circ * pct, total: circ };
-  };
+    const dash = circ * pct;
+    const midAngleDeg = -90 + (pct * 360) / 2;
+    const midAngleRad = midAngleDeg * Math.PI / 180;
+    const px = CX + r * Math.cos(midAngleRad);
+    const py = CY + r * Math.sin(midAngleRad);
+    const side = Math.cos(midAngleRad) < 0 ? "left" : "right";
+    return { ...c, r, pct, circ, dash, px, py, side };
+  });
 
-  const outer = arc(R_OUTER, scoreGlobal);
-  const mid   = arc(R_MID,   scoreTech);
-  const inner = arc(R_INNER, scoreContenu);
+  const left: typeof annotated = [];
+  const right: typeof annotated = [];
+  for (const item of annotated) {
+    let s = item.side;
+    if (s === "left"  && left.length  >= 5) s = "right";
+    if (s === "right" && right.length >= 5) s = "left";
+    if (s === "left") left.push(item);
+    else right.push(item);
+  }
 
-  const pct = (v: number) => Math.round(v * 100);
+  const LABEL_YS = [28, 65, 102, 140, 177];
+  const LEFT_X  = 240;
+  const RIGHT_X = 460;
 
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
+    <svg viewBox="0 0 700 250" width="100%" style={{ display: "block", overflow: "visible" }}>
 
-      <div style={{ position: "relative", width: 200, height: 200, flexShrink: 0 }}>
-        <svg viewBox="0 0 200 200" width="200" height="200">
-          {/* Tracks */}
-          <circle cx={CX} cy={CY} r={R_OUTER} fill="none" stroke="#1a1a1a" strokeWidth={SW_OUTER} />
-          <circle cx={CX} cy={CY} r={R_MID}   fill="none" stroke="#161616" strokeWidth={SW_MID} />
-          <circle cx={CX} cy={CY} r={R_INNER} fill="none" stroke="#161616" strokeWidth={SW_INNER} />
+      {/* Tracks */}
+      {criteres.map((c, i) => (
+        <circle key={`track-${c.nom}`}
+          cx={CX} cy={CY} r={BASE_R - i * STEP}
+          fill="none" stroke="#1a1a1a" strokeWidth={SW}
+        />
+      ))}
 
-          {/* Arcs */}
-          <circle cx={CX} cy={CY} r={R_OUTER}
-            fill="none" stroke="#a3e635" strokeWidth={SW_OUTER}
-            strokeDasharray={`${outer.dash} ${outer.total}`}
-            strokeLinecap="round"
-            transform={`rotate(-90 ${CX} ${CY})`}
-          />
-          <circle cx={CX} cy={CY} r={R_MID}
-            fill="none" stroke="#f97316" strokeWidth={SW_MID}
-            strokeDasharray={`${mid.dash} ${mid.total}`}
-            strokeLinecap="round"
-            transform={`rotate(-90 ${CX} ${CY})`}
-          />
-          <circle cx={CX} cy={CY} r={R_INNER}
-            fill="none" stroke="#60a5fa" strokeWidth={SW_INNER}
-            strokeDasharray={`${inner.dash} ${inner.total}`}
-            strokeLinecap="round"
-            transform={`rotate(-90 ${CX} ${CY})`}
-          />
+      {/* Arcs */}
+      {annotated.map((c) => (
+        <circle key={`arc-${c.nom}`}
+          cx={CX} cy={CY} r={c.r}
+          fill="none"
+          stroke={CRITERE_COLOR(c.nom.toLowerCase())}
+          strokeWidth={SW}
+          strokeOpacity={CRITERE_OPACITY(c.nom.toLowerCase())}
+          strokeDasharray={`${c.dash} ${c.circ}`}
+          strokeLinecap="round"
+          transform={`rotate(-90 ${CX} ${CY})`}
+        />
+      ))}
 
-          {/* Score centre */}
-          <text x={CX} y={CY - 6}
-            textAnchor="middle"
-            fontFamily="'Bebas Neue', sans-serif"
-            fontSize="28"
-            fill="#f0f0f0"
-          >{score}</text>
-          <text x={CX} y={CY + 10}
-            textAnchor="middle"
-            fontFamily="'Raleway', sans-serif"
-            fontSize="9"
-            fill="#4a4a4a"
-            letterSpacing="1"
-          >/100</text>
-        </svg>
-      </div>
+      {/* Score centre */}
+      <text x={CX} y={119}
+        textAnchor="middle"
+        fontFamily="'Bebas Neue', sans-serif"
+        fontSize="24"
+        fill="#f0f0f0"
+      >{score}</text>
+      <text x={CX} y={133}
+        textAnchor="middle"
+        fontFamily="'Raleway', sans-serif"
+        fontSize="8"
+        fill="#4a4a4a"
+        letterSpacing="1"
+      >/100</text>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      {/* Labels GAUCHE */}
+      {left.map((c, j) => {
+        const ly = LABEL_YS[j];
+        const color = CRITERE_COLOR(c.nom.toLowerCase());
+        return (
+          <g key={`ll-${c.nom}`}>
+            <line x1={LEFT_X + 6} y1={ly} x2={c.px} y2={c.py}
+              stroke={color} strokeWidth={0.7} strokeOpacity={0.3}
+            />
+            <text x={LEFT_X} y={ly + 4}
+              textAnchor="end"
+              fontFamily="'Raleway', sans-serif"
+              fontSize="8.5"
+              fill={color}
+            >{c.titre}</text>
+            <text x={LEFT_X - 52} y={ly + 4}
+              textAnchor="end"
+              fontFamily="'Bebas Neue', sans-serif"
+              fontSize="9"
+              fill={color}
+              opacity={0.6}
+            >{Math.round(c.pct * 100)}%</text>
+          </g>
+        );
+      })}
 
-        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", background: "#0a0a0a", borderLeft: "2px solid #a3e635" }}>
-          <div style={{ flex: 1 }}>
-            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", color: "#7a7a7a", letterSpacing: "0.06em", margin: 0 }}>Score AIO global</p>
-          </div>
-          <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1rem", color: "#a3e635" }}>{pct(scoreGlobal)} / 100</span>
-        </div>
+      {/* Labels DROITE */}
+      {right.map((c, j) => {
+        const ly = LABEL_YS[j];
+        const color = CRITERE_COLOR(c.nom.toLowerCase());
+        return (
+          <g key={`rl-${c.nom}`}>
+            <line x1={RIGHT_X - 6} y1={ly} x2={c.px} y2={c.py}
+              stroke={color} strokeWidth={0.7} strokeOpacity={0.3}
+            />
+            <text x={RIGHT_X} y={ly + 4}
+              textAnchor="start"
+              fontFamily="'Raleway', sans-serif"
+              fontSize="8.5"
+              fill={color}
+            >{c.titre}</text>
+            <text x={RIGHT_X + 52} y={ly + 4}
+              textAnchor="start"
+              fontFamily="'Bebas Neue', sans-serif"
+              fontSize="9"
+              fill={color}
+              opacity={0.6}
+            >{Math.round(c.pct * 100)}%</text>
+          </g>
+        );
+      })}
 
-        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", background: "#0a0a0a", borderLeft: "2px solid #f97316" }}>
-          <div style={{ flex: 1 }}>
-            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", color: "#7a7a7a", letterSpacing: "0.06em", margin: 0 }}>Technique & structure</p>
-          </div>
-          <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1rem", color: "#f97316" }}>{pct(scoreTech)}%</span>
-        </div>
-
-        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", background: "#0a0a0a", borderLeft: "2px solid #60a5fa" }}>
-          <div style={{ flex: 1 }}>
-            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", color: "#7a7a7a", letterSpacing: "0.06em", margin: 0 }}>Contenu & autorité</p>
-          </div>
-          <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1rem", color: "#60a5fa" }}>{pct(scoreContenu)}%</span>
-        </div>
-
-      </div>
-    </div>
+    </svg>
   );
 };
 
