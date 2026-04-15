@@ -588,25 +588,83 @@ const Dashboard: React.FC = () => {
               )}
 
               {/* ROW 2 : Répartition critères — pleine largeur */}
-              {latestAudit && latestAudit.criteres && latestAudit.criteres.length > 0 && (
-                <div className="anim-delay-5" style={{ background: "var(--bg-hero)", border: "1px solid var(--border-2)", padding: "20px 24px", marginBottom: 20 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
-                    <div>
-                      <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.82rem", letterSpacing: "0.1em", color: "var(--text-1)", marginBottom: 4 }}>RÉPARTITION CRITÈRES</p>
-                      <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.54rem", color: "#4a4a4a", letterSpacing: "0.1em" }}>
-                        Dernier audit · {new Date(latestAudit.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
-                      </p>
+              {latestAudit && latestAudit.criteres && latestAudit.criteres.length > 0 && (() => {
+                const getCritere = (nom: string) => latestAudit.criteres.find(c => c.nom === nom);
+                const accentColor = (pct: number): string =>
+                  pct >= 1 ? "#a3e635" : pct >= 0.8 ? "#f97316" : "#ef4444";
+                const renderItem = (nom: string, label: string, side: "left" | "right") => {
+                  const c = getCritere(nom);
+                  const pct = c ? c.points / Math.max(c.max, 1) : 0;
+                  const color = accentColor(pct);
+                  const scoreText = c ? `${c.points}/${c.max}` : "—";
+                  const sideBorder = side === "left"
+                    ? { borderLeft: `2px solid ${color}` }
+                    : { borderRight: `2px solid ${color}` };
+                  return (
+                    <div key={nom} style={{ padding: "10px 14px", border: "1px solid #2a2a2a", ...sideBorder, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", color: "#d4d4d4" }}>{label}</span>
+                      <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.72rem", fontWeight: 500, color }}>{scoreText}</span>
                     </div>
-                    <div style={{ textAlign: "right" }}>
-                      <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2.2rem", color: "var(--text-1)", lineHeight: 1, letterSpacing: "0.02em" }}>
-                        {latestAudit.score}<span style={{ fontSize: "0.9rem", color: "#3a3a3a", letterSpacing: "0.1em" }}> /100</span>
-                      </p>
-                      <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.52rem", color: "var(--accent)", letterSpacing: "0.18em", textTransform: "uppercase", marginTop: 2 }}>Score AIO</p>
+                  );
+                };
+                const date = new Date(latestAudit.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+                return (
+                  <div className="anim-delay-5" style={{ background: "#0f0f0f", border: "1px solid #2a2a2a", padding: "24px", marginBottom: 20 }}>
+
+                    {/* Header */}
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
+                      <div>
+                        <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.58rem", color: "#7a7a7a", letterSpacing: "0.3em", textTransform: "uppercase", margin: 0, marginBottom: 4 }}>RÉPARTITION CRITÈRES</p>
+                        <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.6rem", color: "#4a4a4a", margin: 0 }}>Dernier audit · {date}</p>
+                      </div>
+                      <div style={{ textAlign: "right" }}>
+                        <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "3.5rem", color: "#f0f0f0", lineHeight: 1, margin: 0 }}>{latestAudit.score}</p>
+                        <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.55rem", color: "#7a7a7a", letterSpacing: "0.2em", textTransform: "uppercase", margin: 0 }}>/ 100 SCORE AIO</p>
+                      </div>
+                    </div>
+
+                    {/* Grid 3 colonnes */}
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 200px 1fr", gap: "24px", alignItems: "center" }}>
+
+                      {/* Colonne gauche */}
+                      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                        {renderItem("faq_glossaire", "FAQ / Glossaire", "left")}
+                        {renderItem("llms_txt",      "llms.txt",         "left")}
+                        {renderItem("meta_onpage",   "Meta / On-page",   "left")}
+                        {renderItem("wikidata",      "Wikidata",         "left")}
+                        {renderItem("sitemap",       "Sitemap",          "left")}
+                      </div>
+
+                      {/* Colonne centre — donut statique */}
+                      <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                        <svg viewBox="0 0 160 160" width="160" height="160">
+                          <circle cx="80" cy="80" r="64" fill="none" stroke="#2a2a2a" strokeWidth="12" />
+                          <circle cx="80" cy="80" r="64" fill="none" stroke="#a3e635" strokeWidth="12"
+                            strokeDasharray="80 322" strokeDashoffset="-14" strokeLinecap="round" />
+                          <circle cx="80" cy="80" r="64" fill="none" stroke="#60a5fa" strokeWidth="12"
+                            strokeDasharray="105 322" strokeDashoffset="-94" strokeLinecap="round" />
+                          <circle cx="80" cy="80" r="64" fill="none" stroke="#f97316" strokeWidth="12"
+                            strokeDasharray="65 322" strokeDashoffset="-199" strokeLinecap="round" />
+                          <circle cx="80" cy="80" r="64" fill="none" stroke="#2a2a2a" strokeWidth="12"
+                            strokeDasharray="73 322" strokeDashoffset="-264" strokeLinecap="round" />
+                          <text x="80" y="76" textAnchor="middle" fontFamily="'Raleway', sans-serif" fontSize="8" fill="#7a7a7a" letterSpacing="1.5">RÉPARTITION</text>
+                          <text x="80" y="89" textAnchor="middle" fontFamily="'Raleway', sans-serif" fontSize="8" fill="#7a7a7a" letterSpacing="1.5">CRITÈRES</text>
+                        </svg>
+                      </div>
+
+                      {/* Colonne droite */}
+                      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                        {renderItem("open_graph",  "Open Graph",        "right")}
+                        {renderItem("https",       "HTTPS",             "right")}
+                        {renderItem("crawlers_ia", "Accès crawlers IA", "right")}
+                        {renderItem("schema_org",  "Schema.org",        "right")}
+                        {renderItem("eeat",        "E-E-A-T",           "right")}
+                      </div>
+
                     </div>
                   </div>
-                  <CriteriaDonut criteres={latestAudit.criteres} score={latestAudit.score} />
-                </div>
-              )}
+                );
+              })()}
 
               {/* Audit history */}
               <div className="anim-delay-6" style={{ background: "var(--bg-hero)", border: "1px solid var(--border-2)" }}>
