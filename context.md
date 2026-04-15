@@ -293,10 +293,34 @@ Une skill = des décisions résolues, pas des conseils génériques. Chaque règ
 - **@graph fix** : sites utilisant `@graph` (pattern courant) scoraient faussement `warn` sur `schema_org` — fix appliqué dans les deux endpoints
 - **Validation curl** : `grep -o '"@type": *"[^"]*"'` — 10 types Schema.org confirmés dans le HTML statique
 
-### Reste à faire
+---
+
+## Sessions 11-15/04/2026 — Dashboard polissage UI + CriteriaDonut refonte complète
+
+### Modifications effectuées
+
+| Fichier | Modification |
+|---------|-------------|
+| src/pages/Dashboard.tsx | ✅ Layout ROW1/ROW2 — évolution+critères côte à côte, donut pleine largeur |
+| src/pages/Dashboard.tsx | ✅ Animations fade-in cascade (`anim-delay-1` à `6`) sur tous les blocs |
+| src/pages/Dashboard.tsx | ✅ Barres critères animées — `animated` state, `transitionDelay: idx*60ms`, reset au changement d'URL |
+| src/pages/Dashboard.tsx | ✅ ScoreEvolutionChart : H=220, `preserveAspectRatio="none"`, `minHeight: 320` |
+| src/pages/Dashboard.tsx | ✅ CriteriaDonut : triple arc concentrique 200×200 — score global / technique / contenu |
+| src/index.css | ✅ `@keyframes fadeSlideIn` + `.anim-delay-1` à `.anim-delay-6` |
+| .claude/skills/ui-ux-otarcy/SKILL.md | ✅ Skill UI/UX créée — référentiel complet décisions visuelles + composants |
+
+### Décisions techniques retenues
+
+- **CriteriaDonut triple arc** : architecture sémantique > architecture par critère individuel — 3 axes lisibles (global/tech/contenu) au lieu de 10 arcs illisibles
+- `groupScore(keywords)` : `includes()` sur `c.nom.toLowerCase()` — robuste aux variations de nommage BDD
+- `ScoreEvolutionChart` : `preserveAspectRatio="none"` + `height: "100%"` force le SVG à remplir son flex container
+- Animations : CSS pur, `animation-delay` en classes utilitaires — performant, zéro dépendance
+- Barres : `width: animated ? "x%" : "0%"` + `transitionDelay` par index — cascade naturelle, reset propre sur changement d'URL
+
+### Reste à faire — mis à jour 15/04/2026
 
 1. **Étape 4 — `api/llm-perception.ts`** : bloquée sur `OPENROUTER_API_KEY`
-2. **`ANTHROPIC_API_KEY`** : ajouter dans Vercel
+2. **`ANTHROPIC_API_KEY`** : ajouter dans Vercel pour activer la synthèse Claude dans `api/audit.ts`
 3. **Pages secteurs orphelines** : supprimer `AioCoaching.tsx`, `Ecommerce.tsx`, `Immobilier.tsx`, `Restauration.tsx`, `Rh.tsx`, `Sante.tsx`
 4. **DNS otarcy.app** : vérifier réactivation
 

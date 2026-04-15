@@ -16,7 +16,7 @@ Instructions pour Claude Code. Lire entièrement avant de modifier quoi que ce s
 
 ---
 
-## État d'avancement — Session 10/04/2026
+## État d'avancement — Session 15/04/2026
 
 | Étape | Fichier | Statut |
 |-------|---------|--------|
@@ -31,7 +31,7 @@ Instructions pour Claude Code. Lire entièrement avant de modifier quoi que ce s
 | 8 | src/App.tsx | ✅ Routes /score /audit /perception /about /contact /cgv /mentions-legales /rgpd + redirects secteurs |
 | 9 | src/pages/Index.tsx | ✅ Nettoyage home — barre URL dans Hero, sections WhyAio/About/AuditSection supprimées |
 | 10 | src/pages/About.tsx | ✅ Refactorisée — utilise Navbar + Footer partagés depuis src/components/ |
-| 11 | src/pages/Dashboard.tsx | ✅ Refondu — architecture two-column, sidebar URLs, composants SkeletonRow/MiniSparkline/ScoreEvolutionChart/CriteriaDonut |
+| 11 | src/pages/Dashboard.tsx | ✅ Refondu + polissage UI — layout no-empty-space, animations fade-in cascade, barres animées, CriteriaDonut triple arc concentrique (score global/tech/contenu), ScoreEvolutionChart H=220 pleine hauteur |
 | 12 | src/components/Navbar.tsx | ✅ Extrait — composant partagé avec ThemeToggle intégré |
 | 13 | src/components/Footer.tsx | ✅ Extrait — composant partagé |
 | 14 | index.html | ✅ Meta tags, OG, Schema.org repositionnés — diagnostic présence IA par URL |
@@ -82,6 +82,7 @@ Lire la skill concernée AVANT toute intervention dans le domaine correspondant.
 | supabase-otarcy | `.claude/skills/supabase-otarcy/SKILL.md` | Toute interaction DB, auth, plan, quota |
 | blog-writer-aio | `.claude/skills/blog-writer-aio/SKILL.md` | Tout article de blog, guide, contenu web, page pilier |
 | OKLM | `.claude/skills/OKLM/SKILL.md` | Quand l'utilisateur écrit `OKLM` — mise à jour CLAUDE.md + context.md |
+| ui-ux-otarcy | `.claude/skills/ui-ux-otarcy/SKILL.md` | Design UI/UX senior — décisions visuelles, SVG, animations, composants Dashboard |
 
 ---
 
@@ -418,6 +419,34 @@ OPENROUTER_API_KEY    ← workflow 2 dans api/llm-perception.ts
 ### CSS ajouté
 
 - `index.css` : animation `@keyframes skeleton-pulse` + classe `.skeleton-pulse` ajoutée
+
+---
+
+## Modifications session 11-15/04/2026 — Dashboard polissage UI + CriteriaDonut refonte
+
+### Layout fixes (src/pages/Dashboard.tsx + src/index.css)
+
+- Wrapper "Two charts row" : grid → flex `alignItems: stretch` → remplacé par layout ROW1/ROW2
+- **ROW 1** (grid `1fr 1fr`) : Évolution du score | Critères Détail (barres animées)
+- **ROW 2** (pleine largeur) : CriteriaDonut triple arc avec header score à droite
+- `ScoreEvolutionChart` : `H = 130 → 220`, `padT 14→20`, `padB 22→28`, `preserveAspectRatio="none"`, `height: "100%"`, `minHeight: 320` sur le conteneur
+- `index.css` : `@keyframes fadeSlideIn` + classes `.anim-delay-1` à `.anim-delay-6` (0→400ms par pas 80ms)
+- Barres critères : `animated` state + `setTimeout(100ms)` + `transitionDelay: idx*60ms` — animation cascade reset à chaque changement d'URL
+
+### CriteriaDonut — versions successives
+
+1. SVG `700×250` pleine largeur avec donut centré + labels gauche/droite + connecteurs
+2. Calcul dynamique des arcs (`midAngle`, `pointX/pointY` trigonométriques)
+3. Répartition angulaire gauche/droite (`Math.cos(midAngle) < 0`), équilibrage while loop
+4. **Version finale** : triple arc concentrique `200×200` — 3 anneaux sémantiques :
+   - Anneau outer vert `r=84` → score global `/100` (affiché au centre en Bebas Neue)
+   - Anneau mid orange `r=64` → groupe "Technique & structure" (crawlers, E-E-A-T, meta, sitemap, HTTPS, OG)
+   - Anneau inner bleu `r=46` → groupe "Contenu & autorité" (Schema.org, Wikidata, FAQ, LLMs.txt)
+   - Légende à droite : 3 blocs `borderLeft` colorés, `groupScore()` calcule la moyenne pondérée `points/max`
+
+### Skill créée
+
+- `ui-ux-otarcy` : `.claude/skills/ui-ux-otarcy/SKILL.md` — référentiel UI/UX senior pour le projet Otarcy (palette, typo, SVG, animations, composants)
 
 ---
 
