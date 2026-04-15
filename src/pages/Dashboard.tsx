@@ -276,6 +276,7 @@ const CriteriaDonut: React.FC<{ criteres: AuditRecord["criteres"]; score: number
     opacity: number;
     dash: number;
     offset: number;
+    midAngle: number;
     pointX: number;
     pointY: number;
   };
@@ -288,24 +289,24 @@ const CriteriaDonut: React.FC<{ criteres: AuditRecord["criteres"]; score: number
     const midAngle   = (startAngle + endAngle) / 2;
     const arc: ArcData = {
       c,
-      color:   CRITERE_COLOR(c.nom.toLowerCase()),
-      opacity: CRITERE_OPACITY(c.nom.toLowerCase()),
+      color:    CRITERE_COLOR(c.nom.toLowerCase()),
+      opacity:  CRITERE_OPACITY(c.nom.toLowerCase()),
       dash,
-      offset:  -cumulative,
-      pointX:  CX + R * Math.cos(midAngle),
-      pointY:  CY + R * Math.sin(midAngle),
+      offset:   -cumulative,
+      midAngle,
+      pointX:   CX + R * Math.cos(midAngle),
+      pointY:   CY + R * Math.sin(midAngle),
     };
     cumulative += dash;
     return arc;
   });
 
-  // pointX < CX ↔ cos(midAngle) < 0 → arc dans la moitié gauche
-  const left  = arcs
-    .filter(a => a.pointX < CX)
-    .sort((a, b) => Math.atan2(a.pointY - CY, a.pointX - CX) - Math.atan2(b.pointY - CY, b.pointX - CX));
-  const right = arcs
-    .filter(a => a.pointX >= CX)
-    .sort((a, b) => Math.atan2(a.pointY - CY, a.pointX - CX) - Math.atan2(b.pointY - CY, b.pointX - CX));
+  const leftArcs  = arcs.filter(a => Math.cos(a.midAngle) < 0).sort((a, b) => a.midAngle - b.midAngle);
+  const rightArcs = arcs.filter(a => Math.cos(a.midAngle) >= 0).sort((a, b) => a.midAngle - b.midAngle);
+  while (leftArcs.length > rightArcs.length + 1) rightArcs.unshift(leftArcs.pop()!);
+  while (rightArcs.length > leftArcs.length + 1) leftArcs.push(rightArcs.shift()!);
+  const left  = leftArcs;
+  const right = rightArcs;
 
   const labelYs = (count: number) =>
     count === 1
@@ -314,27 +315,8 @@ const CriteriaDonut: React.FC<{ criteres: AuditRecord["criteres"]; score: number
   const leftYs  = labelYs(left.length);
   const rightYs = labelYs(right.length);
 
-  const markerColors = [...new Set(arcs.map(a => a.color))];
-
   return (
     <svg viewBox="0 0 700 250" width="100%" style={{ display: "block", overflow: "visible" }}>
-      <defs>
-        {markerColors.map(color => {
-          const id  = `arr-${color.replace("#", "")}`;
-          const idR = `arr-r-${color.replace("#", "")}`;
-          return (
-            <React.Fragment key={color}>
-              <marker id={id}  markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-                <path d="M0,0 L0,6 L6,3 Z" fill={color} />
-              </marker>
-              <marker id={idR} markerWidth="6" markerHeight="6" refX="1" refY="3" orient="auto">
-                <path d="M6,0 L6,6 L0,3 Z" fill={color} />
-              </marker>
-            </React.Fragment>
-          );
-        })}
-      </defs>
-
       {/* Track */}
       <circle cx={CX} cy={CY} r={R} fill="none" stroke="#1a1a1a" strokeWidth="7" />
 
@@ -357,15 +339,13 @@ const CriteriaDonut: React.FC<{ criteres: AuditRecord["criteres"]; score: number
       {/* GAUCHE */}
       {left.map((a, i) => {
         const y        = leftYs[i];
-        const markerId = `arr-r-${a.color.replace("#", "")}`;
         const lblColor = a.opacity < 1 ? "#4a4a4a" : "#7a7a7a";
         return (
           <g key={`left-${a.c.nom}`}>
-            <line x1="238" y1={y} x2={a.pointX} y2={a.pointY} stroke={a.color} strokeWidth="0.8" strokeOpacity="0.7" markerEnd={`url(#${markerId})`} />
             <rect x="2" y={y - 10} width="228" height="20" fill="#0a0a0a" />
             <rect x="2" y={y - 10} width="2"   height="20" fill={a.color} fillOpacity={a.opacity} />
             <text x="224" y={y + 4} fill={lblColor} fontFamily="'Raleway', sans-serif" fontSize="9" textAnchor="end" letterSpacing="0.3">
-              {a.c.titre} · <tspan fill={a.color} fillOpacity={a.opacity === 1 ? 1 : 0.7}>{Math.round((a.c.max / totalMax) * 100)}%</tspan>
+              {a.c.titre} · <tspan fill={a.color} fillOpacity={a.opacity === 1 ? 1 : 0.7}>{Math.round((a.c.points / Math.max(a.c.max, 1)) * 100)}%</tspan>
             </text>
           </g>
         );
@@ -374,15 +354,13 @@ const CriteriaDonut: React.FC<{ criteres: AuditRecord["criteres"]; score: number
       {/* DROITE */}
       {right.map((a, i) => {
         const y        = rightYs[i];
-        const markerId = `arr-${a.color.replace("#", "")}`;
         const lblColor = a.opacity < 1 ? "#4a4a4a" : "#7a7a7a";
         return (
           <g key={`right-${a.c.nom}`}>
-            <line x1="462" y1={y} x2={a.pointX} y2={a.pointY} stroke={a.color} strokeWidth="0.8" strokeOpacity="0.7" markerEnd={`url(#${markerId})`} />
             <rect x="470" y={y - 10} width="228" height="20" fill="#0a0a0a" />
             <rect x="696" y={y - 10} width="2"   height="20" fill={a.color} fillOpacity={a.opacity} />
             <text x="476" y={y + 4} fill={lblColor} fontFamily="'Raleway', sans-serif" fontSize="9" textAnchor="start" letterSpacing="0.3">
-              {a.c.titre} · <tspan fill={a.color} fillOpacity={a.opacity === 1 ? 1 : 0.7}>{Math.round((a.c.max / totalMax) * 100)}%</tspan>
+              {a.c.titre} · <tspan fill={a.color} fillOpacity={a.opacity === 1 ? 1 : 0.7}>{Math.round((a.c.points / Math.max(a.c.max, 1)) * 100)}%</tspan>
             </text>
           </g>
         );
