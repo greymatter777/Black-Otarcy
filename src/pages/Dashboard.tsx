@@ -200,7 +200,7 @@ const MiniSparkline: React.FC<{ scores: number[] }> = ({ scores }) => {
 
 const ScoreEvolutionChart: React.FC<{ audits: AuditRecord[] }> = ({ audits }) => {
   const sorted = [...audits].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
-  const W = 620, H = 130, padL = 28, padR = 20, padT = 14, padB = 22;
+  const W = 620, H = 220, padL = 28, padR = 20, padT = 20, padB = 28;
   const innerW = W - padL - padR;
   const innerH = H - padT - padB;
   const toX = (i: number) => padL + (i / Math.max(sorted.length - 1, 1)) * innerW;
@@ -210,13 +210,13 @@ const ScoreEvolutionChart: React.FC<{ audits: AuditRecord[] }> = ({ audits }) =>
   const area = `M${pts[0]?.x ?? 0},${pts[0]?.y ?? padT} ` + pts.map(p => `L${p.x},${p.y}`).join(" ") + ` L${pts[pts.length-1]?.x ?? W},${H - padB} L${pts[0]?.x ?? 0},${H - padB} Z`;
 
   if (sorted.length < 2) return (
-    <div style={{ height: 130, display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <div style={{ height: 220, display: "flex", alignItems: "center", justifyContent: "center" }}>
       <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.68rem", color: "#4a4a4a" }}>Auditez ce site plusieurs fois pour voir l'évolution.</p>
     </div>
   );
 
   return (
-    <svg width="100%" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet" style={{ overflow: "visible" }}>
+    <svg width="100%" height="100%" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" style={{ overflow: "visible", width: "100%", height: "100%" }}>
       <defs>
         <linearGradient id="evGrad" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#a3e635" stopOpacity="0.12" />
@@ -543,7 +543,7 @@ const Dashboard: React.FC = () => {
                 <div className="anim-delay-3" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 20 }}>
 
                   {/* Évolution du score */}
-                  <div style={{ background: "var(--bg-hero)", border: "1px solid var(--border-2)", padding: "18px 20px", display: "flex", flexDirection: "column" }}>
+                  <div style={{ background: "var(--bg-hero)", border: "1px solid var(--border-2)", padding: "18px 20px", display: "flex", flexDirection: "column", minHeight: 320 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
                       <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "0.82rem", letterSpacing: "0.1em", color: "var(--text-1)" }}>ÉVOLUTION DU SCORE</p>
                       <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: "0.5rem", letterSpacing: "0.15em", color: "var(--accent)", border: "1px solid var(--accent)", padding: "2px 6px", textTransform: "uppercase" }}>{selectedUrl}</span>
