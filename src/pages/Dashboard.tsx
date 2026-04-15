@@ -299,12 +299,18 @@ const CriteriaDonut: React.FC<{ criteres: AuditRecord["criteres"]; score: number
     return arc;
   });
 
-  const half   = Math.ceil(arcs.length / 2);
-  const left   = arcs.slice(0, half);
-  const right  = arcs.slice(half);
+  // pointX < CX ↔ cos(midAngle) < 0 → arc dans la moitié gauche
+  const left  = arcs
+    .filter(a => a.pointX < CX)
+    .sort((a, b) => Math.atan2(a.pointY - CY, a.pointX - CX) - Math.atan2(b.pointY - CY, b.pointX - CX));
+  const right = arcs
+    .filter(a => a.pointX >= CX)
+    .sort((a, b) => Math.atan2(a.pointY - CY, a.pointX - CX) - Math.atan2(b.pointY - CY, b.pointX - CX));
 
   const labelYs = (count: number) =>
-    Array.from({ length: count }, (_, i) => 22 + i * (160 / Math.max(count - 1, 1)));
+    count === 1
+      ? [125]
+      : Array.from({ length: count }, (_, i) => 22 + i * (206 / Math.max(count - 1, 1)));
   const leftYs  = labelYs(left.length);
   const rightYs = labelYs(right.length);
 
