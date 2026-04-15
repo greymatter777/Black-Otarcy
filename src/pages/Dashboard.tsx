@@ -242,126 +242,141 @@ const ScoreEvolutionChart: React.FC<{ audits: AuditRecord[] }> = ({ audits }) =>
   );
 };
 
-const CriteriaDonut: React.FC<{ criteres: AuditRecord["criteres"]; score: number }> = ({ criteres }) => {
-  const CRITERE_COLORS: Record<string, string> = {
-    "crawlers_ia":   "#a3e635",
-    "meta_onpage":   "#a3e635",
-    "schema_org":    "#60a5fa",
-    "wikidata":      "#60a5fa",
-    "eeat":          "#f97316",
-    "faq_glossaire": "#4a4a4a",
-    "llms_txt":      "#4a4a4a",
-    "sitemap":       "#3a3a3a",
-    "open_graph":    "#3a3a3a",
-    "https":         "#3a3a3a",
-  };
-  const CRITERE_OPACITY: Record<string, number> = {
-    "meta_onpage": 0.4,
-    "wikidata":    0.4,
-    "llms_txt":    0.5,
-    "open_graph":  0.5,
-    "https":       0.25,
-  };
-  const colorToMarkerId: Record<string, string> = {
-    "#a3e635": "donut-arr-green",
-    "#60a5fa": "donut-arr-blue",
-    "#f97316": "donut-arr-orange",
-    "#4a4a4a": "donut-arr-gray1",
-    "#3a3a3a": "donut-arr-gray2",
-  };
-  const markerDefs = [
-    { id: "donut-arr-green",  color: "#a3e635" },
-    { id: "donut-arr-blue",   color: "#60a5fa" },
-    { id: "donut-arr-orange", color: "#f97316" },
-    { id: "donut-arr-gray1",  color: "#4a4a4a" },
-    { id: "donut-arr-gray2",  color: "#3a3a3a" },
-  ];
+const CRITERE_COLOR = (nom: string): string => {
+  if (nom.includes("crawler")) return "#a3e635";
+  if (nom.includes("meta") || nom.includes("onpage") || nom.includes("on_page")) return "#a3e635";
+  if (nom.includes("schema")) return "#60a5fa";
+  if (nom.includes("wikidata")) return "#60a5fa";
+  if (nom.includes("eeat") || nom.includes("e_e_a_t") || nom.includes("eat")) return "#f97316";
+  if (nom.includes("faq") || nom.includes("glossaire")) return "#4a4a4a";
+  if (nom.includes("llms")) return "#7a7a7a";
+  if (nom.includes("sitemap")) return "#3a3a3a";
+  if (nom.includes("open") || nom.includes("graph") || nom.includes("og")) return "#3a3a3a";
+  if (nom.includes("https") || nom.includes("ssl")) return "#3a3a3a";
+  return "#3a3a3a";
+};
 
+const CRITERE_OPACITY = (nom: string): number => {
+  if (nom.includes("meta") || nom.includes("onpage") || nom.includes("on_page")) return 0.45;
+  if (nom.includes("wikidata")) return 0.45;
+  if (nom.includes("llms")) return 0.55;
+  if (nom.includes("open") || nom.includes("graph") || nom.includes("og")) return 0.5;
+  if (nom.includes("https") || nom.includes("ssl")) return 0.3;
+  return 1;
+};
+
+const CriteriaDonut: React.FC<{ criteres: AuditRecord["criteres"]; score: number }> = ({ criteres, score }) => {
+  const CX = 350, CY = 125, R = 84;
+  const CIRCUMFERENCE = 2 * Math.PI * R;
   const totalMax = criteres.reduce((acc, c) => acc + c.max, 0) || 1;
-  const circumference = 2 * Math.PI * 84;
-  let arcOffset = 0;
-  const arcs = criteres.map((c) => {
-    const dash = (c.max / totalMax) * circumference;
-    const seg = { ...c, dash, arcOffset };
-    arcOffset += dash;
-    return seg;
+
+  type ArcData = {
+    c: AuditRecord["criteres"][0];
+    color: string;
+    opacity: number;
+    dash: number;
+    offset: number;
+    pointX: number;
+    pointY: number;
+  };
+
+  let cumulative = 0;
+  const arcs: ArcData[] = criteres.map((c) => {
+    const dash = (c.max / totalMax) * CIRCUMFERENCE;
+    const startAngle = (cumulative / CIRCUMFERENCE) * 2 * Math.PI - Math.PI / 2;
+    const endAngle   = ((cumulative + dash) / CIRCUMFERENCE) * 2 * Math.PI - Math.PI / 2;
+    const midAngle   = (startAngle + endAngle) / 2;
+    const arc: ArcData = {
+      c,
+      color:   CRITERE_COLOR(c.nom.toLowerCase()),
+      opacity: CRITERE_OPACITY(c.nom.toLowerCase()),
+      dash,
+      offset:  -cumulative,
+      pointX:  CX + R * Math.cos(midAngle),
+      pointY:  CY + R * Math.sin(midAngle),
+    };
+    cumulative += dash;
+    return arc;
   });
 
-  const getColor   = (nom: string) => CRITERE_COLORS[nom]  ?? "#3a3a3a";
-  const getOpacity = (nom: string) => CRITERE_OPACITY[nom] ?? 1;
+  const half   = Math.ceil(arcs.length / 2);
+  const left   = arcs.slice(0, half);
+  const right  = arcs.slice(half);
 
-  const yPositions  = [22, 62, 102, 142, 182];
-  const leftCoords  = [[284,60],[278,84],[266,116],[270,146],[278,168]] as [number,number][];
-  const rightCoords = [[420,58],[424,92],[434,118],[436,136],[428,168]] as [number,number][];
-  const leftCriteres  = criteres.slice(0, 5);
-  const rightCriteres = criteres.slice(5, 10);
+  const labelYs = (count: number) =>
+    Array.from({ length: count }, (_, i) => 22 + i * (160 / Math.max(count - 1, 1)));
+  const leftYs  = labelYs(left.length);
+  const rightYs = labelYs(right.length);
+
+  const markerColors = [...new Set(arcs.map(a => a.color))];
 
   return (
-    <svg width="100%" viewBox="0 0 700 250" style={{ overflow: "visible" }}>
+    <svg viewBox="0 0 700 250" width="100%" style={{ display: "block", overflow: "visible" }}>
       <defs>
-        {markerDefs.map(({ id, color }) => (
-          <marker key={id} id={id} markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto">
-            <path d="M0,0 L0,6 L6,3 Z" fill={color} />
-          </marker>
-        ))}
+        {markerColors.map(color => {
+          const id  = `arr-${color.replace("#", "")}`;
+          const idR = `arr-r-${color.replace("#", "")}`;
+          return (
+            <React.Fragment key={color}>
+              <marker id={id}  markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L6,3 Z" fill={color} />
+              </marker>
+              <marker id={idR} markerWidth="6" markerHeight="6" refX="1" refY="3" orient="auto">
+                <path d="M6,0 L6,6 L0,3 Z" fill={color} />
+              </marker>
+            </React.Fragment>
+          );
+        })}
       </defs>
 
-      {/* Track fond */}
-      <circle cx="350" cy="125" r="84" fill="none" stroke="#1a1a1a" strokeWidth="7" />
+      {/* Track */}
+      <circle cx={CX} cy={CY} r={R} fill="none" stroke="#1a1a1a" strokeWidth="7" />
 
-      {/* Arcs */}
-      {arcs.map((c) => {
-        const color   = getColor(c.nom);
-        const opacity = getOpacity(c.nom);
+      {/* Arcs dynamiques */}
+      {arcs.map((a) => (
+        <circle key={a.c.nom} cx={CX} cy={CY} r={R} fill="none"
+          stroke={a.color} strokeWidth="7"
+          strokeDasharray={`${a.dash} ${CIRCUMFERENCE}`}
+          strokeDashoffset={a.offset}
+          strokeLinecap="round"
+          strokeOpacity={a.opacity}
+          transform={`rotate(-90 ${CX} ${CY})`}
+        />
+      ))}
+
+      {/* Texte centre */}
+      <text x={CX} y={CY - 6} fill="#3a3a3a" fontFamily="'Raleway', sans-serif" fontSize="6" textAnchor="middle" letterSpacing="2">RÉPARTITION</text>
+      <text x={CX} y={CY + 7} fill="#2a2a2a" fontFamily="'Raleway', sans-serif" fontSize="6" textAnchor="middle" letterSpacing="1.5">CRITÈRES</text>
+
+      {/* GAUCHE */}
+      {left.map((a, i) => {
+        const y        = leftYs[i];
+        const markerId = `arr-r-${a.color.replace("#", "")}`;
+        const lblColor = a.opacity < 1 ? "#4a4a4a" : "#7a7a7a";
         return (
-          <circle key={c.nom} cx="350" cy="125" r="84" fill="none"
-            stroke={color} strokeWidth="7"
-            strokeDasharray={`${c.dash} ${circumference}`}
-            strokeDashoffset={-c.arcOffset}
-            strokeLinecap="round"
-            strokeOpacity={opacity}
-            transform="rotate(-90 350 125)"
-          />
-        );
-      })}
-
-      {/* Centre */}
-      <text x="350" y="119" textAnchor="middle" fontFamily="'Raleway', sans-serif" fontSize="6" fill="#3a3a3a" letterSpacing="2">RÉPARTITION</text>
-      <text x="350" y="131" textAnchor="middle" fontFamily="'Raleway', sans-serif" fontSize="6" fill="#2a2a2a" letterSpacing="2">CRITÈRES</text>
-
-      {/* Critères GAUCHE */}
-      {leftCriteres.map((c, i) => {
-        const Y = yPositions[i];
-        const [ax, ay] = leftCoords[i];
-        const color    = getColor(c.nom);
-        const opacity  = getOpacity(c.nom);
-        const markerId = colorToMarkerId[color] ?? "donut-arr-gray2";
-        return (
-          <g key={`left-${c.nom}`}>
-            <line x1="238" y1={Y} x2={ax} y2={ay} stroke={color} strokeWidth="0.8" opacity="0.7" markerEnd={`url(#${markerId})`} />
-            <rect x="2" y={Y - 10} width="228" height="20" fill="#0a0a0a" />
-            <rect x="2" y={Y - 10} width="2" height="20" fill={color} opacity={opacity} />
-            <text x="224" y={Y + 4} textAnchor="end" fontSize="9" fontFamily="'Raleway', sans-serif" fill={opacity < 1 ? "#4a4a4a" : "#7a7a7a"}>
-              {c.titre} · <tspan fill={color}>{Math.round((c.max / totalMax) * 100)}%</tspan>
+          <g key={`left-${a.c.nom}`}>
+            <line x1="238" y1={y} x2={a.pointX} y2={a.pointY} stroke={a.color} strokeWidth="0.8" strokeOpacity="0.7" markerEnd={`url(#${markerId})`} />
+            <rect x="2" y={y - 10} width="228" height="20" fill="#0a0a0a" />
+            <rect x="2" y={y - 10} width="2"   height="20" fill={a.color} fillOpacity={a.opacity} />
+            <text x="224" y={y + 4} fill={lblColor} fontFamily="'Raleway', sans-serif" fontSize="9" textAnchor="end" letterSpacing="0.3">
+              {a.c.titre} · <tspan fill={a.color} fillOpacity={a.opacity === 1 ? 1 : 0.7}>{Math.round((a.c.max / totalMax) * 100)}%</tspan>
             </text>
           </g>
         );
       })}
 
-      {/* Critères DROITE */}
-      {rightCriteres.map((c, i) => {
-        const Y = yPositions[i];
-        const [ax, ay] = rightCoords[i];
-        const color    = getColor(c.nom);
-        const opacity  = getOpacity(c.nom);
-        const markerId = colorToMarkerId[color] ?? "donut-arr-gray2";
+      {/* DROITE */}
+      {right.map((a, i) => {
+        const y        = rightYs[i];
+        const markerId = `arr-${a.color.replace("#", "")}`;
+        const lblColor = a.opacity < 1 ? "#4a4a4a" : "#7a7a7a";
         return (
-          <g key={`right-${c.nom}`}>
-            <line x1="462" y1={Y} x2={ax} y2={ay} stroke={color} strokeWidth="0.8" opacity="0.7" markerEnd={`url(#${markerId})`} />
-            <rect x="470" y={Y - 10} width="228" height="20" fill="#0a0a0a" />
-            <rect x="696" y={Y - 10} width="2" height="20" fill={color} opacity={opacity} />
-            <text x="474" y={Y + 4} textAnchor="start" fontSize="9" fontFamily="'Raleway', sans-serif" fill={opacity < 1 ? "#4a4a4a" : "#7a7a7a"}>
-              <tspan fill={color}>{Math.round((c.max / totalMax) * 100)}%</tspan> · {c.titre}
+          <g key={`right-${a.c.nom}`}>
+            <line x1="462" y1={y} x2={a.pointX} y2={a.pointY} stroke={a.color} strokeWidth="0.8" strokeOpacity="0.7" markerEnd={`url(#${markerId})`} />
+            <rect x="470" y={y - 10} width="228" height="20" fill="#0a0a0a" />
+            <rect x="696" y={y - 10} width="2"   height="20" fill={a.color} fillOpacity={a.opacity} />
+            <text x="476" y={y + 4} fill={lblColor} fontFamily="'Raleway', sans-serif" fontSize="9" textAnchor="start" letterSpacing="0.3">
+              {a.c.titre} · <tspan fill={a.color} fillOpacity={a.opacity === 1 ? 1 : 0.7}>{Math.round((a.c.max / totalMax) * 100)}%</tspan>
             </text>
           </g>
         );
